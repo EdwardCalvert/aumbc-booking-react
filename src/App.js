@@ -71,9 +71,13 @@ function App() {
       <div className='container-lg '>
       
       <Login/>
+      <hr/>
       <RegisterAccount/>
+      <hr/>
       <EventDetails></EventDetails>
+      <hr/>
       <EventList events={events}></EventList>
+      <hr/>
       <ExternalStateExample/>
       <Footer/>
       </div>
