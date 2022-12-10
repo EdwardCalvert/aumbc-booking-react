@@ -14,7 +14,6 @@ class SignUpForm extends Component{
             showAddCarForm: false,
             driving: "-1",
             vehicleId: -1,
-            newCarName: "corsa",
             newCarNumberOfSeats: 0,
             newCarNumberOfBikeSpaces: 0,
             newCarMpg: 47.6,
@@ -22,12 +21,12 @@ class SignUpForm extends Component{
             borrowClubBike: false,
             giveItAGo:false,
             myVehicles: [
-                {name: "corsa",
+                {
             vehicleId :20,
             mpg: 47.6,
             numberOfBikeSpaces: 2,
             numberOfSeats: 2},
-            {name: "fabia",
+            {
             vehicleId :21,
             mpg: 47.9,
             numberOfBikeSpaces: 4,
@@ -66,11 +65,10 @@ class SignUpForm extends Component{
             }
 
             handleNewCarAdded(event){
-                alert('A car with stupidly programmed key 27: ' + this.state.newCarName);
+                alert('A car with stupidly programmed key 27: ' );
     event.preventDefault();
     const newVehicle= this.state.myVehicles;
     newVehicle.push({
-        name: this.state.newCarName,
         mpg: this.state.newCarMpg,
         numberOfBikeSpaces: this.state.newCarNumberOfBikeSpaces,
         numberOfSeats: this.state.newCarNumberOfSeats,
@@ -181,7 +179,7 @@ class SignUpForm extends Component{
                     <div className='row mb-3 gx-3 gy-2'>
                         <label className='col-sm-2'>Remaining passenger capacity </label>
                         <div className="col-sm-6">
-                            <label>{event.numberOfBikeSpaces} 🚵 {event.numberOfSeats} 💺 </label>
+                            <label>{event.numberOfBikeSpaces} 🚲 {event.numberOfSeats} 💺 </label>
                             <p className='form-text'>Result from {event.numberOfCars}🚗 (Excludes drivers)</p>
                         </div>
                     </div>
@@ -190,7 +188,7 @@ class SignUpForm extends Component{
                         <div className="col-sm-6">
                             <select className="form-select"  onChange={this.updateDrivingSelector} value={this.state.driving}>
                                 <option value="-1" >No</option>
-                                {myVehicles.map((item,key)=> (<option value={key} key={key}>I'll drive my {item.name} ({item.numberOfBikeSpaces }x🚵/{item.numberOfSeats}x💺)</option>) )}
+                                {myVehicles.map((item,key)=> (<option value={key} key={key}>{item.numberOfBikeSpaces }x🚲/{item.numberOfSeats}x💺 ({item.mpg} mpg)</option>) )}
                             </select>
                         </div>
                         <div className="col-auto">
@@ -204,11 +202,6 @@ class SignUpForm extends Component{
                     </div>
                     {this.state.showAddCarForm &&
                     <div className='row gx-3 gy-2 align-items-center mb-3 offset-sm-2'>
-
-                        <div className="col-sm-3">
-                            <label className="visually-hidden" for="specificSizeInputName">Car Name</label>
-                            <input type="text" className="form-control" id="specificSizeInputName" name="newCarName" value={this.state.newCarName} onChange={this.handleFormInputChange}/>
-                        </div>
                         <div className="col-sm-3">
                             <label className="visually-hidden" for="specificSizeInputGroupUsername">Mpg</label>
                             <div className="input-group">
@@ -219,7 +212,7 @@ class SignUpForm extends Component{
                         
                         <div className="col-sm-2">
                             <div className="input-group">
-                                <div className="input-group-text">🚵</div>
+                                <div className="input-group-text">🚲</div>
                                 <select className="form-select" id="specificSizeSelect" name="newCarNumberOfBikeSpaces" value={this.state.newCarNumberOfBikeSpaces} onChange={this.handleFormInputChange}>
                                 {[...Array(11).keys()].map((count, index) => <option value={index} key={index}>{count}</option>)}
                             </select>
