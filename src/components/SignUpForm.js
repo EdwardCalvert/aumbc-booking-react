@@ -12,7 +12,7 @@ class SignUpForm extends Component{
         this.removeCarFromMyVehicles = this.removeCarFromMyVehicles.bind(this)
         this.state = {
             showAddCarForm: false,
-            driving: -1,
+            driving: "-1",
             vehicleId: -1,
             newCarName: "corsa",
             newCarNumberOfSeats: 0,
@@ -92,8 +92,8 @@ class SignUpForm extends Component{
         
         let aumbcEvent =  this.state.event
         let newVehicleId = -1;
-        if(event.target.value !== "0" ){
-            selectedVehicle = this.state.myVehicles[parseInt(event.target.value)-1]
+        if(event.target.value !== "-1" ){
+            selectedVehicle = this.state.myVehicles[parseInt(event.target.value)]
             newVehicleId = selectedVehicle.vehicleId; // Select the correct car. 
         }
         if(currentVehicleId === -1 && newVehicleId !== -1) // Go from no car to a car
@@ -131,7 +131,7 @@ class SignUpForm extends Component{
     event: aumbcEvent}); 
 
 
-        alert("Need to hide car with id " + currentVehicleId)
+        alert("Need to hide car with id (currently removed)  " + currentVehicleId)
         
         
     }
@@ -189,14 +189,14 @@ class SignUpForm extends Component{
                         <label className='col-sm-2'>Will you drive?</label>
                         <div className="col-sm-6">
                             <select className="form-select"  onChange={this.updateDrivingSelector} value={this.state.driving}>
-                                <option value="0" >No</option>
-                                {myVehicles.map((item,key)=> (<option value={key+1} key={key}>I'll drive my {item.name} ({item.numberOfBikeSpaces }x🚵/{item.numberOfSeats}x💺)</option>) )}
+                                <option value="-1" >No</option>
+                                {myVehicles.map((item,key)=> (<option value={key} key={key}>I'll drive my {item.name} ({item.numberOfBikeSpaces }x🚵/{item.numberOfSeats}x💺)</option>) )}
                             </select>
                         </div>
                         <div className="col-auto">
                             <button className="btn btn-outline-secondary "  type="button" onClick={this.toggleAddCarForm} >Add a new car?</button>
                         </div>
-                        {this.state.driving !==-1 &&
+                        {this.state.driving !=="-1" &&
                         <div className="col-auto">
                             <button className="btn btn-outline-danger "  type="button" onClick={this.removeCarFromMyVehicles} >Remove Car</button>
                         </div>
