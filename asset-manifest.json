@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/aumbc-booking-react/static/css/main.9481edec.css",
-    "main.js": "/aumbc-booking-react/static/js/main.18da887a.js",
+    "main.js": "/aumbc-booking-react/static/js/main.7bc6f254.js",
     "static/js/787.b46f167c.chunk.js": "/aumbc-booking-react/static/js/787.b46f167c.chunk.js",
     "static/media/bootstrap-icons.woff?": "/aumbc-booking-react/static/media/bootstrap-icons.6959d0d983ee318f8880.woff",
     "static/media/bootstrap-icons.woff2?": "/aumbc-booking-react/static/media/bootstrap-icons.b2e5aab643c6f0fd2da6.woff2",
     "static/media/logo.svg": "/aumbc-booking-react/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "/aumbc-booking-react/index.html",
     "main.9481edec.css.map": "/aumbc-booking-react/static/css/main.9481edec.css.map",
-    "main.18da887a.js.map": "/aumbc-booking-react/static/js/main.18da887a.js.map",
+    "main.7bc6f254.js.map": "/aumbc-booking-react/static/js/main.7bc6f254.js.map",
     "787.b46f167c.chunk.js.map": "/aumbc-booking-react/static/js/787.b46f167c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9481edec.css",
-    "static/js/main.18da887a.js"
+    "static/js/main.7bc6f254.js"
   ]
 }
