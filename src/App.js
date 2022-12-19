@@ -9,13 +9,14 @@ import ExternalStateExample from './components/InteractiveMap';
 import RegisterAccount from './components/RegisterAccount';
 import Login from './components/Login'
 import EventDetails from './components/EventDetails';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 
 const events = [
   {id: 0,
   name: "Pitfichie",
 date: "12/12/2022",
 imageURL: "https://www.cyclegrampian.co.uk/imz/pitfichie-img.jpg",
-description: "Smashing ride.... Shweet!",
+description: "Smashing ride.... ",
 eventState: "cancelled",
 type : "Ride" },
 {id: 2,
@@ -34,7 +35,7 @@ type : "Ride" },
   name: "Pitfichie",
 date: "12/12/2021",
 imageURL: "https://www.cyclegrampian.co.uk/imz/pitfichie-img.jpg",
-description: "Smashing ride.... Shweet!",
+description: "Really exciting text ....",
 eventState: "occured",
 type : "Ride" },
 {id: 2,
@@ -65,23 +66,36 @@ type : "Trip" }
 
 function App() {
   return (
-    <div className='m-2'>
-      <Navbar/>
     
+    <HashRouter>
+<div className='m-2'>
+      <Navbar/>
       <div className='container-lg '>
-      
+
+    <Routes>
+    
+    
+     
+      <Route path="/login" element={<div>
       <Login/>
       <hr/>
       <RegisterAccount/>
-      <hr/>
-      <EventDetails></EventDetails>
-      <hr/>
-      <EventList events={events}></EventList>
-      <hr/>
-      <ExternalStateExample/>
-      <Footer/>
-      </div>
+      </div>}/>
+      
+      <Route path="/event/:id" element={<EventDetails></EventDetails>}/>
+
+      <Route path="/events" element={<EventList events={events}></EventList>}/>
+      <Route path="/" element={<EventList events={events}></EventList>}/>
+      <Route path="/admin/newEvent" element={<ExternalStateExample/>}/>
+      <Route path="*" element={<p> There is nothing at this page</p >}/>
+      
+    
+    </Routes>
+    <Footer/>
     </div>
+    </div>
+    </HashRouter>
+    
   );
 }
 

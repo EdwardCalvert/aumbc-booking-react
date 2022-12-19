@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import AUMBCPhoto from './AUMBCPhoto';
 import StaticMap from './StaticMap';
-
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 class EventTile extends Component{
     render(){
@@ -15,7 +16,7 @@ class EventTile extends Component{
               <h6>{event.date}</h6>
               <p>{event.description}</p>
               
-              <a href="#" className={"btn btn-"+style}>{this.getButtonText(event.eventState)}</a>
+              <Link to="/event/1" className={"btn btn-"+style}>{this.getButtonText(event.eventState)}</Link>
             </div>
             </div>
           </div>
@@ -23,6 +24,8 @@ class EventTile extends Component{
     
 
     }
+
+
     getStyleKeyword(eventState){
       switch(eventState){
         case "cancelled":
@@ -49,6 +52,10 @@ class EventTile extends Component{
     }
 
     
+}
+
+EventTile.propTypes ={
+  event: PropTypes.object.isRequired
 }
 
 function ImageSelector({event}){

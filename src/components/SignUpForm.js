@@ -8,16 +8,19 @@ class SignUpForm extends Component{
         this.updateDrivingSelector = this.updateDrivingSelector.bind(this)
         this.handleFormInputChange = this.handleFormInputChange.bind(this)
         this.handleNewCarAdded = this.handleNewCarAdded.bind(this)
+        this.handleEventCancellation = this.handleEventCancellation.bind(this)
         this.handleEventAcceptance = this.handleEventAcceptance.bind(this)
         this.removeCarFromMyVehicles = this.removeCarFromMyVehicles.bind(this)
+        
         this.state = {
             showAddCarForm: false,
             driving: "-1",
             vehicleId: -1,
+            newCarPetrol: true,
             newCarNumberOfSeats: 0,
             newCarNumberOfBikeSpaces: 0,
             newCarMpg: 47.6,
-            
+            alreadyBooked: false,
             borrowClubBike: false,
             giveItAGo:false,
             myVehicles: [
@@ -25,12 +28,17 @@ class SignUpForm extends Component{
             vehicleId :20,
             mpg: 47.6,
             numberOfBikeSpaces: 2,
-            numberOfSeats: 2},
+            numberOfSeats: 2,
+            petrol: true,
+            carVisible: true
+        },
             {
             vehicleId :21,
             mpg: 47.9,
             numberOfBikeSpaces: 4,
-            numberOfSeats: 2}
+            numberOfSeats: 2,
+            petrol: true,
+            carVisible: true}
         ],
 
             event: {id: 6,
@@ -47,8 +55,10 @@ class SignUpForm extends Component{
               numberOfCars: 0,
               numberOfBikeSpaces: 0,
               numberOfSeats: 0,
-              eventState: "live",
-              type : "Trip" }
+              eventState: "active",
+              type : "Trip",
+              distanceForLiftShare: 150
+             }
 
             }
             }       
@@ -72,15 +82,33 @@ class SignUpForm extends Component{
         mpg: this.state.newCarMpg,
         numberOfBikeSpaces: this.state.newCarNumberOfBikeSpaces,
         numberOfSeats: this.state.newCarNumberOfSeats,
-        vehicleId : 27
+        vehicleId : 27,
+        petrol: this.state.newCarPetrol,
+        carVisible: true
     });
     this.setState({myVehicles : newVehicle,
     showAddCarForm: false});
             }
         
   handleEventAcceptance(event) {
-    alert('A name was submitted: ' + this.state.event.name);
+    // alert('A name was submitted: ' + this.state.event.name);
+    // event.preventDefault();
+    this.setState({alreadyBooked: true})
     event.preventDefault();
+  }
+
+  handleEventCancellation(){
+    let aumbcEvent = this.state.event
+    if(this.state.driving != "-1"){
+        aumbcEvent = this.removeCurrentCarFromCapcity(aumbcEvent,this.state.vehicleId)
+    }
+    this.setState({
+        driving: "-1",
+        vehicleId: -1,
+        event: aumbcEvent,
+        alreadyBooked: false,
+    })
+
   }
     updateDrivingSelector(event){
         //Update the capacity for people on the event.
@@ -91,7 +119,7 @@ class SignUpForm extends Component{
         let aumbcEvent =  this.state.event
         let newVehicleId = -1;
         if(event.target.value !== "-1" ){
-            selectedVehicle = this.state.myVehicles[parseInt(event.target.value)]
+            selectedVehicle = this.state.myVehicles.filter((item)=>item.carVisible)[parseInt(event.target.value)]
             newVehicleId = selectedVehicle.vehicleId; // Select the correct car. 
         }
         if(currentVehicleId === -1 && newVehicleId !== -1) // Go from no car to a car
@@ -110,7 +138,8 @@ class SignUpForm extends Component{
         this.setState({
             vehicleId: newVehicleId,
             event: aumbcEvent,
-            driving: event.target.value
+            driving: event.target.value,
+            
         })
         
     }
@@ -119,11 +148,15 @@ class SignUpForm extends Component{
     removeCarFromMyVehicles(){
         const currentVehicleId = this.state.vehicleId
 
-        const updatedGarage = this.state.myVehicles.filter(item => item.vehicleId !== currentVehicleId)
+        const carToUpdate = this.state.myVehicles.find((item) => item.vehicleId === currentVehicleId)
+        carToUpdate.carVisible = false;
+        const otherCars = this.state.myVehicles.filter((item )=>item.vehicleId !== currentVehicleId)
+        otherCars.concat(carToUpdate)
+        
         //Now change the currently selected vehicle!
        const aumbcEvent =  this.removeCurrentCarFromCapcity(this.state.event, currentVehicleId)
             
-            this.setState({myVehicles : updatedGarage,
+            this.setState({myVehicles : otherCars,
             driving :-1,
         vehicleId : -1,
     event: aumbcEvent}); 
@@ -172,9 +205,12 @@ class SignUpForm extends Component{
 
         const event = this.state.event
         const myVehicles = this.state.myVehicles
-        return <form className='mb-3' onSubmit={this.handleEventAcceptance}>
+        return <div className='sign-up-form-container'>
+            <h2>Sign up for {event.name}</h2>
+            {this.shouldSignUpFormBeShown(this.state) &&
+        <form className='mb-3' onSubmit={this.handleEventAcceptance}>
             
-                <h2>Sign up for {event.name}</h2>
+                
                 <p>You only need to fill in this form as a passenger or as a driver who took passengers (so you can be reimbursed for your fuel costs). Please view the important information for loading <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">bikes with mudguards</a>.</p>
                     <div className='row mb-3 gx-3 gy-2'>
                         <label className='col-sm-2'>Remaining passenger capacity </label>
@@ -188,7 +224,7 @@ class SignUpForm extends Component{
                         <div className="col-sm-6">
                             <select className="form-select"  onChange={this.updateDrivingSelector} value={this.state.driving}>
                                 <option value="-1" >No</option>
-                                {myVehicles.map((item,key)=> (<option value={key} key={key}>{item.numberOfBikeSpaces }x🚲/{item.numberOfSeats}x💺 ({item.mpg} mpg)</option>) )}
+                                {myVehicles.filter((item) => item.carVisible).map((item,key)=> (<option value={key} key={key}>{item.numberOfBikeSpaces }x🚲/{item.numberOfSeats}x💺 ({item.petrol? "petrol" : "diesel"}, {item.mpg} mpg)</option>) )}
                             </select>
                         </div>
                         <div className="col-auto">
@@ -226,6 +262,12 @@ class SignUpForm extends Component{
                             </select>
                             </div>
                         </div>
+                        <div className="col-sm-2">
+                            <div className="form-check">
+                                <input className="form-check-input" type="checkbox"  name="newCarPetrol" checked={this.state.newCarPetrol} onChange={this.handleFormInputChange}/>
+                                <label className="form-check-label" for="gridCheck1">Petrol</label>
+                        </div>
+                    </div>
                         <div className="col-auto">
                             <button  className="btn btn-success"  type="button" onClick={this.handleNewCarAdded}>Add Car</button>
                         </div>
@@ -258,7 +300,23 @@ class SignUpForm extends Component{
                     <this.submitButton state={this.state}/>
                    
                 </form>
-  return 
+            }
+            {this.state.alreadyBooked&&
+                <p>You are booked as {this.state.driving !== "-1"? "a driver, taking "+ this.state.myVehicles.find((item) => item.vehicleId == this.state.vehicleId).numberOfBikeSpaces + "🚲 and "+ this.state.myVehicles.find((item) => item.vehicleId == this.state.vehicleId).numberOfSeats +"💺" : "a passenger (proably should confirm if there is space for them)" }. To edit your booking, please <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger'>cancel</button> your existnig one.  </p>
+            }
+
+            {event.eventState === "occured" &&
+                <p>You can't sign up, since this ride has happened!</p>
+            }
+            {event.eventState === "cancelled" &&
+                <p>You can't sign up, since this ride was cancelled!</p>
+            }
+            </div>
+    }
+
+    shouldSignUpFormBeShown(event){
+        let eventState = event.eventState
+        return (eventState !== "cancelled" & eventState !== "occured" ) & !event.alreadyBooked
     }
 
     submitButton({state}){

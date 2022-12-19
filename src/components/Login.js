@@ -24,7 +24,7 @@ class Login extends Component{
                 <div className="row mb-3">
                     <label for="inputEmail3" className="col-sm-2 col-form-label">OTP</label>
                     <div className="col-sm-6">
-                        <input type="email" className="form-control" id="inputEmail3" placeholder='12345678'/>
+                        <input type="number" className="form-control" id="inputEmail3" placeholder='12345678'/>
                     </div>
                     <div className='col-sm-2'><button type="button" className="btn btn-primary">Login</button></div>
                     
