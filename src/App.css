@@ -20,6 +20,9 @@
     object-fit: cover;
 }
 
+.table-space{
+  padding-bottom: 10px !important;
+}
 .sign-up-form-container{
   height: 800px;
 }

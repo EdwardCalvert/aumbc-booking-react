@@ -5,11 +5,13 @@ import SignUpForm from './components/SignUpForm';
 import HelpWidget from './components/HelpWidget';
 import Navbar from './components/AUMBCNav';
 import Footer from './components/Footer';
-import ExternalStateExample from './components/InteractiveMap';
+import ExternalStateExample from './components/ExternalStateInteractiveMap';
 import RegisterAccount from './components/RegisterAccount';
 import Login from './components/Login'
 import EventDetails from './components/EventDetails';
 import { HashRouter, Route, Routes } from 'react-router-dom';
+import React from 'react';
+import DriverPayouts from './components/DriverPayouts';
 
 const events = [
   {id: 0,
@@ -86,7 +88,10 @@ function App() {
 
       <Route path="/events" element={<EventList events={events}></EventList>}/>
       <Route path="/" element={<EventList events={events}></EventList>}/>
-      <Route path="/admin/newEvent" element={<ExternalStateExample/>}/>
+      <Route path="/admin/newEvent" element={<React.Fragment>
+        <ExternalStateExample/>
+        <DriverPayouts/>
+      </React.Fragment>}/>
       <Route path="*" element={<p> There is nothing at this page</p >}/>
       
     

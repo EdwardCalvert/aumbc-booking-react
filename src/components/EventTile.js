@@ -16,7 +16,7 @@ class EventTile extends Component{
               <h6>{event.date}</h6>
               <p>{event.description}</p>
               
-              <Link to="/event/1" className={"btn btn-"+style}>{this.getButtonText(event.eventState)}</Link>
+              <Link to={"/event/" +event.eventID } className={"btn btn-"+style}>{this.getButtonText(event.eventState)}</Link>
             </div>
             </div>
           </div>

@@ -1,9 +1,11 @@
 import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 
 class SignUpForm extends Component{
 
     constructor(props){
         super(props);
+        console.warn(props)
         this.toggleAddCarForm = this.toggleAddCarForm.bind(this)
         this.updateDrivingSelector = this.updateDrivingSelector.bind(this)
         this.handleFormInputChange = this.handleFormInputChange.bind(this)
@@ -41,28 +43,14 @@ class SignUpForm extends Component{
             carVisible: true}
         ],
 
-            event: {id: 6,
-                name: "Glentress",
-              startdDate: "12/12/2023",
-              endDate : "13/12/2023",
-              imageURL: "",
-              rideStartLocation : {
-                lat: 55.647368,
-                lng: -3.139119
-              },
-              costForPassenger: 5,
-              costForDriver: 10,
-              numberOfCars: 0,
-              numberOfBikeSpaces: 0,
-              numberOfSeats: 0,
-              eventState: "active",
-              type : "Trip",
-              distanceForLiftShare: 150
-             }
+            event: props.event
 
             }
             }       
 
+            componentDidMount(){
+                fetch()
+            }
             handleFormInputChange(event){
                 const target = event.target;
                 const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -239,7 +227,7 @@ class SignUpForm extends Component{
                     {this.state.showAddCarForm &&
                     <div className='row gx-3 gy-2 align-items-center mb-3 offset-sm-2'>
                         <div className="col-sm-3">
-                            <label className="visually-hidden" for="specificSizeInputGroupUsername">Mpg</label>
+                            <label className="visually-hidden">Mpg</label>
                             <div className="input-group">
                                 <input type="number" className="form-control" id="specificSizeInputGroupUsername" placeholder="45" name="newCarMpg" value={this.state.newCarMpg} onChange={this.handleFormInputChange}/>
                                 <div className="input-group-text">mpg</div>
@@ -249,7 +237,7 @@ class SignUpForm extends Component{
                         <div className="col-sm-2">
                             <div className="input-group">
                                 <div className="input-group-text">🚲</div>
-                                <select className="form-select" id="specificSizeSelect" name="newCarNumberOfBikeSpaces" value={this.state.newCarNumberOfBikeSpaces} onChange={this.handleFormInputChange}>
+                                <select className="form-select"  name="newCarNumberOfBikeSpaces" value={this.state.newCarNumberOfBikeSpaces} onChange={this.handleFormInputChange}>
                                 {[...Array(11).keys()].map((count, index) => <option value={index} key={index}>{count}</option>)}
                             </select>
                             </div>
@@ -257,7 +245,7 @@ class SignUpForm extends Component{
                         <div className="col-sm-2">
                             <div className="input-group">
                                 <div className="input-group-text">💺</div>
-                                <select className="form-select" id="specificSizeSelect" name="newCarNumberOfSeats" value={this.state.newCarNumberOfSeats} onChange={this.handleFormInputChange}>
+                                <select className="form-select" name="newCarNumberOfSeats" value={this.state.newCarNumberOfSeats} onChange={this.handleFormInputChange}>
                                 {[...Array(11).keys()].map((count, index) => <option value={index} key={index}>{count}</option>)}
                             </select>
                             </div>
@@ -265,7 +253,7 @@ class SignUpForm extends Component{
                         <div className="col-sm-2">
                             <div className="form-check">
                                 <input className="form-check-input" type="checkbox"  name="newCarPetrol" checked={this.state.newCarPetrol} onChange={this.handleFormInputChange}/>
-                                <label className="form-check-label" for="gridCheck1">Petrol</label>
+                                <label className="form-check-label">Petrol</label>
                         </div>
                     </div>
                         <div className="col-auto">
@@ -285,7 +273,7 @@ class SignUpForm extends Component{
                         <div className="col-sm-10 offset-sm-2">
                             <div className="form-check">
                                 <input className="form-check-input" type="checkbox" id="gridCheck1" name="borrowClubBike" checked={this.state.borrowClubBike} onChange={this.handleFormInputChange}/>
-                                <label className="form-check-label" for="gridCheck1">Borrow a club bike</label>
+                                <label className="form-check-label" >Borrow a club bike</label>
                             </div>
                         </div>
                     </div>
@@ -293,7 +281,7 @@ class SignUpForm extends Component{
                         <div className="col-sm-10 offset-sm-2">
                             <div className="form-check">
                                 <input className="form-check-input" type="checkbox" id="gridCheck1" name="giveItAGo" checked={this.state.giveItAGo} onChange={this.handleFormInputChange}/>
-                                <label className="form-check-label" for="gridCheck1">This is my give it a go ride</label>
+                                <label className="form-check-label" >This is my give it a go ride</label>
                             </div>
                         </div>
                     </div>
@@ -333,6 +321,9 @@ class SignUpForm extends Component{
         
         
     }
+  }
+  SignUpForm.propTypes = {
+    event: PropTypes.object
   }
 
   export default SignUpForm
