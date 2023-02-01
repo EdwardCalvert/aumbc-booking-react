@@ -3,6 +3,7 @@ import SignUpForm from "./SignUpForm";
 import StaticMap from "./StaticMap";
 import OpenInGoogleMps from "./OpenInGoogleMaps";
 import { useParams } from "react-router-dom";
+import CopyWhat3Words from "./CopyWhat3Words";
 
 class EventDetailsRenderer extends Component {
 
@@ -17,8 +18,11 @@ class EventDetailsRenderer extends Component {
   }
 
   componentDidMount(){
-    const callURL = "https://localhost:7260/api/MtbEvent/" +this.state.id
-    fetch(callURL )
+    const id = this.state.id
+    const callURL = "https://localhost:7260/api/MtbEvent/get?" +new URLSearchParams({ eventId :this.state.id})
+    window.fetch(callURL,{
+      
+    } )
                     .then((res) => res.json())
                     .then((json) => {
                         this.setState({
@@ -36,12 +40,12 @@ class EventDetailsRenderer extends Component {
     return (
       <div>
         <h2>
-          {event.type} at {event.name}{" "} {event.id}
+          {event.name}
         </h2>
         <p>{event.description}</p>
         <this.RideDate event={event} />
-        <this.MapRideLocation event={event} />
-        <this.MapLiftShare event={event} />
+        <this.MapLocation eventLocationName={event.rideStartName} locationTitle={"Ride Start Location"} eventWhat3Words={event.rideStartW3W} eventLat={event.rideStartLat} eventLng={event.rideStartLng} zoom={13} />
+        <this.MapLocation eventLocationName={event.liftShareName} locationTitle={"Lift Share Location "} eventWhat3Words={event.liftShareW3W} eventLat={event.liftShareLat} eventLng={event.liftShareLng} zoom={16} />
 
         <SignUpForm event={event}/>
       </div>
@@ -49,85 +53,48 @@ class EventDetailsRenderer extends Component {
   }
 
 
-  MapRideLocation({ event }) {
-    if ("rideStartLocation" in event) {
-      const start = event.rideStartLocation;
-      if (
-        "lat" in start &&
-        "lng" in start &&
-        start.lat !== 0 &&
-        start.lng !== 0
-      ) {
+  MapLocation({eventLocationName,eventWhat3Words, eventLat, eventLng, locationTitle,zoom} ) {
+      console.log(eventWhat3Words)
         return (
           <div className="row mb-3 gx-3 gy-2">
-            <label className="col-sm-2"> Ride Start Location </label>
+            <label className="col-sm-2">{locationTitle}</label>
+            
             <div className="col-sm-6">
+            <h5>{eventLocationName} - <a href={"https://what3words.com/" + eventWhat3Words} target="_blank">///{eventWhat3Words}</a></h5>
               <StaticMap
-                lat={event.rideStartLocation.lat}
-                lng={event.rideStartLocation.lng}
-                zoom={13}
+                lat={eventLat}
+                lng={eventLng}
+                zoom={zoom}
               ></StaticMap>
-              <OpenInGoogleMps position={event.rideStartLocation} />
+              <OpenInGoogleMps position={{lat: eventLat, lng: eventLng}} /> <CopyWhat3Words what3Words={eventWhat3Words}/>
             </div>
           </div>
         );
-      }
     }
-  }
-
-  MapLiftShare({ event }) {
-    if ("liftShareLocation" in event) {
-      const start = event.liftShareLocation;
-      if (
-        "lat" in start &&
-        "lng" in start &&
-        start.lat !== 0 &&
-        start.lng !== 0
-      ) {
-        return (
-          <div className="row mb-3 gx-3 gy-2">
-            <label className="col-sm-2"> Lift Share Location </label>
-            <div className="col-sm-6">
-              <StaticMap
-                lat={event.liftShareLocation.lat}
-                lng={event.liftShareLocation.lng}
-                zoom={16}
-              ></StaticMap>
-              <OpenInGoogleMps position={event.liftShareLocation} />
-            </div>
-          </div>
-        );
-      }
-    }
-  }
+  
+    
+  
 
   RideDate({ event }) {
-    if (event.startDate === event.endDate) {
-      return (
-        <div className="row mb-3 gx-3 gy-2">
-          <label className="col-sm-2"> Date </label>
-          <div className="col-sm-10">{event.startDate}</div>
-        </div>
-      );
-    } else {
+
       return (
         <div>
           <div className="row mb-3 gx-3 gy-2">
             <label className="col-sm-2">Start </label>
             <div className="col-sm-10">
-              {event.startTime}, {event.endDate}
+            { new Date(event.startDateTime).toLocaleDateString("en-GB")} { new Date(event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})} 
             </div>
           </div>
           <div className="row mb-3 gx-3 gy-2">
             <label className="col-sm-2">End</label>
             <div className="col-sm-10">
-              {event.endTime}, {event.endDate}
+            { new Date(event.endDateTime).toLocaleDateString("en-GB")} { new Date(event.endDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})} 
             </div>
           </div>
         </div>
       );
     }
-  }
+
 }
 
 function EventDetails() {

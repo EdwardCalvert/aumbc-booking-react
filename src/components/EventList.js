@@ -29,15 +29,9 @@ class EventList extends Component{
     componentDidMount(){
 
         let headers = new Headers()
-        headers.append('Content-Type', 'application/json');
-  headers.append('Accept', 'application/json');
-
-  headers.append('Access-Control-Allow-Origin', 'http://localhost:7260');
-  headers.append('Origin', 'http://localhost:7260');
-  headers.append('Access-Control-Allow-Credentials', 'true');
 
         fetch(
-            "https://localhost:7260/api/MtbEvent")
+            "https://localhost:7260/api/MtbEvent/get-upcoming-events")
                         .then((res) => res.json())
                         .then((json) => {
                             this.setState({

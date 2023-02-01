@@ -12,11 +12,11 @@ class EventTile extends Component{
           <div className="card" >
             <ImageSelector event={event}/>
             <div className="card-body">
-              <h5 className="card-title">{event.name} <div className="badge text-bg-light"><i className="bi bi-tag-fill"></i> {event.type}</div></h5>
+              <h5 className="card-title">{event.name} </h5>
               <h6>{event.date}</h6>
               <p>{event.description}</p>
               
-              <Link to={"/event/" +event.eventID } className={"btn btn-"+style}>{this.getButtonText(event.eventState)}</Link>
+              <Link to={"/event/" +event.id } className={"btn btn-"+style}>{this.getButtonText(event.eventState)}</Link>
             </div>
             </div>
           </div>
