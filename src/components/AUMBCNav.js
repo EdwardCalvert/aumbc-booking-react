@@ -5,31 +5,38 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import AUMBCPhoto from "./AUMBCPhoto";
 import { Link } from "react-router-dom";
+import authenticationService from "../services/authentication.service";
 
 class AUMBCNav extends Component{
     render(){
 return (
 <Navbar bg="white" expand="lg">
       <Container>
-      <Navbar.Brand><AUMBCPhoto size="100vh" className="d-inline-block align-top"/></Navbar.Brand>
-        
+      <Navbar.Brand> <Link to="/" ><AUMBCPhoto size="100vh" className="d-inline-block align-top"/></Link></Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="container d-flex">
-          <Link to="/events" className="nav-link">Events</Link>
-            <Link to="/login" className="nav-link">My Account</Link>
-            
-           
-            
-            
-             <Nav.Link  className='ms-auto' href="https://www.instagram.com/uoa_mountainbiking" target="_blank"><i className="bi bi-instagram"></i></Nav.Link> 
-            <Link to="/login" className="nav-item btn btn-primary">Login</Link>
+          <Link to="/" className="nav-link">Events</Link>
+          <Link to="/login" className="nav-link">My Account</Link>
+          <Nav.Link  className='ms-auto' href="https://www.instagram.com/uoa_mountainbiking" target="_blank"><i className="bi bi-instagram"></i></Nav.Link> 
+          <LoginLogout/>
+          
             {/* <button type="button" className=" nav-item btn btn-primary">Invoices <span className="badge text-bg-secondary">4</span></button> */}
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>)
 }
+}
+
+function LoginLogout(){
+  if(!authenticationService.currentUserValue )
+  {
+    return<Link to="/login" className="nav-item btn btn-primary">Login</Link>
+  }
+  else{
+    return <Link to="/logout" className="nav-item btn btn-primary">Logout</Link>
+  }
 }
 
 export default AUMBCNav

@@ -1,107 +1,73 @@
-import logo from './logo.svg';
 import './App.css';
 import EventList from './components/EventList';
-import SignUpForm from './components/SignUpForm';
-import HelpWidget from './components/HelpWidget';
 import Navbar from './components/AUMBCNav';
 import Footer from './components/Footer';
-import ExternalStateExample from './components/ExternalStateInteractiveMap';
-import RegisterAccount from './components/RegisterAccount';
+import { authenticationService } from './services/authentication.service'
+import {  Role } from './_helpers/role';
+import{ history} from './_helpers/history';
+import InteractiveMap from './components/InteractiveMap';
 import Login from './components/Login'
 import EventDetails from './components/EventDetails';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import React from 'react';
 import DriverPayouts from './components/DriverPayouts';
-
-const events = [
-  {id: 0,
-  name: "Pitfichie",
-date: "12/12/2022",
-imageURL: "https://www.cyclegrampian.co.uk/imz/pitfichie-img.jpg",
-description: "Smashing ride.... ",
-eventState: "cancelled",
-type : "Ride" },
-{id: 2,
-  name: "Kirkhill",
-date: "12/01/2023",
-imageURL: "https://www.cyclegrampian.co.uk/imz/kirkhill-img.jpg",
-eventState: "live",
-type : "Ride" },
-{id: 3,
-  name: "Durris",
-date: "12/12/2023",
-imageURL: "https://www.cyclegrampian.co.uk/imz/fb/durris.png",
-eventState: "full",
-type : "Ride" },
-{id: 0,
-  name: "Pitfichie",
-date: "12/12/2021",
-imageURL: "https://www.cyclegrampian.co.uk/imz/pitfichie-img.jpg",
-description: "Really exciting text ....",
-eventState: "occured",
-type : "Ride" },
-{id: 2,
-  name: "Kirkhill",
-date: "12/01/2023",
-imageURL: "https://www.cyclegrampian.co.uk/imz/kirkhill-img.jpg",
-eventState: "booked",
-type : "Ride" },
-{id: 3,
-  name: "Durris",
-date: "12/12/2023",
-eventState: "booked",
-type : "Ride" }
-,
-{id: 6,
-  name: "Glentress",
-startDate: "12/12/2023",
-endDate : "13/12/2023",
-imageURL: "",
-rideStartLocation : {
-  lat: 55.647368,
-  lng: -3.139119
-},
-eventState: "live",
-type : "Trip" }
-]
+import RequireAuth from './components/RequireAuth';
+import Logout from './components/Logout';
+import CreateNewEvent from './components/CreateNewEvent';
 
 
-function App() {
-  return (
-    
-    <HashRouter>
-<div className='m-2'>
-      <Navbar/>
-      <div className='container-lg '>
+class App extends React.Component {
+  constructor(props) {
+      super(props);
 
-    <Routes>
-    
-    
-     
-      <Route path="/login" element={<div>
-      <Login/>
-      <hr/>
-      <RegisterAccount/>
-      </div>}/>
+      this.state = {
+          currentUser: null,
+          isAdmin: false
+      };
+  }
+
+  componentDidMount() {
+      authenticationService.currentUser.subscribe(x => this.setState({
+          currentUser: x,
+          isAdmin: x && x.role === Role.Admin
+      }));
+
+      console.log(authenticationService.currentUserValue)
+  }
+
+  logout() {
+      authenticationService.logout();
+      //history.push('/login');
+      //redirect('/login');
+  }
+
+  render() {
+    const { currentUser, isAdmin } = this.state;
+    return (
+      <HashRouter >
+        <div className='m-2'>
+          <Navbar/>
+          <div className='container-lg '>
+            <Routes>
+              <Route path="/login" element={<Login/>}/>
+            
+              <Route path="/event/:id" element={<RequireAuth><EventDetails/></RequireAuth>}/>
+              <Route path="/" element={<RequireAuth><EventList /></RequireAuth>}/>
+                {/* <Route path="/admin/newEvent" element={<RequireAuth roles={Role.Admin}>
+                  <InteractiveMap/>
+                  <DriverPayouts/>
+                </RequireAuth>}/> */}
+              <Route path="/logout" element={<Logout/>}/>
+              <Route path="/admin/new-event/" element={<RequireAuth roles={Role.Admin}><CreateNewEvent/></RequireAuth>}/>
+              <Route path="*" element={<p> There is nothing at this page</p>}/>
+          </Routes>
+          <Footer/>
+        </div>
+      </div>
+      </HashRouter>
       
-      <Route path="/event/:id" element={<EventDetails></EventDetails>}/>
-
-      <Route path="/events" element={<EventList events={events}></EventList>}/>
-      <Route path="/" element={<EventList events={events}></EventList>}/>
-      <Route path="/admin/newEvent" element={<React.Fragment>
-        <ExternalStateExample/>
-        <DriverPayouts/>
-      </React.Fragment>}/>
-      <Route path="*" element={<p> There is nothing at this page</p >}/>
-      
-    
-    </Routes>
-    <Footer/>
-    </div>
-    </div>
-    </HashRouter>
-    
-  );
+    );
+  }
 }
 
 export default App;

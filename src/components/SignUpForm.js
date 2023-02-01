@@ -204,7 +204,6 @@ class SignUpForm extends Component{
                         <label className='col-sm-2'>Remaining passenger capacity </label>
                         <div className="col-sm-6">
                             <label>{event.numberOfBikeSpaces} 🚲 {event.numberOfSeats} 💺 </label>
-                            <p className='form-text'>Result from {event.numberOfCars}🚗 (Excludes drivers)</p>
                         </div>
                     </div>
                     <div className="row mb-3 gx-3 gy-2">

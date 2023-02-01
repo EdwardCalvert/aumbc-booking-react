@@ -15,6 +15,7 @@ class EventDetailsRenderer extends Component {
         id : id,
       dataFetched : false
     };
+    
   }
 
   componentDidMount(){
@@ -43,9 +44,44 @@ class EventDetailsRenderer extends Component {
           {event.name}
         </h2>
         <p>{event.description}</p>
-        <this.RideDate event={event} />
-        <this.MapLocation eventLocationName={event.rideStartName} locationTitle={"Ride Start Location"} eventWhat3Words={event.rideStartW3W} eventLat={event.rideStartLat} eventLng={event.rideStartLng} zoom={13} />
-        <this.MapLocation eventLocationName={event.liftShareName} locationTitle={"Lift Share Location "} eventWhat3Words={event.liftShareW3W} eventLat={event.liftShareLat} eventLng={event.liftShareLng} zoom={16} />
+
+        <div className="row mb-3 gx-3 gy-2">
+            <label className="col-sm-2">Lift share at</label>
+            
+            <div className="col-sm-6">
+            <h5>{event.liftShareName} - <a href={"https://what3words.com/" + event.liftShareW3W} target="_blank">///{event.liftShareW3W}</a> @{  new Date(event.startDateTime).toLocaleDateString("en-GB") +" "+ new Date(event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}</h5>
+              <StaticMap
+                lat={event.liftShareLat}
+                lng={event.liftShareLng}
+                zoom={16}
+              ></StaticMap>
+              <OpenInGoogleMps position={{lat: event.liftShareLat, lng: event.liftShareLng}} /> <CopyWhat3Words what3Words={event.liftShareW3W}/>
+            </div>
+          </div>
+          <div className="row mb-3 gx-3 gy-2">
+            <label className="col-sm-2">The ride will be at</label>
+            
+            <div className="col-sm-6">
+            <h5>{event.rideStartName} - <a href={"https://what3words.com/" + event.rideStartW3W} target="_blank">///{event.rideStartW3W}</a></h5>
+              <StaticMap
+                lat={event.rideStartLat}
+                lng={event.rideStartLng}
+                zoom={16}
+              ></StaticMap>
+              <OpenInGoogleMps position={{lat: event.rideStartLat, lng: event.rideStartLng}} /> <CopyWhat3Words what3Words={event.rideStartW3W}/>
+            </div>
+          </div>
+          {new Date(event.startDateTime).toLocaleDateString("en-GB") ==  new Date(event.endDateTime).toLocaleDateString("en-GB") &&
+            <div className="row mb-3 gx-3 gy-2">
+              <label className="col-sm-2">Possible finish</label>
+                <div className="col-sm-10">
+                  { new Date(event.startDateTime).toLocaleDateString("en-GB")} { new Date(event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})} - This is only a guess!
+                </div>
+          </div>
+          }
+          
+     
+       
 
         <SignUpForm event={event}/>
       </div>
@@ -53,14 +89,14 @@ class EventDetailsRenderer extends Component {
   }
 
 
-  MapLocation({eventLocationName,eventWhat3Words, eventLat, eventLng, locationTitle,zoom} ) {
-      console.log(eventWhat3Words)
+
+  MapLocation({eventLocationName,eventWhat3Words, eventLat, eventLng, locationTitle,zoom, dateTime} ) {
         return (
           <div className="row mb-3 gx-3 gy-2">
             <label className="col-sm-2">{locationTitle}</label>
             
             <div className="col-sm-6">
-            <h5>{eventLocationName} - <a href={"https://what3words.com/" + eventWhat3Words} target="_blank">///{eventWhat3Words}</a></h5>
+            <h5>{eventLocationName} - <a href={"https://what3words.com/" + eventWhat3Words} target="_blank">///{eventWhat3Words}</a> @{  new Date(dateTime).toLocaleDateString("en-GB") +" "+ new Date(dateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}</h5>
               <StaticMap
                 lat={eventLat}
                 lng={eventLng}

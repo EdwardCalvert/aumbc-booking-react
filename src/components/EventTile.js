@@ -4,29 +4,38 @@ import StaticMap from './StaticMap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-class EventTile extends Component{
-    render(){
-      const event = this.props.event;
-     const style = String(this.getStyleKeyword(event.eventState)) ;
-  return <div className="col"  >
+function EventTile(props) {
+
+      
+      const event = props.event;
+     const style = String(getStyleKeyword(event.eventState));
+  return <Link to={"/event/" +event.id } className="NoDecoration"><div className="col"  >
           <div className="card" >
             <ImageSelector event={event}/>
             <div className="card-body">
               <h5 className="card-title">{event.name} </h5>
-              <h6>{event.date}</h6>
+              <h6>{getDisplayDate(event.startDateTime, event.endDateTime)}</h6>
               <p>{event.description}</p>
               
-              <Link to={"/event/" +event.id } className={"btn btn-"+style}>{this.getButtonText(event.eventState)}</Link>
+              {/* <Link to={"/event/" +event.id } className={"btn btn-primary"}>View</Link> */}
             </div>
             </div>
           </div>
+          </Link>
 
     
+            }
+    
+function getDisplayDate(startDateTime, endDateTime){
+  if(new Date(startDateTime).toLocaleDateString("en-GB") == new Date(endDateTime).toLocaleDateString("en-GB") ){
+    return  new Date(startDateTime).toLocaleDateString("en-GB") + " "  + new Date(startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})
+  }
+  else{
+    return new Date(startDateTime).toLocaleDateString("en-GB") + " - "+ new Date(endDateTime).toLocaleDateString("en-GB") 
+  }
+}
 
-    }
-
-
-    getStyleKeyword(eventState){
+   function getStyleKeyword(eventState){
       switch(eventState){
         case "cancelled":
           return "light";
@@ -38,7 +47,7 @@ class EventTile extends Component{
           return "primary";
       }
     }
-    getButtonText(eventState){
+  function  getButtonText(eventState){
       switch(eventState){
         case "cancelled":
           return "View";
@@ -52,7 +61,7 @@ class EventTile extends Component{
     }
 
     
-}
+
 
 EventTile.propTypes ={
   event: PropTypes.object.isRequired

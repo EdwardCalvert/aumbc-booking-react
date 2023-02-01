@@ -1,8 +1,8 @@
-import React, {Component} from 'react'
+// import React, {Component} from 'react'
 
-class AccountManager extends Component{
+// class AccountManager extends Component{
     
-    class render(){
-        return 
-    }
-}
+//     class render(){
+//         return 
+//     }
+// }

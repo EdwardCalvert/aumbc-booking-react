@@ -13,6 +13,12 @@
   }
 }
 
+  .NoDecoration, .NoDecoration:hover, .NoDecoration img, .NoDecoration img:hover, .NoDecoration div, .NoDecoration div:hover {
+    text-decoration: none;
+    color: black;
+}
+
+
 .EventTile-image{
   width: 100%;
     height: 35vw;
