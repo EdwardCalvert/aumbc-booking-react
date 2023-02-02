@@ -4,7 +4,7 @@ import CheckButton from "react-validation/build/button";
 import authenticationService from "../services/authentication.service";
 import { isEmail } from "validator";
 import React, {Component, useState} from 'react'
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, redirect, useNavigate, Link } from "react-router-dom";
 
 
 
@@ -30,7 +30,23 @@ function Login(){
     e.preventDefault();
     authenticationService.login(emailAddress, otp).then(
       user => {
-          navigate("/",{ replace: true });
+        const queryString = window.location.href.split("?")[1];
+        const urlParams = new URLSearchParams(queryString);
+        console.log(queryString)
+        if (urlParams.has('redirect')) {
+          console.log('params')
+          let redirect = decodeURI(urlParams.get('redirect'))
+          console.log(redirect)
+          if(redirect.startsWith("/")) // Assumed local redirect. 
+          {
+            navigate(redirect,{ replace: true });
+          }
+          else{
+            navigate("/",{ replace: true });
+          }
+      
+        }
+          
       },
       error => {
        setErrorWhileLoggingIn(true);
@@ -42,6 +58,9 @@ function Login(){
     var re = /\S+@\S+\.\S+/;
   return re.test(email);
   }
+  
+
+
 
   let navigate = useNavigate();
   const [emailAddress, setEmail] = useState("");
@@ -121,10 +140,11 @@ function Login(){
     }
     { authenticationService.currentUserValue &&
     <div><h2>You are already logged in. </h2>
-    <p>You may have been redirected here as you don't have sufficient access rights to view a resource. </p>
     <p>You have access rights of: {authenticationService.currentUserValue.role}</p>
     <p>Your email is: {authenticationService.currentUserValue.emailAddress}</p>
     <p>Your access token will expire: {authenticationService.currentUserValue.accessTokenExpiry}</p>
+    <p>Your refresh token will expire: {authenticationService.currentUserValue.refreshTokenExpiry}</p>
+    <Link to={"/logout"} className="btn btn-primary">Logout</Link>
     </div>
       
     }

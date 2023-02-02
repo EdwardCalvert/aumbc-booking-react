@@ -14,6 +14,7 @@ import DriverPayouts from './components/DriverPayouts';
 import RequireAuth from './components/RequireAuth';
 import Logout from './components/Logout';
 import CreateNewEvent from './components/CreateNewEvent';
+import AdminHomePage from './components/AdminHomePage';
 
 
 class App extends React.Component {
@@ -58,6 +59,7 @@ class App extends React.Component {
                   <DriverPayouts/>
                 </RequireAuth>}/> */}
               <Route path="/logout" element={<Logout/>}/>
+              <Route path="/admin" element={<RequireAuth roles={Role.Admin}><AdminHomePage/></RequireAuth>}/>
               <Route path="/admin/new-event/" element={<RequireAuth roles={Role.Admin}><CreateNewEvent/></RequireAuth>}/>
               <Route path="*" element={<p> There is nothing at this page</p>}/>
           </Routes>
