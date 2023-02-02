@@ -8,6 +8,7 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import LeafletControlGeocoder from './LeafletControlGeocoder';
 import { useRef } from 'react'
 import L from "leaflet";
+import api from "./../services/api"
 const icon = L.icon({
     iconSize: [25, 41],
     iconAnchor: [10, 41],
@@ -25,6 +26,8 @@ function SelectLocation({locations}){
     const [map, setMap] = useState(null)
     let markerRefs = useRef([])
     const editMarkerRef = useRef(null);
+    const [newMarkerName, setNewMarkerName] = useState("");
+    const [newWhat3WordsAddress, setNewWhat3WordsAddress] = useState("");
 
     function markerSelected(event){
         if(!addNewLocation.current){
@@ -69,10 +72,9 @@ function SelectLocation({locations}){
    }
 
    function onCancelAddingNewLocationClicked(event){
-
         map.removeLayer(editMarkerRef.current)
-    addNewLocation.current = false;
-    setSelectedIndex(0);
+        addNewLocation.current = false;
+        setSelectedIndex(0);
     }   
 
     const displayMap = useMemo(
@@ -102,47 +104,66 @@ function SelectLocation({locations}){
     if(locations){
     return  <div>
 
-    <select className="form-select"  value={selectedIndex} onChange={selectionChanged}>
+        <select className="form-select"  value={selectedIndex} onChange={selectionChanged}>
         <option disabled={!addNewLocation} value={-1}>Use map to create new location (click button below & move red marker)</option>
-             {locations.map((item,key)=> (<option value={key} disabled={addNewLocation} key={key}>{ `${item.name }  (///${item.what3WordsAddress})`}</option>) )}
+             {locations.map((item,key)=> (<option value={key} disabled={addNewLocation.current} key={key}>{ `${item.name }  (///${item.what3WordsAddress})`}</option>) )}
         </select>
+        <div className="card mb-3" >
         {selectedLocation &&
-             <div className="card mb-3" >
              <div className='map card-img-top'>
-               
                {displayMap}
              </div>
-             
-              <AddNewLocationControlWidget/>
-              {/* {map ? <DisplayPosition map={map}  lat={selectedLocation.lat} lng={selectedLocation.lng} zoom={zoom}  /> : null} */}
-            
-              
-         
-          </div>
         }
-        
+        {addNewLocation.current&&
+             <React.Fragment>
+                <p>Create a new location, by moving the marker on the map or supplying a what 3 words address. You need to enter a name before the location is saved.</p>
+                <label>Give the marker a name: </label>
+                <input type="text" value={newMarkerName} onChange={onMarkerNameChanged}  className="form-control" placeholder="ASV"/>
+                <button className="btn btn-primary"  disabled={newMarkerName.length < 2} onClick={onSaveMarkerLocation}>Save red marker location</button>
+                <label>Or supply a what 3 words address:</label>
+                <input type="text" value={newWhat3WordsAddress} onChange={onWhat3WordsChanged} className="form-control" placeholder="recent.mock.soup"/>
+                <button className="btn btn-secondary" onClick={onWhat3WordsSubmitted}  disabled={newWhat3WordsAddress.length < 3}>Load from What 3 Words Address (please save afterwards!)</button>
+                <button className="btn btn-danger" onClick={onCancelAddingNewLocationClicked}>Cancel adding new location.</button>
+            </React.Fragment>
+        }
+        {!addNewLocation.current &&
+            <button className="btn btn-success" onClick={onAddNewLocationClicked}>Add new location</button>
+        }
+         </div>
         <p>Selected map Location:</p>
         <p>Lat:{selectedLocation.lat} Lng:{selectedLocation.lng} </p>
         </div>
+    
+    }
+    function onWhat3WordsSubmitted(){
+        // Get lat lng object. Set location of marker. Disable dragging. 
+        api.get('Location/w3w-to-latlng', { params: { w3w: newWhat3WordsAddress } }).then(success => {console.log(success)}, failure => {console.log(failure)});
+
+       
     }
 
-    function AddNewLocationControlWidget(){
-        if(addNewLocation.current){
-            return <React.Fragment>
-            
-            <input type="text" className="form-control" placeholder="Name the red marker (like 'ASV')"/>
-            <button className="btn btn-primary" disabled={true}>Save red marker location</button>
-            <p>Or supply a what 3 words address:</p>
-            <input type="text" className="form-control" placeholder="recent.mock.soup"/>
-            <button type="text" className="btn btn-primary" disabled={true}>Load from What 3 Words Address</button>
-            <button className="btn btn-danger" onClick={onCancelAddingNewLocationClicked}>Cancel adding new location.</button>
-
-            </React.Fragment>
-        }
-        else{
-            return <button className="btn btn-success" onClick={onAddNewLocationClicked}>Add new location</button>
-            
-        }
+    function onMarkerNameChanged(e){
+        setNewMarkerName(e.target.value);
+    }
+    function onWhat3WordsChanged(e){
+        setNewWhat3WordsAddress(e.target.value);
+    }
+    function onSaveMarkerLocation(){
+        //Get location of current marker
+        const selectedLocation = editMarkerRef.current.getLatLng(); // object of {lat:, lng:}
+        map.removeLayer(editMarkerRef.current)
+        locations.push({...selectedLocation, name:newMarkerName  })
+        
+        
+        setNewMarkerName("");
+        setSelectedIndex(locations.length-1);
+        //Attempt to make the user 'fly' to where they put the pin. 
+        map.flyTo([selectedLocation.lat,selectedLocation.lng], 16)
+                const marker = markerRefs.current[locations.length -1]
+                if (marker) {
+                    marker.openPopup()
+                }
+        addNewLocation.current = false;
     }
 
 }

@@ -11,7 +11,7 @@ export const authenticationService = {
     register,
     sendOtp,
     currentUser: currentUserSubject.asObservable(),
-    get currentUserValue () { return JSON.parse(currentUserSubject.value) }
+    get currentUserValue () { return tokenService.getApiTokenResponse() }
 };
 
 function sendOtp(emailAddress){
@@ -26,7 +26,7 @@ function login(email, otp) {
     })
     .then(response => {
       if (response.data.accessToken) {
-        const data = JSON.stringify(response.data);
+        const data = response.data;
         tokenService.saveApiTokenResponse(data);
        
         currentUserSubject.next(data);

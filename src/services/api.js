@@ -1,4 +1,5 @@
 import axios from "axios";
+import authenticationService from "./authentication.service";
 import TokenService from "./token.service";
 
 const instance = axios.create({
@@ -11,6 +12,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     const token = TokenService.getLocalAccessToken();
+    console.log(token);
     if (token) {
       config.headers["Authorization"] = 'Bearer ' + token;  // for Spring Boot back-end
       //config.headers["x-access-token"] = token; // for Node.js Express back-end
@@ -44,7 +46,8 @@ instance.interceptors.response.use(
           console.log("Proabably need more casting of types- email etc.")
           console.log(rs.data)
           const { accessToken } = rs.data;
-          TokenService.updateLocalAccessToken(accessToken);
+          TokenService.saveApiTokenResponse(accessToken);
+          authenticationService.currentUser.next(JSON.stringify(rs.data));
 
           return instance(originalConfig);
         } catch (_error) {
