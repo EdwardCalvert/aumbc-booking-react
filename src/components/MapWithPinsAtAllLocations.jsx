@@ -5,24 +5,24 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import LeafletControlGeocoder from './LeafletControlGeocoder';
 
  const asv = [57.161953, -2.091058]
-const zoom = 16
+// const zoom = 16
 
 
 //https://react-leaflet.js.org/docs/example-draggable-marker/
-function DisplayPosition({ map, lat,lng }) {
+function DisplayPosition({ map, lat,lng, zoom }) {
   useEffect(() => {
     map.setView([lat,lng], zoom)
   }, [lat, lng]) 
 }
 
-function MapWithPinsAtAllLocations({lat,lng,locations,onMarkerSelected}) {
+function MapWithPinsAtAllLocations({lat,lng,locations,onMarkerSelected,zoom}) {
   const [map, setMap] = useState(null)
 
   const displayMap = useMemo(
     () => (
       <MapContainer 
         center={[lat,lng]}
-        zoom={zoom}
+        zoom={5}
         scrollWheelZoom={true}
         ref={setMap}  >
         <TileLayer
@@ -30,9 +30,10 @@ function MapWithPinsAtAllLocations({lat,lng,locations,onMarkerSelected}) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {/* <LeafletControlGeocoder /> */}
-      {  locations.map(x =>  <Marker position={[x.lat,x.lng]} eventHandlers={{
+      {  locations.map((x,key) =>  <Marker key={key} position={[x.lat,x.lng]} eventHandlers={{
     click: (e) => {
       if(map){
+        zoom = 16;
       map.setView([x.lat,x.lng],16);
       }
       onMarkerSelected(x);
@@ -51,7 +52,7 @@ function MapWithPinsAtAllLocations({lat,lng,locations,onMarkerSelected}) {
       {displayMap}
     </div>
      
-     {map ? <DisplayPosition map={map}  lat={lat} lng={lng}  /> : null}
+     {map ? <DisplayPosition map={map}  lat={lat} lng={lng} zoom={zoom}  /> : null}
    
      
 

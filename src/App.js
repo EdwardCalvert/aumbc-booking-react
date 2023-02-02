@@ -32,8 +32,6 @@ class App extends React.Component {
           currentUser: x,
           isAdmin: x && x.role === Role.Admin
       }));
-
-      console.log(authenticationService.currentUserValue)
   }
 
   logout() {

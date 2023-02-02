@@ -5,19 +5,20 @@ import SelectLocation from "./SelectLocation";
 
 const locations = [
     {
+        "what3WordsAddress": "recent.soup.mock",
+        "visible": true,
+        "name": "ASV",
+        "lat": 57.161957,
+        "lng": -2.091061
+      },
+    {
       "what3WordsAddress": "firebird.wallet.portable",
       "visible": true,
       "name": "Kirkhill A96 Carpark",
       "lat": 57.1932,
       "lng": -2.242359
     },
-    {
-      "what3WordsAddress": "recent.soup.mock",
-      "visible": true,
-      "name": "ASV",
-      "lat": 57.161957,
-      "lng": -2.091061
-    },
+   
     {
       "what3WordsAddress": "scanty.putts.caressed",
       "visible": true,

@@ -27,14 +27,14 @@ function Login(){
   }
   
   async function handleLogin(e) {
+    if(e){
     e.preventDefault();
+    }
     authenticationService.login(emailAddress, otp).then(
       user => {
         const queryString = window.location.href.split("?")[1];
         const urlParams = new URLSearchParams(queryString);
-        console.log(queryString)
         if (urlParams.has('redirect')) {
-          console.log('params')
           let redirect = decodeURI(urlParams.get('redirect'))
           console.log(redirect)
           if(redirect.startsWith("/")) // Assumed local redirect. 
@@ -59,12 +59,16 @@ function Login(){
   return re.test(email);
   }
   
-
-
+  
+  
+  const queryString = window.location.href.split("?")[1];
+  const urlParams = new URLSearchParams(queryString);
+  const defaultEmail = urlParams.has('email') ?  decodeURI(urlParams.get('email')) : "";
+  const defaultOTP = urlParams.has('otp') ? decodeURI(urlParams.get('otp')) : "";
 
   let navigate = useNavigate();
-  const [emailAddress, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
+  const [emailAddress, setEmail] = useState(defaultEmail);
+  const [otp, setOtp] = useState(defaultOTP);
   const [otpFailedToSend, setotpFailedToSend] = useState(false);
   const [otpSent ,setOtpSent] = useState(false);
   const [errorWhileLoggingIn, setErrorWhileLoggingIn] = useState(false);
@@ -73,7 +77,10 @@ function Login(){
           // registerLastName: "",
           // registerNewEventNotifcations : false,
           // errorWhileLo
-  
+ 
+  if(urlParams.has('email') && urlParams.has('otp')){
+    handleLogin();
+  }
   return <React.Fragment>
     {!authenticationService.currentUserValue &&
       <React.Fragment> 

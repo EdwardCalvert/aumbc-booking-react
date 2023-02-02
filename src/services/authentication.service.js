@@ -28,8 +28,8 @@ function login(email, otp) {
       if (response.data.accessToken) {
         const data = JSON.stringify(response.data);
         tokenService.saveApiTokenResponse(data);
-        console.log(response.data)
-        currentUserSubject.next(response.data);
+       
+        currentUserSubject.next(data);
             }
       return response.data;
     });
