@@ -1,4 +1,8 @@
-# Getting Started with Create React App
+# AUMBC booking website, written poorley in react. 
+
+Allows users rides to be created, users to book onto rides and drivers to be reimbursed for any fuel costs. 
+
+I may supply the code for the backend api in the future, but am having difficlty managing secrets!
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
