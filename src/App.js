@@ -4,8 +4,6 @@ import Navbar from './components/AUMBCNav';
 import Footer from './components/Footer';
 import { authenticationService } from './services/authentication.service'
 import {  Role } from './_helpers/role';
-import{ history} from './_helpers/history';
-import InteractiveMap from './components/InteractiveMap';
 import Login from './components/Login'
 import EventDetails from './components/EventDetails';
 import { HashRouter, Route, Routes } from 'react-router-dom';
@@ -36,26 +34,18 @@ class App extends React.Component {
 
   logout() {
       authenticationService.logout();
-      //history.push('/login');
-      //redirect('/login');
   }
 
   render() {
-    const { currentUser, isAdmin } = this.state;
     return (
       <HashRouter >
         <div className='m-2'>
           <Navbar/>
-          <div className='container-lg '>
+          <div className='container'>
             <Routes>
               <Route path="/login" element={<Login/>}/>
-            
               <Route path="/event/:id" element={<RequireAuth><EventDetails/></RequireAuth>}/>
               <Route path="/" element={<RequireAuth><EventList /></RequireAuth>}/>
-                {/* <Route path="/admin/newEvent" element={<RequireAuth roles={Role.Admin}>
-                  <InteractiveMap/>
-                  <DriverPayouts/>
-                </RequireAuth>}/> */}
               <Route path="/logout" element={<Logout/>}/>
               <Route path="/admin" element={<RequireAuth roles={Role.Admin}><AdminHomePage/></RequireAuth>}/>
               <Route path="/admin/new-event/" element={<RequireAuth roles={Role.Admin}><CreateNewEvent/></RequireAuth>}/>

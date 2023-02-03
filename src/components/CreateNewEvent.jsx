@@ -3,63 +3,62 @@ import { useEffect , useState} from "react";
 import AutoTextArea from "./AutoTextArea";
 import SelectLocation from "./SelectLocation";
 
-const locations = [
-    {
-        "what3WordsAddress": "recent.soup.mock",
-        "visible": true,
-        "name": "ASV",
-        "lat": 57.161957,
-        "lng": -2.091061
-      },
-    {
-      "what3WordsAddress": "firebird.wallet.portable",
-      "visible": true,
-      "name": "Kirkhill A96 Carpark",
-      "lat": 57.1932,
-      "lng": -2.242359
-    },
-   
-    {
-      "what3WordsAddress": "scanty.putts.caressed",
-      "visible": true,
-      "name": "Glentress Forest Lodges",
-      "lat": 55.647368,
-      "lng": -3.139119
-    }
-  ]
 function CreateNewEvent(){
+    const [rideStartLocation, setRideStartLocation ] = useState();
+    const [liftShareLocation, setLiftShareLocation] = useState();
+    const [rideName, setRideName] = useState("");
+    const [description, setDescription] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
+    function onRideStartLocationChanged(event){
+        if(event !== null){
+        setRideStartLocation(event.what3WordsAddress)
+        }
+        else{
+            setRideStartLocation(null);
+        }
+    }
 
-
+    function onLiftShareLocationChanged(event){
+        if(event !== null){
+        setLiftShareLocation(event.what3WordsAddress);
+    }
+    else{
+        setLiftShareLocation(null);
+    }
+    }
 
 
     return <div>
-
+        <p>Please note: the system claims to be 'clever', so will calculate the distance between the start and end location to work out how much to compensate drivers. Therefore, it is vital to provide correct data.</p>
         <div className="row mb-3 gx-3 gy-2 form-group">
             <label className="col-sm-2">Name</label>
             <div className="col-sm-10">
-                <input className=" form-control"  type="text"/>
+                <input className=" form-control" value={rideName} onChange={(e)=>{ setRideName(e.target.value)}} type="text"/>
             </div>
         </div>
         <div className="row mb-3 gx-3 gy-2 form-group">
             <label className="col-sm-2">Description</label>
             <div className="col-sm-10">
-                <AutoTextArea/>
+                <AutoTextArea />
             </div>
         </div>
-        
-        {/* <div className="row mb-3 gx-3 gy-2">
-            <label className="col-sm-2">Lift share Location</label>
+        <div className="row mb-3 gx-3 gy-2">
+            <label className="col-sm-2">Lift share location</label>
             <div className="col-sm-10">
-            <LocationSelector/>
+                <SelectLocation onLocationChanged={onLiftShareLocationChanged}  />
+                You selected:  {liftShareLocation}
             </div>
-        </div> */}
+        </div>
         <div className="row mb-3 gx-3 gy-2">
             <label className="col-sm-2">Ride Start Location</label>
             <div className="col-sm-10">
-                <SelectLocation locations={locations} />
+                <SelectLocation onLocationChanged={onRideStartLocationChanged}  />
+                You selected:  {rideStartLocation}
             </div>
         </div>
+       
         <div className="row mb-3 gx-3 gy-2">
             <label className="col-sm-2">Start date & time</label>
             <div className="col-sm-3">

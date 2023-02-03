@@ -1,5 +1,4 @@
-import { useLocation } from 'react-router-dom';
-import { Navigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import authenticationService from '../services/authentication.service';
 
 function RequireAuth({  children: Component, roles }) {
@@ -8,7 +7,7 @@ function RequireAuth({  children: Component, roles }) {
         if (!currentUser) {
 
             // not logged in so redirect to login page with the return url //, state: { from: props.location }
-            return <div><h2>Please login to view this page.</h2><Link className='btn btn-primary' to={"/login?redirect="+returnRoute} replace={true} >Take me to the login page </Link> </div>
+            return <div><h2>Please login to view this page.</h2><p>To protect the privacy of our members, you will have to login to view events & book onto rides.</p><Link className='btn btn-primary' to={"/login?redirect="+returnRoute} replace={true} >Take me to the login page </Link> </div>
         }
 
         // check if route is restricted by role

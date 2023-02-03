@@ -84,8 +84,6 @@ function Login(){
   return <React.Fragment>
     {!authenticationService.currentUserValue &&
       <React.Fragment> 
-      <h2>You will need to login to veiw this page</h2>
-        <p>To protect the privacy of our members, you will have to login to view events & book onto rides. You also need administrative privallages to edit & create events.  We have a very easy to use login system and will only send emails about events you've signed up to, and our optional new event notifier.  </p>
             <form className='mb-3' onSubmit={handleEmailProvided} >
             <h2>Login</h2>
                 <div className="row mb-3">
@@ -146,11 +144,14 @@ function Login(){
             </React.Fragment>
     }
     { authenticationService.currentUserValue &&
-    <div><h2>You are already logged in. </h2>
-    <p>You have access rights of: {authenticationService.currentUserValue.role}</p>
-    <p>Your email is: {authenticationService.currentUserValue.emailAddress}</p>
-    <p>Your access token will expire: {authenticationService.currentUserValue.accessTokenExpiry}</p>
-    <p>Your refresh token will expire: {authenticationService.currentUserValue.refreshTokenExpiry}</p>
+    <div><h2>You are logged in </h2>
+    <ul>
+    <li>Your email is: {authenticationService.currentUserValue.emailAddress}</li>
+    <li>You have access rights of: {authenticationService.currentUserValue.role}</li>
+    <li>Your access token will expire: {authenticationService.currentUserValue.accessTokenExpiry}</li>
+    <li>Your refresh token will expire: {authenticationService.currentUserValue.refreshTokenExpiry}</li>
+    </ul>
+    
     <Link to={"/logout"} className="btn btn-primary">Logout</Link>
     </div>
       
