@@ -7,7 +7,6 @@ function EditEventPage(props){
     const [errorWhileLoading, setErrorWhileLoading]=useState(false);
     const [errorWhileSubmitting, setErrorWhileSubmitting] = useState(false);
     const [mtbEvent, setMtbEvent] = useState(null);
-    const params = useParams()
     const id = useParams().id;
     let navigate = useNavigate();
 
@@ -25,15 +24,12 @@ function EditEventPage(props){
             visible: true,
 
         };
-        console.log(eventToSave);
         api.patch("MtbEvent", eventToSave).then(success =>{
-            console.log(success);
             setErrorWhileSubmitting(false);
 
             navigate(`/event/${id}`,{ replace: true });
         }, error => {
             setErrorWhileSubmitting(true);
-            console.log(error)
         });
        
     }
@@ -47,7 +43,6 @@ function EditEventPage(props){
             setErrorWhileLoading(true)})
 
     },[])
-// yuo can find all params from here
  
    if(errorWhileLoading){
     return <p className="alert alert-danger">Unable to get the event from the database. Does an event whith that id really exist? </p>
@@ -55,8 +50,8 @@ function EditEventPage(props){
    else{
     if(mtbEvent){
         return <div>
-            <h1>Edit</h1>
-          <CreateNewEvent onChange={handleFormSubmit} mtbEvent={mtbEvent}/>
+            <h1>Edit </h1>
+          <CreateNewEvent onChange={handleFormSubmit} mtbEvent={mtbEvent} newEvent={false}/>
           {errorWhileSubmitting && 
             <p className="alert alert-danger">An error occured while attempting to save the event. Please check all fields are considered valid and try again.</p>
           }

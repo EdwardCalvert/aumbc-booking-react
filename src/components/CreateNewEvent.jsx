@@ -2,8 +2,9 @@ import api from "./../services/api";
 import { useEffect , useState} from "react";
 import AutoTextArea from "./AutoTextArea";
 import SelectLocation from "./SelectLocation";
+import React from "react";
 
-function CreateNewEvent({mtbEvent,onChange}){
+function CreateNewEvent({mtbEvent,onChange, newEvent}){
     const [rideStartLocation, setRideStartLocation ] = useState();
     const [liftShareLocation, setLiftShareLocation] = useState();
     const [rideName, setRideName] = useState("");
@@ -13,8 +14,8 @@ function CreateNewEvent({mtbEvent,onChange}){
     const [costForDriver, setCostForDriver] = useState(0);
     const [costForPassenger, setCostForPassenger] = useState(0);
 
-    useEffect(() =>{
-        console.log(mtbEvent)
+    useEffect(() =>{ 
+        if(mtbEvent){
         setRideStartLocation(mtbEvent.rideStartW3W);
         setLiftShareLocation(mtbEvent.liftShareW3W);
         setRideName(mtbEvent.name);
@@ -25,6 +26,7 @@ function CreateNewEvent({mtbEvent,onChange}){
         setEndDate((splitEndTime.length ===3? splitEndTime[0]+":"+splitEndTime[1]:mtbEvent.endDateTime));
         setCostForDriver(mtbEvent.costForDriver);
         setCostForPassenger(mtbEvent.costForPassenger);
+        }
 
     }, [mtbEvent])
     function onRideStartLocationChanged(event){
@@ -59,15 +61,25 @@ function CreateNewEvent({mtbEvent,onChange}){
     }
     }
 
-    console.log("Start loc on new event comp: " + rideStartLocation)
-    if(mtbEvent && rideStartLocation ){
+    if((mtbEvent &&rideStartLocation ) || newEvent ) // hacks to ensure correct location is shown from start
+    {
     return <form onSubmit={handleFormSubmit} >
         <p>Please note: the system claims to be 'clever', so will calculate the distance between the start and end location to work out how much to compensate drivers. Therefore, it is vital to provide correct data.</p>
         <div className="row mb-3 gx-3 gy-2 form-group">
             <label className="col-sm-2">Name</label>
             <div className="col-sm-10">
-                <input className=" form-control" value={rideName} onChange={(e)=>{ setRideName(e.target.value)}} type="text"/>
+                <input className=" form-control" required value={rideName} onChange={(e)=>{ setRideName(e.target.value)}} type="text"/>
+                {/* <span className="validity"></span> */}
+                {rideName.length ===0 &&
+                <React.Fragment>
+                <br/>
+                <p className="alert alert-danger">Plese define a ride name</p>
+                </React.Fragment>
+            }
             </div>
+          
+            
+
         </div>
         <div className="row mb-3 gx-3 gy-2 form-group">
             <label className="col-sm-2">Description</label>
@@ -96,7 +108,7 @@ function CreateNewEvent({mtbEvent,onChange}){
             <label className="col-sm-2">Start date & time</label>
             <div className="col-sm-5">
                 <input type="datetime-local" value={startDate} onChange={(e)  => {setStartDate(e.target.value)}} className="form-control" required/>
-                <span class="validity"></span>
+                <span className="validity"></span>
             </div>
         </div>
         <div className="row mb-3 gx-3 gy-2">
@@ -133,8 +145,8 @@ function CreateNewEvent({mtbEvent,onChange}){
                 </div>
             </div>
         </div>
-        <button type="submit" disabled={!(costForPassenger>=0 && costForPassenger >= 0 && Date.parse(endDate) > Date.parse(startDate) && rideName.length>0 &&rideStartLocation !== liftShareLocation )} className="btn btn-primary">Submit</button>
-        {!(costForPassenger>=0 && costForPassenger >= 0 && Date.parse(endDate) > Date.parse(startDate) && rideName.length>0&& rideStartLocation !== liftShareLocation )&&
+        <button type="submit" disabled={!(costForPassenger>=0 && costForPassenger >= 0 && Date.parse(endDate) > Date.parse(startDate)  &&rideStartLocation !== liftShareLocation )} className="btn btn-primary">Submit</button>
+        {!(costForPassenger>=0 && costForPassenger >= 0 && Date.parse(endDate) > Date.parse(startDate) && rideStartLocation !== liftShareLocation )&&
             <label className="form-text">Please fill out: Name, start date, end date, cost for driver and cost for passenger to continue. P.s. (end date should be greater than start date! and the ride start cannot be the same as the end.)</label>
         }
         
