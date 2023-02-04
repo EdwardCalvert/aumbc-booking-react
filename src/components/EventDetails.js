@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import SignUpForm from "./SignUpForm";
 import StaticMap from "./StaticMap";
 import OpenInGoogleMps from "./OpenInGoogleMaps";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import CopyWhat3Words from "./CopyWhat3Words";
+import authenticationService from "../services/authentication.service";
 
 class EventDetailsRenderer extends Component {
 
@@ -38,12 +39,13 @@ class EventDetailsRenderer extends Component {
         return <h3>Loading</h3>
     }
     const event = this.state.event;
+    if(event.visible){
     return (
       <div>
         <h2>
           {event.name}
         </h2>
-        <p>{event.description}</p>
+        <p style={{whiteSpace: 'pre-line'}}>{event.description}</p>
 
         <div className="row mb-3 gx-3 gy-2">
             <label className="col-sm-2">Lift share at</label>
@@ -66,7 +68,7 @@ class EventDetailsRenderer extends Component {
               <StaticMap
                 lat={event.rideStartLat}
                 lng={event.rideStartLng}
-                zoom={16}
+                zoom={17}
               ></StaticMap>
               <OpenInGoogleMps position={{lat: event.rideStartLat, lng: event.rideStartLng}} /> <CopyWhat3Words what3Words={event.rideStartW3W}/>
             </div>
@@ -79,7 +81,13 @@ class EventDetailsRenderer extends Component {
                 </div>
           </div>
           }
-          
+          {authenticationService.currentUserValue&&
+           <React.Fragment>
+            
+            <Link to={"/event/edit/"+this.state.id} ><button className="btn btn-primary">Ammend ride</button></Link><button className="btn btn-danger">Cancel ride</button>
+            <label className="form-text">The ride will remain in the database. Users will be notified that the event has been cancelled.</label>
+            </React.Fragment>
+          }
      
        
 
@@ -87,6 +95,11 @@ class EventDetailsRenderer extends Component {
       </div>
     );
   }
+  else{
+    return <h2>This ride has been cancelled. </h2>
+  }
+}
+
 
 
 

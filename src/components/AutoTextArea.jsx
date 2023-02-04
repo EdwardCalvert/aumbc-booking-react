@@ -5,7 +5,11 @@ import React, {
 	TextareaHTMLAttributes,
 } from "react";
 
-const AutoTextArea = (props) => {
+const AutoTextArea = ({
+	disabled,
+	onChange,
+	value
+  }) => {
 	const textAreaRef = useRef(null);
 	const [text, setText] = useState("");
 	const [textAreaHeight, setTextAreaHeight] = useState("auto");
@@ -15,10 +19,11 @@ const AutoTextArea = (props) => {
 	useEffect(() => {
 		setParentHeight(`${minHeight}px`);
 		setTextAreaHeight(`${minHeight}px`);
-	}, [text]);
+	}, [value]);
 
 	const onChangeHandler = (event) => {
-		setText(event.target.value);
+		// setText(event.target.value);
+		// value = event.target.value;
 		if(textAreaRef.current.scrollHeight > minHeight)
 		{
 			setMinHeight( textAreaRef.current.scrollHeight);
@@ -27,8 +32,8 @@ const AutoTextArea = (props) => {
 			
 		}
 
-		if (props.onChange) {
-			props.onChange(event);
+		if (onChange) {
+			onChange(event);
 		}
 	};
 
@@ -39,12 +44,13 @@ const AutoTextArea = (props) => {
 			}}
 		>
 			<textarea className="form-control"
-				{...props}
+				// {...props}
 				ref={textAreaRef}
 				rows={1}
 				style={{
 					height: textAreaHeight,
 				}}
+				value={value}
 				onChange={onChangeHandler}
 			/>
 		</div>

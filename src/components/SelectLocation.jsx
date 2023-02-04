@@ -3,7 +3,6 @@ import { TileLayer } from 'react-leaflet/TileLayer'
 import {Marker} from 'react-leaflet/Marker'
 import { Popup } from "react-leaflet";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import LeafletControlGeocoder from './LeafletControlGeocoder';
 import { useRef } from 'react'
 import L from "leaflet";
 import api from "./../services/api"
@@ -16,7 +15,7 @@ const icon = L.icon({
   });
 
 
-function SelectLocation(props){
+function SelectLocation({startLocation, onLocationChanged}){
     const [selectedLocation, setSelectedLocation] = useState();
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [zoom, setZoom] = useState(7);
@@ -34,21 +33,23 @@ function SelectLocation(props){
     useEffect(()=>{
         api.get("Location/get-all-locations").then(success =>{
             setLocations(success.data);
-            let indexOfASV = success.data.findIndex(x => x.what3WordsAddress === 'recent.soup.mock');
-            
-            if(indexOfASV !== -1){
-                setSelectedIndex(indexOfASV);
-                setSelectedLocation(success.data[indexOfASV]);
-                props.onLocationChanged(success.data[indexOfASV]);
+            let toFind = startLocation? startLocation: 'recent.soup.mock'
+            let indexOfStartLocation = success.data.findIndex(x => x.what3WordsAddress === toFind);
+           
+            if(indexOfStartLocation !== -1){
+                setSelectedIndex(indexOfStartLocation);
+                setSelectedLocation(success.data[indexOfStartLocation]);
+                onLocationChanged(success.data[indexOfStartLocation]);
+                setZoom(startLocation? 17:8);
             }else{
             setSelectedLocation(success.data[0])
             setSelectedIndex(0)
-            props.onLocationChanged(success.data[0]);
+            onLocationChanged(success.data[0]);
             }
         },
         error => {
             setErrorWhileLoading(true);
-            props.selectedLocation(null);
+            selectedLocation(null);
         })
     },[])
 
@@ -58,7 +59,7 @@ function SelectLocation(props){
         if(index !== -1){
             setSelectedIndex(index);
             setSelectedLocation(event);
-            props.onLocationChanged(event);
+            onLocationChanged(event);
         }
     }
     }
@@ -69,7 +70,7 @@ function SelectLocation(props){
             let newLocation = locations[parseInt(value)]
             setSelectedLocation(newLocation);
             setSelectedIndex(value);
-            props.onLocationChanged(newLocation);
+            onLocationChanged(newLocation);
             //Programattically update location of map
             if (map) {
                 map.flyTo([newLocation.lat,newLocation.lng], 16)
@@ -81,7 +82,7 @@ function SelectLocation(props){
         }
         else{
             setSelectedIndex(-1);
-            props.onLocationChanged(null);
+            onLocationChanged(null);
         }
     }
 
@@ -91,14 +92,14 @@ function SelectLocation(props){
         editMarkerRef.current = L.marker([map.getCenter().lat, map.getCenter().lng], { draggable: 'true', icon });
         editMarkerRef.current.addTo(map);
         setSelectedIndex(-1);
-        props.onLocationChanged(null);
+        onLocationChanged(null);
    }
 
    function onCancelAddingNewLocationClicked(event){
         map.removeLayer(editMarkerRef.current)
         addNewLocation.current = false;
         setSelectedIndex(0);
-        props.onLocationChanged(locations[0]);
+        onLocationChanged(locations[0]);
     }   
     if(errorWhileLoading){
         return <p className='alert alert-danger'>We could not load the locations from the API. Sorry, this form will not work!</p>
@@ -125,7 +126,6 @@ function SelectLocation(props){
         }
         markerSelected(x)},
     }} > <Popup >{x.name}</Popup></Marker>)}
-    <LeafletControlGeocoder/>
         </MapContainer>
              </div> 
         }
@@ -212,12 +212,12 @@ function SelectLocation(props){
                 locations[locations.length -1] = success.data
                 setSelectedIndex(locations.length -1);
                 map.flyTo([selectedLocation.lat,selectedLocation.lng], 18); //Make super clear which pin they made!
-                props.onLocationChanged(success.data);
+                onLocationChanged(success.data);
                 setWhat3WordsAddressSet(false);
                 setNewWhat3WordsAddress("");
             }
             else{
-                props.onLocationChanged(success.data);
+                onLocationChanged(success.data);
                 setLocations( [...locations,success.data]);
                 setSelectedIndex(locations.length);
                 map.flyTo([selectedLocation.lat,selectedLocation.lng], 16);
