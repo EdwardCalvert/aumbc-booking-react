@@ -5,6 +5,7 @@ import OpenInGoogleMps from "./OpenInGoogleMaps";
 import { useParams, Link } from "react-router-dom";
 import CopyWhat3Words from "./CopyWhat3Words";
 import authenticationService from "../services/authentication.service";
+import api from './../services/api';
 
 class EventDetailsRenderer extends Component {
 
@@ -20,18 +21,15 @@ class EventDetailsRenderer extends Component {
   }
 
   componentDidMount(){
-    const id = this.state.id
-    const callURL = "https://localhost:7260/api/MtbEvent/get?" +new URLSearchParams({ eventId :this.state.id})
-    window.fetch(callURL,{
-      
-    } )
-                    .then((res) => res.json())
-                    .then((json) => {
+    api.get("MtbEvent/get", {params: {eventId :this.state.id}})
+                    .then((response) => {
                         this.setState({
-                            event: json,
+                            event: response.data,
                             dataFetched: true
                         });
-                    })
+                    }, error=> {
+                      console.log(error)
+                    });
   }
 
   render() {

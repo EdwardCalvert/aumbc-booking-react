@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import EventTile from './EventTile'
+import api from './../services/api';
 
 class EventList extends Component{
 
@@ -15,7 +16,7 @@ class EventList extends Component{
         if(!this.state.dataFetched){
             return(<this.PlaceHolderEvent/>)
         }
-        const events =  this.state.events//this.props.events.sort((a,b) => a.date - b.date); //This obviously doesn't work on strings ...
+        const events =  this.state.events;
   return (<div>
     <h2>Welcome to AUMBC's Booking page.</h2>
     <p>Use this site to view upcoming rides, and either find transport if you are a passenger or offer to drive other members (and get reimbursed for any additionl fuel costs). &nsbp; If you have any questions, please feel free to put them in the Group WhatsApp 👌</p>
@@ -29,16 +30,14 @@ class EventList extends Component{
     componentDidMount(){
 
         let headers = new Headers()
-
-        fetch(
-            "https://localhost:7260/api/MtbEvent/get-upcoming-events")
-                        .then((res) => res.json())
-                        .then((json) => {
-                            this.setState({
-                                events: json,
-                                dataFetched: true
-                            });
-                        })
+        api.get("MtbEvent/get-upcoming-events").then(success => {
+          this.setState({
+            events: success.data,
+            dataFetched: true
+        });
+        }, error => {
+          console.log(error);
+        });
     }
 
     PlaceHolderEvent(){
