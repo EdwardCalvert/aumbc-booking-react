@@ -4,7 +4,7 @@ import { useState } from 'react';
 import authenticationService from '../services/authentication.service';
 import Role from '../_helpers/role';
 
-function CreateNewSemester({value,onChange}){
+function CreateNewSemester({value,onChange,allowCreatingNewSemesters}){
     const [semesters, setSemesters ] = useState([]);
     const [selectedValue, setSelectedValue] = useState(-1);
     const [errorWithApi, setErrorWithApi] = useState(false);
@@ -15,9 +15,13 @@ function CreateNewSemester({value,onChange}){
     useEffect(()=>{
         api.get("Finance/get-all-semesters").then(success => {
             if(success.status === 200){
+                // console.log("SEMESTERS: ")
+                // console.log(success.data)
                 setSemesters(success.data);
+                setSelectedValue(success.data[0].semesterId);
+                onChange({target: {value: success.data[0].semesterId}});
             }
-            setSelectedValue(0);
+           
             setErrorWithApi(false);
         },
         error=> {
@@ -51,15 +55,19 @@ function CreateNewSemester({value,onChange}){
         onChange(event);
 
     }
+    const isUserAdmin = authenticationService.currentUserValue.role === Role.Admin;
     if(errorWithApi){
         return <p className='alert alert-danger'>Create new semester object failed.</p>
     }
     else{
     return <div><select className='form-select' onChange={onSelectionChanged} value={selectedValue} >
-        {semesters.map((item,index)=><option value={item.semesterId} key={index}>{item.semesterName} (Diesel: {item.dieselPrice}p Petrol: {item.petrolPrice}p)</option>)}
+        {}
+        {semesters.map((item,index)=><option value={item.semesterId} key={index}>{item.semesterName} {isUserAdmin && allowCreatingNewSemesters? `(Diesel: ${item.dieselPrice}p Petrol: ${item.petrolPrice}p)`: ""}</option>)}
+        {isUserAdmin && allowCreatingNewSemesters && 
         <option value={"-1"} >Create new semester</option>
+        }
     </select>
-    {selectedValue === "-1" && authenticationService.currentUserValue.Role === Role.Admin &&
+    {selectedValue === "-1" && isUserAdmin  &&
     <div >
     <div className="form-group">
         <label>Semester Name</label>

@@ -8,10 +8,8 @@ import Login from './components/Login'
 import EventDetails from './components/EventDetails';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import React from 'react';
-import DriverPayouts from './components/DriverPayouts';
 import RequireAuth from './components/RequireAuth';
 import Logout from './components/Logout';
-import CreateNewEvent from './components/CreateNewEvent';
 import AdminHomePage from './components/AdminHomePage';
 import EditEventPage from './components/EditEventPage';
 import AddNewEventPage from './components/AddNewEventPage';

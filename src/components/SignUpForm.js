@@ -278,7 +278,7 @@ class SignUpForm extends Component{
                 const drivingVehicle = this.state.myVehicles.find((item) => item.vehicleId === this.state.driving)
                 return <div>
                      <p>Thanks for driving, taking {drivingVehicle.numberOfSeats} passengers with {drivingVehicle.numberOfBikeSpaces} bikes. Have a great ride. </p> 
-                     <p>To make an ammendment, please<button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger'>cancel current booking</button></p>
+                     <p>To make an ammendment, please  <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger'>cancel current booking</button></p>
                      <this.paymentHelpMessage paymentAmmount={event.costForDriver}></this.paymentHelpMessage>
                      </div>
             }
@@ -286,7 +286,7 @@ class SignUpForm extends Component{
                 if(this.state.inQueue){
                     return <div>
                         <p>You are queueing for the ride, we'll let you know by email if a space becomes available</p>
-                        <p>To make an ammendment, please <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger'>cancel current booking</button></p>
+                        <p>To make an ammendment, please  <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger'>cancel current booking</button></p>
 
                     </div>
                 }

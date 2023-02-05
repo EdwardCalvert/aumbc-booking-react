@@ -34,7 +34,10 @@ class EventDetailsRenderer extends Component {
 
   render() {
     if(!this.state.dataFetched){
-        return <h3>Loading</h3>
+        return <div>
+                 <h3>Loading</h3>
+                <div class="spinner-border"></div>
+            </div>
     }
     const event = this.state.event;
     if(event.visible){

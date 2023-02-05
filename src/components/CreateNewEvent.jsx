@@ -89,7 +89,7 @@ function CreateNewEvent({mtbEvent,onChange, newEvent}){
         <div className="row mb-3 gx-3 gy-2">
             <label className="col-sm-2">Semester</label>
             <div className="col-sm-10">
-                <CreateNewSemester value={semesterId} onChange={(e)=> setSemesterId(e.target.value)}/>
+                <CreateNewSemester value={semesterId} onChange={(e)=> setSemesterId(e.target.value)} allowCreatingNewSemesters={true}/>
             </div>
         </div>
         <div className="row mb-3 gx-3 gy-2 form-group">
