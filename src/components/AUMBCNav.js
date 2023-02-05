@@ -18,6 +18,8 @@ return (
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="container d-flex">
           <Link to="/" className="nav-link">Events</Link>
+          <Link to="/my-account" className="nav-link">My rides</Link>
+          <Link to="/email-settings" className="nav-link">Newsletter preference</Link>
           {/* <Nav.Link   href="https://www.instagram.com/uoa_mountainbiking" target="_blank"><i className="bi bi-instagram"></i></Nav.Link> */}
           <LoginLogout/>
           </Nav>

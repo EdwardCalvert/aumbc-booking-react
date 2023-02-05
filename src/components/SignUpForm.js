@@ -264,10 +264,14 @@ class SignUpForm extends Component{
     }
     else{
         if(!event.visible){
-            return <p>You can't sign up, since this ride was cancelled!</p>
+            return <div><h2>Sign up is unavailable.</h2>
+                <p>You can't sign up, since this ride was cancelled!</p>
+            </div>
         }
         else if(Date.parse(event.startDateTime) < Date.now()){
-            return  <p>You can't sign up, since this ride has happened!</p>
+            return <div><h2>Sign up is unavailable.</h2>
+             <p>You can't sign up, since this ride has happened!</p>
+             </div>
         }
         else{
             if(this.state.driving !=="-1"){

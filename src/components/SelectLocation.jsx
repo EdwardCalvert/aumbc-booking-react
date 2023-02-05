@@ -27,11 +27,14 @@ function SelectLocation({startLocation, onLocationChanged}){
     const [newWhat3WordsAddress, setNewWhat3WordsAddress] = useState("");
     const [what3WordsAddressSet,setWhat3WordsAddressSet] = useState(false);
     const [errorWhileProcessing,setErrorWhileProcessing] = useState(false);
-    const [locations,setLocations] = useState();
+    const [locations,setLocations] = useState([]);
     const [errorWhileLoading, setErrorWhileLoading] = useState(false);
+    const [noData, setNoData] = useState(false);
 
     useEffect(()=>{
         api.get("Location/get-all-locations").then(success =>{
+            if(success.status == 200) // Some data was returned
+            {
             setLocations(success.data);
             let toFind = startLocation? startLocation: 'recent.soup.mock'
             let indexOfStartLocation = success.data.findIndex(x => x.what3WordsAddress === toFind);
@@ -46,6 +49,21 @@ function SelectLocation({startLocation, onLocationChanged}){
             setSelectedIndex(0)
             onLocationChanged(success.data[0]);
             }
+        }
+            else{
+                setSelectedIndex(-1);
+                setNoData(true);
+                addNewLocation.current = true;
+                setSelectedLocation({
+                    lat: 57,
+                    lng: -3,
+                    zoom: 5 
+                });
+               
+               // editMarkerRef.current.addTo(map);
+
+            }
+        
         },
         error => {
             setErrorWhileLoading(true);
@@ -83,6 +101,7 @@ function SelectLocation({startLocation, onLocationChanged}){
         else{
             setSelectedIndex(-1);
             onLocationChanged(null);
+            
         }
     }
 
@@ -105,7 +124,7 @@ function SelectLocation({startLocation, onLocationChanged}){
         return <p className='alert alert-danger'>We could not load the locations from the API. Sorry, this form will not work!</p>
     }
 
-    if(locations){
+    if(locations || noData){
     return  <div>
         <select className="form-select"  value={selectedIndex} onChange={selectionChanged}>
         <option disabled={!addNewLocation.current} value={-1}>Use map to create new location (click button below & move red marker)</option>
@@ -134,20 +153,20 @@ function SelectLocation({startLocation, onLocationChanged}){
                 <p>Create a new location, by moving the marker on the map or supplying a what 3 words address. You need to enter a name before the location is saved.</p>
                 <label>Give the marker a name: </label>
                 <input type="text" value={newMarkerName} onChange={onMarkerNameChanged}  className="form-control" placeholder="ASV"/>
-                <button className="btn btn-success"  disabled={newMarkerName.length < 2} onClick={onSaveMarkerLocation}>Save red marker location</button>
+                <button type='button' className="btn btn-success"  disabled={newMarkerName.length < 2} onClick={onSaveMarkerLocation}>Save red marker location</button>
                 {!what3WordsAddressSet &&
                 <React.Fragment>
                      <label>Or supply a what 3 words address:</label>
-                     <input type="text" value={newWhat3WordsAddress} onChange={onWhat3WordsChanged} className="form-control" placeholder="recent.mock.soup"/>
-                     <button className="btn btn-secondary" onClick={onWhat3WordsSubmitted}  disabled={newWhat3WordsAddress.length < 3}>Load from What 3 Words Address (please save afterwards!)</button>
-                     <button className="btn btn-danger" onClick={onCancelAddingNewLocationClicked}>Cancel adding new location.</button>
+                     <input type="text" value={newWhat3WordsAddress} onChange={onWhat3WordsChanged} className="form-control" placeholder="recent.soup.mock"/>
+                     <button type='button' className="btn btn-secondary" onClick={onWhat3WordsSubmitted}  disabled={newWhat3WordsAddress.length < 3}>Load from What 3 Words Address (please save afterwards!)</button>
+                     <button type='button' className="btn btn-danger" onClick={onCancelAddingNewLocationClicked}>Cancel adding new location.</button>
                      </React.Fragment>
                 }
                
             </React.Fragment>
         }
         {!addNewLocation.current && !errorWhileProcessing &&
-            <button className="btn btn-primary" onClick={onAddNewLocationClicked}>Add new location</button>
+            <button className="btn btn-primary" type='button' onClick={onAddNewLocationClicked}>Add new location</button>
         }
         {errorWhileProcessing&&
            <p className="alert alert-danger">An error occured while processing your request! No new location can be made. </p> 

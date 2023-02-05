@@ -5,6 +5,7 @@ import authenticationService from "../services/authentication.service";
 import { isEmail } from "validator";
 import React, {Component, useState} from 'react'
 import { Navigate, redirect, useNavigate, Link } from "react-router-dom";
+import api from './../services/api'
 
 
 
@@ -56,7 +57,18 @@ function Login(){
   
   function validEmail(email){
     var re = /\S+@\S+\.\S+/;
-  return re.test(email);
+    return re.test(email);
+  }
+
+  function handleRegister(event){
+    authenticationService.register(registrationFirstName,registerLastName,registerEmailAddress,registerNewsletterSubscribe).then(success =>{
+      setRegistrationSubmitted(true);
+      setEmail(registerEmailAddress);
+    }, 
+    error => {
+      console.log(error)
+      setRegistrationSuccessful(false);
+    })
   }
   
   
@@ -72,12 +84,15 @@ function Login(){
   const [otpFailedToSend, setotpFailedToSend] = useState(false);
   const [otpSent ,setOtpSent] = useState(false);
   const [errorWhileLoggingIn, setErrorWhileLoggingIn] = useState(false);
-          // registerEmailAddress : "",
-          // registerFirstName : "",
-          // registerLastName: "",
-          // registerNewEventNotifcations : false,
-          // errorWhileLo
  
+  ///Registration data
+  const [registerEmailAddress, setReigisterEmailAddress] = useState("");
+  const [registrationFirstName, setRegistrationFirstName] = useState("");
+  const [registerLastName, setRegisterLastName] = useState("");
+  const [registerNewsletterSubscribe, setRegisterNewsletterSubscribe] = useState(true);
+  const [registrationSubmited, setRegistrationSubmitted] = useState(false);
+  const [registrationSuccessfull, setRegistrationSuccessful] = useState(true);
+
   if(urlParams.has('email') && urlParams.has('otp')){
     handleLogin();
   }
@@ -115,32 +130,47 @@ function Login(){
                 }
 
                 </form>
-                {/* <form className='mb-3'>
-            <h2>Register Account</h2>
-                <p>Registration is open for any member of UoA, RGU, NESCOL ..... </p>
-                <div  className="row mb-3">
-                    <label className="col-sm-2 col-form-label">First Name</label>
-                    <div className="col-sm-10 col-md-8 col-lg-6">
-                        <input type="text" className="form-control" id="specificSizeInputName" placeholder="Gwen"/>
-                    </div>
-                </div >
-                <div  className="row mb-3">
-                    <label className="col-sm-2 col-form-label" >Last Name</label>
-                    <div className="col-sm-10 col-md-8 col-lg-6">
-                        <input type="text" className="form-control" id="specificSizeInputName" placeholder="Livet"/>
-                    </div>
-                </div >
-                <div className="row mb-3">
-                <label  className="col-sm-2 col-form-label">Email</label>
-                <div className="col-sm-10 col-md-8 col-lg-6">
-                    <input type="email" className="form-control" id="inputEmail3" placeholder='gwen@livet.com'/>
-                    <p className='form-text'>Login codes & booking confirmations are sent to your email. </p>
-                </div>
-                </div>
-                <div className="row ">
-                </div>
-                <button type="submit" disabled={!(this.validEmail(this.state.registerEmailAddress) && this.state.registerFirstName.length > 0 && this.state.registerLastName.length > 0  )} className="btn btn-primary offset-sm-2">Register account</button>
-            </form> */}
+                {!registrationSubmited &&
+                  <form className='mb-3' onSubmit={handleRegister}>
+                  <h2>Register Account</h2>
+                      <p>Registration is open for any member of UoA, RGU, NESCOL. </p>
+                      <div  className="row mb-3">
+                          <label className="col-sm-2 col-form-label">First Name</label>
+                          <div className="col-sm-10 col-md-8 col-lg-6">
+                              <input type="text" className="form-control" value={registrationFirstName} onChange={(e) => setRegistrationFirstName(e.target.value)} id="specificSizeInputName" placeholder="Gwen" minLength={2} required/>
+                              <span className="validity"></span>
+                          </div>
+                      </div >
+                      <div  className="row mb-3">
+                          <label className="col-sm-2 col-form-label" >Last Name</label>
+                          <div className="col-sm-10 col-md-8 col-lg-6">
+                              <input type="text" className="form-control"value={registerLastName} onChange={(e)=> setRegisterLastName(e.target.value)} id="specificSizeInputName" placeholder="Livet" minLength={2} required/>
+                              <span className="validity"></span>
+                          </div>
+                      </div >
+                      <div className="row mb-3">
+                      <label  className="col-sm-2 col-form-label">Email</label>
+                      <div className="col-sm-10 col-md-8 col-lg-6">
+                          <input type="email" className="form-control"  value={registerEmailAddress} onChange={(e) => setReigisterEmailAddress(e.target.value)} placeholder='gwen@livet.com' required/>
+                          <p className='form-text'>Login codes & booking confirmations are sent to your email. </p>
+                          <span className="validity"></span>
+                      </div>
+                      </div>
+                      <div className="row mb-3">
+                      <label  className="col-sm-2 col-form-label">Newsletter</label>
+                      <div className="col-sm-10 col-md-8 col-lg-6">
+                          <input type="checkbox" className="form-check-input" value={registerNewsletterSubscribe} onChange={(e) => setRegisterNewsletterSubscribe(e.target.checked)} placeholder='gwen@livet.com' />
+                          <label className='orm-check-label'>We'll send you a notification when a new ride created.</label>
+                          <span className="validity"></span>
+                      </div>
+                      </div>
+                      <button type="submit"className="btn btn-primary offset-sm-2">Register account</button>
+                      {!registrationSuccessfull && 
+                        <p className="alert alert-danger">Couldn't save your details.</p>
+                      }
+                  </form>
+                }
+                
             </React.Fragment>
     }
     { authenticationService.currentUserValue &&

@@ -15,6 +15,9 @@ import CreateNewEvent from './components/CreateNewEvent';
 import AdminHomePage from './components/AdminHomePage';
 import EditEventPage from './components/EditEventPage';
 import AddNewEventPage from './components/AddNewEventPage';
+import MyAccount from './components/MyAccount';
+import NewsletterPage from './components/NewsletterPage';
+import CreateNewSemester from './components/CreateNewSemester';
 
 
 class App extends React.Component {
@@ -49,6 +52,9 @@ class App extends React.Component {
               <Route path="/event/:id" element={<RequireAuth><EventDetails/></RequireAuth>}/>
               <Route path="/event/edit/:id" element={<RequireAuth role={Role.Admin}><EditEventPage/></RequireAuth>}/>
               <Route path="/" element={<RequireAuth><EventList /></RequireAuth>}/>
+              <Route path="/email-settings" element={<RequireAuth><NewsletterPage /></RequireAuth>}/>
+              <Route path="/my-account" element={<RequireAuth><MyAccount /></RequireAuth>}/>
+              <Route path="/test-create" element={<RequireAuth><CreateNewSemester /></RequireAuth>}/>
               <Route path="/logout" element={<Logout/>}/>
               <Route path="/admin" element={<RequireAuth roles={Role.Admin}><AdminHomePage/></RequireAuth>}/>
               <Route path="/admin/new-event/" element={<RequireAuth roles={Role.Admin}><AddNewEventPage/></RequireAuth>}/>

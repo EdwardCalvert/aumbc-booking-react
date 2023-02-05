@@ -83,7 +83,7 @@ class EventDetailsRenderer extends Component {
            <React.Fragment>
             
             <Link to={"/event/edit/"+this.state.id} ><button className="btn btn-primary">Ammend ride</button></Link><button className="btn btn-danger">Cancel ride</button>
-            <label className="form-text">The ride will remain in the database. Users will be notified that the event has been cancelled.</label>
+            <label className="form-text"> Users will be notified that the event has been cancelled.</label>
             </React.Fragment>
           }
      

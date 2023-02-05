@@ -3,6 +3,7 @@ import { useEffect , useState} from "react";
 import AutoTextArea from "./AutoTextArea";
 import SelectLocation from "./SelectLocation";
 import React from "react";
+import CreateNewSemester from "./CreateNewSemester";
 
 function CreateNewEvent({mtbEvent,onChange, newEvent}){
     const [rideStartLocation, setRideStartLocation ] = useState();
@@ -13,6 +14,7 @@ function CreateNewEvent({mtbEvent,onChange, newEvent}){
     const [endDate, setEndDate] = useState("");
     const [costForDriver, setCostForDriver] = useState(0);
     const [costForPassenger, setCostForPassenger] = useState(0);
+    const [semesterId, setSemesterId] = useState();
 
     useEffect(() =>{ 
         if(mtbEvent){
@@ -26,6 +28,7 @@ function CreateNewEvent({mtbEvent,onChange, newEvent}){
         setEndDate((splitEndTime.length ===3? splitEndTime[0]+":"+splitEndTime[1]:mtbEvent.endDateTime));
         setCostForDriver(mtbEvent.costForDriver);
         setCostForPassenger(mtbEvent.costForPassenger);
+        setSemesterId(mtbEvent.semesterId);
         }
 
     }, [mtbEvent])
@@ -47,7 +50,8 @@ function CreateNewEvent({mtbEvent,onChange, newEvent}){
             description : description,
             rideName : rideName,
             rideStartLocation : rideStartLocation,
-            liftShareLocation : liftShareLocation
+            liftShareLocation : liftShareLocation,
+            semesterId : semesterId
         }
         onChange(mtbEvent);
     }
@@ -81,6 +85,13 @@ function CreateNewEvent({mtbEvent,onChange, newEvent}){
             
 
         </div>
+
+        <div className="row mb-3 gx-3 gy-2">
+            <label className="col-sm-2">Semester</label>
+            <div className="col-sm-10">
+                <CreateNewSemester value={semesterId} onChange={(e)=> setSemesterId(e.target.value)}/>
+            </div>
+        </div>
         <div className="row mb-3 gx-3 gy-2 form-group">
             <label className="col-sm-2">Description</label>
             <div className="col-sm-10">
@@ -93,6 +104,8 @@ function CreateNewEvent({mtbEvent,onChange, newEvent}){
                 <SelectLocation startLocation={liftShareLocation} onLocationChanged={onLiftShareLocationChanged}  />
             </div>
         </div>
+        
+        
         <div className="row mb-3 gx-3 gy-2">
             <label className="col-sm-2">Ride Start Location</label>
             <div className="col-sm-10">

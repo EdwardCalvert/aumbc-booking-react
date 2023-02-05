@@ -41,9 +41,9 @@ function logout() {
   currentUserSubject.next(null);
 }
 
-function register(firstName, lastName, emailAddress) {
+function register(firstName, lastName, emailAddress, notifyNewEvents) {
 return api.post( "auth/register", {
-  firstName, lastName, emailAddress
+  firstName, lastName, emailAddress, notifyNewEvents 
 });
 }
 
