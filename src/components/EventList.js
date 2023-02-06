@@ -41,7 +41,7 @@ class EventList extends Component{
 
     componentDidMount(){
 
-        let headers = new Headers()
+      // let currentDate =  Date.now();
         api.get("MtbEvent/get-upcoming-events").then(success => {
           if(success.status === 204){
             this.setState({
@@ -57,7 +57,7 @@ class EventList extends Component{
           }
          
         }, error => {
-          this.setState({errorWhileFetch : true})
+          this.setState({errorWhileFetch : true, dataFetched : true})
           console.log(error);
         });
     }

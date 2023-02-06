@@ -17,7 +17,9 @@
     text-decoration: none;
     color: black;
 }
-
+.no-bullets {
+  list-style-type: none;
+}
 
 .EventTile-image{
   width: 100%;

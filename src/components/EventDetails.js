@@ -15,7 +15,8 @@ class EventDetailsRenderer extends Component {
     const id = props.id.id
     this.state = {
         id : id,
-      dataFetched : false
+      dataFetched : false,
+      errorWhileFetching: false,
     };
     
   }
@@ -28,6 +29,7 @@ class EventDetailsRenderer extends Component {
                             dataFetched: true
                         });
                     }, error=> {
+                      this.setState({dataFetched:true, errorWhileFetching : true});
                       console.log(error)
                     });
   }
@@ -40,12 +42,15 @@ class EventDetailsRenderer extends Component {
             </div>
     }
     const event = this.state.event;
-    if(event.visible){
+    if(event && event.visible){
     return (
       <div>
         <h2>
           {event.name}
         </h2>
+        {this.state.errorWhileFetching &&
+          <p className="alert-danger alert">An error occured while loading the event</p>
+        }
         <p style={{whiteSpace: 'pre-line'}}>{event.description}</p>
 
         <div className="row mb-3 gx-3 gy-2">
@@ -97,7 +102,12 @@ class EventDetailsRenderer extends Component {
     );
   }
   else{
-    return <h2>This ride has been cancelled. </h2>
+    if(!event.visible){
+      return <h2>This ride has been cancelled. </h2>
+    }
+    else{
+      return <h2>The requested ride could not be found.</h2>
+    }
   }
 }
 

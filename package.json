@@ -1,7 +1,7 @@
 {
-  "name": "aumbc-booking",
+  "name": "aumbc-booking-react",
   "version": "0.1.0",
-  "homepage": "https://EdwardCalvert.github.io",
+  "homepage": "https://aumbc.edcalvert.net",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",

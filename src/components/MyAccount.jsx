@@ -58,9 +58,9 @@ function MyAccount (){
          {rides.map((item,key)=> <tr scope="row">
              <td>{item.name}</td>
              <td>{new Date(item.startDateTime).toLocaleDateString("en-GB")}</td>
-             <td>£{item.costToPay.toFixed(2)}</td>
+             <td>£{item.paymentDue.toFixed(2)}</td>
              <td>{item.paymentSent? "Yes": "No"}</td>
-             <td>£{item.payoutRequired.toFixed(2)}</td>
+             <td>£{item.payoutDue.toFixed(2)}</td>
              <td>{item.payoutSent ? "Yes" : "No"}</td>
              <td><Link className="btn btn-primary" to={"/event/"+item.eventId}>View</Link></td>
              </tr>)}
