@@ -3,7 +3,7 @@ import authenticationService from "./authentication.service";
 import TokenService from "./token.service";
  ///https://aumbc-api-server-v2-production.up.railway.app/api/
 const instance = axios.create({
-  baseURL: "https://aumbc-api-server-v2-production.up.railway.app/api/",
+  baseURL: (!process.env.NODE_ENV || process.env.NODE_ENV === 'development')? "https://localhost:7260/api":  "https://aumbc-api-server-v2-production.up.railway.app/api/",
   headers: {
     "Content-Type": "application/json",
   },

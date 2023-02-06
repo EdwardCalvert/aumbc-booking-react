@@ -29,7 +29,13 @@ class EventDetailsRenderer extends Component {
                             dataFetched: true
                         });
                     }, error=> {
-                      this.setState({dataFetched:true, errorWhileFetching : true});
+                      if(error.status === 404){
+                        this.setState({dataFetched:true, errorWhileFetching : true});
+                      }
+                      else{
+                        this.setState({dataFetched:true, errorWhileFetching :  true});
+                      }
+                      
                       console.log(error)
                     });
   }
@@ -38,80 +44,85 @@ class EventDetailsRenderer extends Component {
     if(!this.state.dataFetched){
         return <div>
                  <h3>Loading</h3>
-                <div class="spinner-border"></div>
+                <div className="spinner-border"></div>
             </div>
     }
-    const event = this.state.event;
-    if(event && event.visible){
-    return (
-      <div>
-        <h2>
-          {event.name}
-        </h2>
-        {this.state.errorWhileFetching &&
-          <p className="alert-danger alert">An error occured while loading the event</p>
-        }
-        <p style={{whiteSpace: 'pre-line'}}>{event.description}</p>
-
-        <div className="row mb-3 gx-3 gy-2">
-            <label className="col-sm-2">Lift share at</label>
-            
-            <div className="col-sm-6">
-            <h5>{event.liftShareName} - <a href={"https://what3words.com/" + event.liftShareW3W} target="_blank">///{event.liftShareW3W}</a> @{  new Date(event.startDateTime).toLocaleDateString("en-GB") +" "+ new Date(event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}</h5>
-              <StaticMap
-                lat={event.liftShareLat}
-                lng={event.liftShareLng}
-                zoom={16}
-              ></StaticMap>
-              <OpenInGoogleMps position={{lat: event.liftShareLat, lng: event.liftShareLng}} /> <CopyWhat3Words what3Words={event.liftShareW3W}/>
-            </div>
-          </div>
-          <div className="row mb-3 gx-3 gy-2">
-            <label className="col-sm-2">The ride will be at</label>
-            
-            <div className="col-sm-6">
-            <h5>{event.rideStartName} - <a href={"https://what3words.com/" + event.rideStartW3W} target="_blank">///{event.rideStartW3W}</a></h5>
-              <StaticMap
-                lat={event.rideStartLat}
-                lng={event.rideStartLng}
-                zoom={17}
-              ></StaticMap>
-              <OpenInGoogleMps position={{lat: event.rideStartLat, lng: event.rideStartLng}} /> <CopyWhat3Words what3Words={event.rideStartW3W}/>
-            </div>
-          </div>
-          {new Date(event.startDateTime).toLocaleDateString("en-GB") ==  new Date(event.endDateTime).toLocaleDateString("en-GB") &&
-            <div className="row mb-3 gx-3 gy-2">
-              <label className="col-sm-2">Possible finish</label>
-                <div className="col-sm-10">
-                  { new Date(event.startDateTime).toLocaleDateString("en-GB")} { new Date(event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})} - This is only a guess!
-                </div>
-          </div>
-          }
-          {authenticationService.currentUserValue&&
-           <React.Fragment>
-            
-            <Link to={"/event/edit/"+this.state.id} ><button className="btn btn-primary">Ammend ride</button></Link><button className="btn btn-danger">Cancel ride</button>
-            <label className="form-text"> Users will be notified that the event has been cancelled.</label>
-            </React.Fragment>
-          }
-     
-       
-
-        <SignUpForm event={event}/>
-      </div>
-    );
-  }
-  else{
-    if(!event.visible){
-      return <h2>This ride has been cancelled. </h2>
-    }
+   
     else{
-      return <h2>The requested ride could not be found.</h2>
+      if(this.state.errorWhileFetching){
+        return <p className="alert-danger alert">An error occured while loading the event. It's likely the event id you supplied doesn't exist.  <Link to={"/"} className="btn btn-primary">Take me home</Link></p>
+      }
+      else{
+        const event = this.state.event;
+        if(event && event.visible){
+          return (
+            <div>
+              <h2>
+                {event.name}
+              </h2>
+              <p style={{whiteSpace: 'pre-line'}}>{event.description}</p>
+      
+              <div className="row mb-3 gx-3 gy-2">
+                  <label className="col-sm-2">Lift share at</label>
+                  
+                  <div className="col-sm-6">
+                  <h5>{event.liftShareName} - <a href={"https://what3words.com/" + event.liftShareW3W} target="_blank">///{event.liftShareW3W}</a> @{  new Date(event.startDateTime).toLocaleDateString("en-GB") +" "+ new Date(event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}</h5>
+                    <StaticMap
+                      lat={event.liftShareLat}
+                      lng={event.liftShareLng}
+                      zoom={16}
+                    ></StaticMap>
+                    <OpenInGoogleMps position={{lat: event.liftShareLat, lng: event.liftShareLng}} /> <CopyWhat3Words what3Words={event.liftShareW3W}/>
+                  </div>
+                </div>
+                <div className="row mb-3 gx-3 gy-2">
+                  <label className="col-sm-2">The ride will be at</label>
+                  
+                  <div className="col-sm-6">
+                  <h5>{event.rideStartName} - <a href={"https://what3words.com/" + event.rideStartW3W} target="_blank">///{event.rideStartW3W}</a></h5>
+                    <StaticMap
+                      lat={event.rideStartLat}
+                      lng={event.rideStartLng}
+                      zoom={17}
+                    ></StaticMap>
+                    <OpenInGoogleMps position={{lat: event.rideStartLat, lng: event.rideStartLng}} /> <CopyWhat3Words what3Words={event.rideStartW3W}/>
+                  </div>
+                </div>
+                {new Date(event.startDateTime).toLocaleDateString("en-GB") ==  new Date(event.endDateTime).toLocaleDateString("en-GB") &&
+                  <div className="row mb-3 gx-3 gy-2 mb-3 pb-3">
+                    <label className="col-sm-2">Possible finish</label>
+                      <div className="col-sm-10">
+                        { new Date(event.startDateTime).toLocaleDateString("en-GB")} { new Date(event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})} - This is only a guess!
+                      </div>
+                </div>
+                }
+                {authenticationService.currentUserValue&&
+                <div className="row mb-3 gx-3 gy-2">
+                <label className="col-sm-2">Admin Controls</label>
+                  <div className="col-sm-10">
+                  
+                  <Link to={"/event/edit/"+this.state.id} ><button className="btn btn-primary btn-block mb-3 me-1 ">Ammend ride</button></Link><button className="btn btn-danger  mb-3 btn-block ">Cancel ride</button>
+                  </div>
+                  </div>
+                }
+           
+             
+      
+              <SignUpForm event={event}/>
+            </div>
+          );
+        }
+        else{
+          if(!event.visible){
+            return <h2>This ride has been cancelled. </h2>
+          }
+          else{
+            return <h2>The requested ride could not be found.</h2>
+          }
+        }
+      }
     }
   }
-}
-
-
 
 
   MapLocation({eventLocationName,eventWhat3Words, eventLat, eventLng, locationTitle,zoom, dateTime} ) {

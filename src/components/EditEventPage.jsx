@@ -11,6 +11,8 @@ function EditEventPage(props){
     let navigate = useNavigate();
 
     function handleFormSubmit(e){
+        console.log(e);
+        // e.preventDefault();
         let eventToSave = {
             name: e.rideName,
             description: e.description,

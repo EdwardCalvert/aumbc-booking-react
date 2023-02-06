@@ -14,14 +14,15 @@ class EventList extends Component{
     }
 
     render(){
-        if(!this.state.dataFetched){
-            return(<this.PlaceHolderEvent/>)
-        }
+
         const events =  this.state.events;
   return (<div>
     <h2>Welcome to AUMBC's Booking page.</h2>
     <p>Use this site to view upcoming rides, and either find transport if you are a passenger or offer to drive other members (and get reimbursed for any additionl fuel costs). &nsbp; If you have any questions, please feel free to put them in the Group WhatsApp 👌</p>
-              {events.length > 0 && !this.state.errorWhileFetch &&
+                {!this.state.dataFetched && 
+                  <this.PlaceHolderEvent/>
+                }
+              {this.state.dataFetched && events.length > 0 && !this.state.errorWhileFetch &&
                   <React.Fragment>
                      <h2>Upcoming Rides</h2>
                       <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-3">
@@ -29,7 +30,7 @@ class EventList extends Component{
                       </div>
                   </React.Fragment>
               }
-              {events.length == 0&&
+              { this.state.dataFetched&& events.length == 0&&
                 <h3>There are no upcoming events- please check back soon.</h3>
               }
               {this.state.errorWhileFetch &&

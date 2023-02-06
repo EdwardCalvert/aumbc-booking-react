@@ -41,7 +41,8 @@ function CreateNewEvent({mtbEvent,onChange, newEvent}){
         }
     }
 
-    function handleFormSubmit(){
+    function handleFormSubmit(event){
+        event.preventDefault();
       let  mtbEvent = {
             costForDriver: costForDriver,
             costForPassenger : costForPassenger,
