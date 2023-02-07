@@ -18,7 +18,7 @@ class EventList extends Component{
         const events =  this.state.events;
   return (<div>
     <h2>Welcome to AUMBC's Booking page.</h2>
-    <p>Use this site to view upcoming rides, and either find transport if you are a passenger or offer to drive other members (and get reimbursed for any additionl fuel costs). &nsbp; If you have any questions, please feel free to put them in the Group WhatsApp 👌</p>
+    <p>Use this site to view upcoming rides, and either find transport if you are a passenger or offer to drive other members (and get reimbursed for any additionl fuel costs). <br/> If you have any questions, please feel free to put them in the Group WhatsApp 👌</p>
                 {!this.state.dataFetched && 
                   <this.PlaceHolderEvent/>
                 }
@@ -30,7 +30,7 @@ class EventList extends Component{
                       </div>
                   </React.Fragment>
               }
-              { this.state.dataFetched&& events.length == 0&&
+              { this.state.dataFetched&& events.length === 0&&
                 <h3>There are no upcoming events- please check back soon.</h3>
               }
               {this.state.errorWhileFetch &&

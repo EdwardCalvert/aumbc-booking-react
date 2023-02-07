@@ -1,5 +1,6 @@
 import axios from "axios";
 import authenticationService from "./authentication.service";
+import { useNavigate } from "react-router-dom";
 import TokenService from "./token.service";
  ///https://aumbc-api-server-v2-production.up.railway.app/api/
 const instance = axios.create({
@@ -40,7 +41,11 @@ instance.interceptors.response.use(
 
             accessToken : TokenService.getLocalAccessToken(),
             refreshToken: TokenService.getLocalRefreshToken(),
-          });
+          }.then(success => {
+
+          }, error =>{
+            useNavigate("/logout",{replace:true});
+          } ));
 
           console.log("Proabably need more casting of types- email etc.")
           console.log(rs.data)

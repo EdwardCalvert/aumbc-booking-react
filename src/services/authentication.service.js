@@ -1,4 +1,3 @@
-import axios from "axios";
 import { BehaviorSubject } from 'rxjs';
 import api from "./api";
 import tokenService from "./token.service";
@@ -43,7 +42,7 @@ function logout() {
 
 function register(firstName, lastName, emailAddress, notifyNewEvents) {
 return api.post( "auth/register", {
-  firstName, lastName, emailAddress, notifyNewEvents 
+ firstName:  firstName, lastName: lastName, emailAddress: emailAddress, notifyNewEvents  :notifyNewEvents
 });
 }
 

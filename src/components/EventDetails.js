@@ -66,7 +66,7 @@ class EventDetailsRenderer extends Component {
                   <label className="col-sm-2">Lift share at</label>
                   
                   <div className="col-sm-6">
-                  <h5>{event.liftShareName} - <a href={"https://what3words.com/" + event.liftShareW3W} target="_blank">///{event.liftShareW3W}</a> @{  new Date(event.startDateTime).toLocaleDateString("en-GB") +" "+ new Date(event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}</h5>
+                  <h5>{event.liftShareName} - <a href={"https://what3words.com/" + event.liftShareW3W} target="_blank" rel="noreferrer">///{event.liftShareW3W}</a> @{  new Date(event.startDateTime).toLocaleDateString("en-GB") +" "+ new Date(event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}</h5>
                     <StaticMap
                       lat={event.liftShareLat}
                       lng={event.liftShareLng}
@@ -79,7 +79,7 @@ class EventDetailsRenderer extends Component {
                   <label className="col-sm-2">The ride will be at</label>
                   
                   <div className="col-sm-6">
-                  <h5>{event.rideStartName} - <a href={"https://what3words.com/" + event.rideStartW3W} target="_blank">///{event.rideStartW3W}</a></h5>
+                  <h5>{event.rideStartName} - <a href={"https://what3words.com/" + event.rideStartW3W} rel="noreferrer" target="_blank">///{event.rideStartW3W}</a></h5>
                     <StaticMap
                       lat={event.rideStartLat}
                       lng={event.rideStartLng}
@@ -88,7 +88,7 @@ class EventDetailsRenderer extends Component {
                     <OpenInGoogleMps position={{lat: event.rideStartLat, lng: event.rideStartLng}} /> <CopyWhat3Words what3Words={event.rideStartW3W}/>
                   </div>
                 </div>
-                {new Date(event.startDateTime).toLocaleDateString("en-GB") ==  new Date(event.endDateTime).toLocaleDateString("en-GB") &&
+                {new Date(event.startDateTime).toLocaleDateString("en-GB") ===  new Date(event.endDateTime).toLocaleDateString("en-GB") &&
                   <div className="row mb-3 gx-3 gy-2 mb-3 pb-3">
                     <label className="col-sm-2">Possible finish</label>
                       <div className="col-sm-10">
@@ -131,7 +131,7 @@ class EventDetailsRenderer extends Component {
             <label className="col-sm-2">{locationTitle}</label>
             
             <div className="col-sm-6">
-            <h5>{eventLocationName} - <a href={"https://what3words.com/" + eventWhat3Words} target="_blank">///{eventWhat3Words}</a> @{  new Date(dateTime).toLocaleDateString("en-GB") +" "+ new Date(dateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}</h5>
+            <h5>{eventLocationName} - <a href={"https://what3words.com/" + eventWhat3Words} rel="noreferrer" target="_blank">///{eventWhat3Words}</a> @{  new Date(dateTime).toLocaleDateString("en-GB") +" "+ new Date(dateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}</h5>
               <StaticMap
                 lat={eventLat}
                 lng={eventLng}

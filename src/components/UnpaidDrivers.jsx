@@ -11,7 +11,7 @@ function UnpaidDrivers(){
         console.log("DEV MODE")
         console.log(!process.env.NODE_ENV || process.env.NODE_ENV === 'development')
         api.get("Finance/get-all-unpaid-payouts").then(success => {
-            if(success.status == 200){
+            if(success.status === 200){
             setErrorWhileLoading(false);
             setLoading(false);
             console.log(success.data);

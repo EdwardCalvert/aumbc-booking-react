@@ -11,22 +11,7 @@ function EditEventPage(props){
     let navigate = useNavigate();
 
     function handleFormSubmit(e){
-        console.log(e);
-        // e.preventDefault();
-        let eventToSave = {
-            name: e.rideName,
-            description: e.description,
-            startDateTime: e.startDate.split(":").length ===2? e.startDate+":00":e.startDate,
-            endDateTime : e.endDate.split(":").length ==2? e.endDate+":00":e.endDate,
-            rideStartW3W : e.rideStartLocation,
-            liftShareW3W: e.liftShareLocation,
-            costForDriver : e.costForDriver,
-            costForPassenger : e.costForPassenger,
-            id: id,
-            visible: true,
-
-        };
-        api.patch("MtbEvent", eventToSave).then(success =>{
+        api.patch("MtbEvent", e).then(success =>{
             setErrorWhileSubmitting(false);
 
             navigate(`/event/${id}`,{ replace: true });

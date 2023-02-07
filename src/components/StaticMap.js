@@ -1,9 +1,8 @@
 import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
-import { useMap } from 'react-leaflet/hooks'
 import {Marker} from 'react-leaflet/Marker'
 import L from "leaflet";
-import React, { useEffect, useState, useCallback, useMemo ,Component} from "react";
+import React from "react";
 
  ///Errored out, look at https://github.com/codegeous/react-component-depot/blob/master/src/pages/Leaflet/StaticMap.js
 const interactionOptions = {

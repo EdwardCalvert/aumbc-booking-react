@@ -6,7 +6,7 @@ function RequireAuth({  children: Component, roles }) {
    
         if (!currentUser) {
             const returnRoute = encodeURIComponent(window.location.href.split('#')[1]);
-            const address = returnRoute? "?redirect="+ returnRoute : ""
+            const address = returnRoute !== "undefined" ? "?redirect="+ returnRoute : "";
             // not logged in so redirect to login page with the return url //, state: { from: props.location }
             return <div><h2>Please login to view this page.</h2><p>To protect the privacy of our members, you will have to login to view events & book onto rides.</p><Link className='btn btn-primary' to={"/login"+address} replace={true} >Take me to the login page </Link> </div>
         }

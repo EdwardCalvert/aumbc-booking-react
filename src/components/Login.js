@@ -1,11 +1,6 @@
-import Form from "react-validation/build/form";
-import Input from "react-validation/build/input";
-import CheckButton from "react-validation/build/button";
 import authenticationService from "../services/authentication.service";
-import { isEmail } from "validator";
-import React, {Component, useState} from 'react'
-import { Navigate, redirect, useNavigate, Link } from "react-router-dom";
-import api from './../services/api'
+import React, { useState} from 'react'
+import { useNavigate, Link } from "react-router-dom";
 
 
 
@@ -15,10 +10,12 @@ function Login(){
     setEmail(e.target.value);
   }
 
-  function handleEmailProvided(e){
+  async function handleEmailProvided(e){
     e.preventDefault();
-    authenticationService.sendOtp(emailAddress).then( () => {setotpFailedToSend(false); setOtpSent(true);}
+    setSendingOtp(true);
+   await authenticationService.sendOtp(emailAddress).then( () => {setotpFailedToSend(false); setOtpSent(true);}
       ,()=>setotpFailedToSend(true));
+      setSendingOtp(false);
     
   }
 
@@ -47,6 +44,9 @@ function Login(){
           }
       
         }
+        else{
+          navigate("/login",{ replace:true });
+        }
           
       },
       error => {
@@ -60,15 +60,19 @@ function Login(){
     return re.test(email);
   }
 
-  function handleRegister(event){
-    authenticationService.register(registrationFirstName,registerLastName,registerEmailAddress,registerNewsletterSubscribe).then(success =>{
+  async function handleRegister(event){
+    event.preventDefault();
+    setProcessingRegistration(true);
+    await authenticationService.register(registrationFirstName,registerLastName,registerEmailAddress,registerNewsletterSubscribe).then(success =>{
       setRegistrationSubmitted(true);
       setEmail(registerEmailAddress);
+      setOtpSent(true);
     }, 
     error => {
       console.log(error)
       setRegistrationSuccessful(false);
     })
+    setProcessingRegistration(false);
   }
   
   
@@ -84,12 +88,14 @@ function Login(){
   const [otpFailedToSend, setotpFailedToSend] = useState(false);
   const [otpSent ,setOtpSent] = useState(false);
   const [errorWhileLoggingIn, setErrorWhileLoggingIn] = useState(false);
+  const [processingRegistration, setProcessingRegistration] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState (false);
  
   ///Registration data
   const [registerEmailAddress, setReigisterEmailAddress] = useState("");
   const [registrationFirstName, setRegistrationFirstName] = useState("");
   const [registerLastName, setRegisterLastName] = useState("");
-  const [registerNewsletterSubscribe, setRegisterNewsletterSubscribe] = useState(true);
+  const [registerNewsletterSubscribe, setRegisterNewsletterSubscribe] = useState(false);
   const [registrationSubmited, setRegistrationSubmitted] = useState(false);
   const [registrationSuccessfull, setRegistrationSuccessful] = useState(true);
 
@@ -105,23 +111,30 @@ function Login(){
                     <label className="col-sm-2 col-form-label">Email</label>
                     <div className="col-sm-6">
                         <input type="email" className="form-control" id="inputEmail3" placeholder='gwen@livet.com' disabled={otpSent} value={emailAddress}
-                onChange={onChangeEmailAddress}/> 
+                onChange={onChangeEmailAddress} required/> 
                     </div>
                     <div className='col-sm-2'><button type="submit"  disabled={!(validEmail(emailAddress) && !otpSent)} className="btn btn-primary">Send OTP</button></div>
                     <label className='form-text offset-sm-2'>A one-time-passcode will be sent to your email address</label>
                 </div>
+                {sendingOtp&&
+                <div>
+                <h3>We're sending your OTP faster than royal mail...</h3>
+               <div className="spinner-border"></div>
+           </div>
+
+                }
                 {otpSent &&
                   <p className="alert alert-success">OTP sent to {emailAddress}</p>
                 }
                 {otpFailedToSend && 
-                  <p className="alert alert-danger">Unable to send OTP to  {emailAddress}- likely our API server is down! Oops! Do drop us a message in the group chat if the error persists. </p>
+                  <p className="alert alert-danger">Unable to send OTP to  {emailAddress}. You can only request a second token after 1 minute.</p>
                 }
                 </form>
                 <form className='mb-3' onSubmit={handleLogin} >
                 <div className="row mb-3">
                     <label  className="col-sm-2 col-form-label">OTP</label>
                     <div className="col-sm-6">
-                        <input type="number" className="form-control" id="inputEmail3" placeholder='12345678'  disabled={!validEmail(emailAddress)} value={otp} onChange={onChangeOtp}/>
+                        <input type="text" className="form-control" id="inputEmail3" placeholder='12345678'  disabled={!validEmail(emailAddress)} value={otp} onChange={onChangeOtp} required/>
                     </div>
                     <div className='col-sm-2'><button type="submit" disabled={!(otp.length >=6 && validEmail(emailAddress))} className="btn btn-primary">Login</button></div>
                 </div>
@@ -159,28 +172,32 @@ function Login(){
                       <div className="row mb-3">
                       <label  className="col-sm-2 col-form-label">Newsletter</label>
                       <div className="col-sm-10 col-md-8 col-lg-6">
-                          <input type="checkbox" className="form-check-input" value={registerNewsletterSubscribe} onChange={(e) => setRegisterNewsletterSubscribe(e.target.checked)} placeholder='gwen@livet.com' />
+                          <input type="checkbox" className="form-check-input" checked={registerNewsletterSubscribe} onChange={(e) => setRegisterNewsletterSubscribe(e.target.checked)} placeholder='gwen@livet.com' />
                           <label className='orm-check-label'>We'll send you a notification when a new ride created.</label>
                           <span className="validity"></span>
                       </div>
                       </div>
-                      <button type="submit"className="btn btn-primary offset-sm-2">Register account</button>
-                      {!registrationSuccessfull && 
-                        <p className="alert alert-danger">Couldn't save your details.</p>
+                      {processingRegistration && 
+                        <div>
+                        <h4>We're processing your request faster than you can blink.</h4>
+                       <div className="spinner-border"></div>
+                   </div>
+                      }{!processingRegistration &&
+                        <button type="submit"className="btn btn-primary offset-sm-2">Register account & send OTP</button>
                       }
+                      
+                      {!registrationSuccessfull && 
+                        <p className="alert alert-danger">Couldn't save your details.- most likely an account already exists with the same email.</p>
+                      }
+                    
                   </form>
                 }
                 
             </React.Fragment>
     }
     { authenticationService.currentUserValue &&
-    <div><h2>You are logged in </h2>
-    <ul>
-    <li>Your email is: {authenticationService.currentUserValue.emailAddress}</li>
-    <li>You have access rights of: {authenticationService.currentUserValue.role}</li>
-    <li>Your access token will expire: {authenticationService.currentUserValue.accessTokenExpiry}</li>
-    <li>Your refresh token will expire: {authenticationService.currentUserValue.refreshTokenExpiry}</li>
-    </ul>
+    <div><h2>Hello, {authenticationService.currentUserValue.firstName} </h2>
+    <p>You are now logged in as a {authenticationService.currentUserValue.role}.</p>
     
     <Link to={"/logout"} className="btn btn-primary">Logout</Link>
     </div>

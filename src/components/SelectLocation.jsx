@@ -2,7 +2,7 @@ import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
 import {Marker} from 'react-leaflet/Marker'
 import { Popup } from "react-leaflet";
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState} from "react";
 import { useRef } from 'react'
 import L from "leaflet";
 import api from "./../services/api"
@@ -33,7 +33,7 @@ function SelectLocation({startLocation, onLocationChanged}){
 
     useEffect(()=>{
         api.get("Location/get-all-locations").then(success =>{
-            if(success.status == 200) // Some data was returned
+            if(success.status === 200) // Some data was returned
             {
             setLocations(success.data);
             let toFind = startLocation? startLocation: 'recent.soup.mock'
@@ -84,7 +84,7 @@ function SelectLocation({startLocation, onLocationChanged}){
  
     function selectionChanged(event){
         let value = event.target.value
-        if(value != -1){
+        if(value !== -1){
             let newLocation = locations[parseInt(value)]
             setSelectedLocation(newLocation);
             setSelectedIndex(value);

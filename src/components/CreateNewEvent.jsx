@@ -1,4 +1,3 @@
-import api from "./../services/api";
 import { useEffect , useState} from "react";
 import AutoTextArea from "./AutoTextArea";
 import SelectLocation from "./SelectLocation";
@@ -43,18 +42,21 @@ function CreateNewEvent({mtbEvent,onChange, newEvent}){
 
     function handleFormSubmit(event){
         event.preventDefault();
-      let  mtbEvent = {
-            costForDriver: costForDriver,
+        let eventToSave = {
+            name: rideName,
+            description: description,
+            startDateTime: startDate.split(":").length ===2? startDate+":00":startDate,
+            endDateTime : endDate.split(":").length ===2? endDate+":00":endDate,
+            rideStartW3W : rideStartLocation,
+            liftShareW3W: liftShareLocation,
+            costForDriver : costForDriver,
             costForPassenger : costForPassenger,
-            startDate : startDate,
-            endDate : endDate,
-            description : description,
-            rideName : rideName,
-            rideStartLocation : rideStartLocation,
-            liftShareLocation : liftShareLocation,
+            id: event.id,
+            visible: true,
             semesterId : semesterId
-        }
-        onChange(mtbEvent);
+
+        };
+        onChange(eventToSave);
     }
 
     function onLiftShareLocationChanged(event){

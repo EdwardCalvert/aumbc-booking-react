@@ -102,7 +102,7 @@ class SignUpForm extends Component{
   }
 
   handleEventCancellation(){
-    if(this.state.driving != "-1"){
+    if(this.state.driving !== "-1"){
          this.removeCurrentCarFromCapcity(this.state.driving);
     }
     this.setState({
@@ -332,8 +332,8 @@ class SignUpForm extends Component{
 
         if(paymentAmmount>0){
             return <React.Fragment>
-                <a href="https://settleup.starlingbank.com/glenncharlton" target="_blank" className='btn btn-primary'>Don't forget to pay £{paymentAmmount.toFixed(2)} to cover our costs here. </a><br/>
-        <label className='form-text'>Please include a descriptive refrence like "{authenticationService.currentUserValue.firstName},{authenticationService.currentUserValue.lastName}  {event.name} { new Date(event.startDateTime).toLocaleDateString("en-gb")}  "</label> 
+                <a href="https://settleup.starlingbank.com/glenncharlton" rel="noreferrer" target="_blank" className='btn btn-primary'>Don't forget to pay £{paymentAmmount.toFixed(2)} to cover our costs here. </a><br/>
+        <label className='form-text'>Please include a descriptive refrence like "{authenticationService.currentUserValue.firstName} {authenticationService.currentUserValue.lastName}  {event.name} { new Date(event.startDateTime).toLocaleDateString("en-gb")}  "</label> 
         </React.Fragment>
         
         }
