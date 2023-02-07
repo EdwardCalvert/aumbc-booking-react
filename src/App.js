@@ -12,11 +12,10 @@ import RequireAuth from './components/RequireAuth';
 import Logout from './components/Logout';
 import AdminHomePage from './components/AdminHomePage';
 import EditEventPage from './components/EditEventPage';
-import AddNewEventPage from './components/AddNewEventPage';
 import MyAccount from './components/MyAccount';
 import NewsletterPage from './components/NewsletterPage';
-import CreateNewSemester from './components/CreateNewSemester';
 import UnpaidDrivers from './components/UnpaidDrivers';
+import CreateNewEventPage from './components/CreateNewEventPage';
 
 
 class App extends React.Component {
@@ -58,7 +57,7 @@ class App extends React.Component {
               {/* Admin related components */}
               <Route path="/admin" element={<RequireAuth roles={Role.Admin}><AdminHomePage/></RequireAuth>}/>
               <Route path="/admin/unpaid-drivers" element={<RequireAuth roles={Role.Admin}><UnpaidDrivers /></RequireAuth>}/>
-              <Route path="/admin/new-event/" element={<RequireAuth roles={Role.Admin}><AddNewEventPage/></RequireAuth>}/>
+              <Route path="/admin/new-event/" element={<RequireAuth roles={Role.Admin}><CreateNewEventPage/></RequireAuth>}/>
               <Route path="*" element={<p> There is nothing at this page</p>}/>
           </Routes>
           <Footer/>

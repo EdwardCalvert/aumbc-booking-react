@@ -1,9 +1,9 @@
-import CreateNewEvent from "./CreateNewEvent";
 import { useNavigate} from 'react-router-dom';
-import api from './../services/api'
+import api from '../services/api'
 import { useState } from "react";
+import EventForm from "./EventForm";
 
-function AddNewEventPage(){
+function CreateNewEventPage(){
     const [errorWhileSubmitting, setErrorWhileSubmitting] = useState(false);
     let navigate = useNavigate();
 
@@ -19,7 +19,7 @@ function AddNewEventPage(){
     }
         return <div>
             <h1>Create new event</h1>
-          <CreateNewEvent onChange={handleFormSubmit} newEvent={true} />
+          <EventForm onChange={handleFormSubmit} newEvent={true} />
           {errorWhileSubmitting && 
             <p className="alert alert-danger">An error occured while attempting to save the event. Please check all fields are considered valid and try again.</p>
           }
@@ -27,4 +27,4 @@ function AddNewEventPage(){
    
 }
 
-export default AddNewEventPage;
+export default CreateNewEventPage;

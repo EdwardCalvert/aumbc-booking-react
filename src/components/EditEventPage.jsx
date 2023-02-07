@@ -1,7 +1,7 @@
-import CreateNewEvent from "./CreateNewEvent";
 import { useParams ,useNavigate} from 'react-router-dom';
 import api from './../services/api'
 import { useState, useEffect } from "react";
+import EventForm from "./EventForm";
 
 function EditEventPage(props){
     const [errorWhileLoading, setErrorWhileLoading]=useState(false);
@@ -42,7 +42,7 @@ function EditEventPage(props){
 
             }
             <h1>Edit </h1>
-          <CreateNewEvent onChange={handleFormSubmit} mtbEvent={mtbEvent} newEvent={false}/>
+          <EventForm onChange={handleFormSubmit} mtbEvent={mtbEvent} newEvent={false}/>
           {errorWhileSubmitting && 
             <p className="alert alert-danger">An error occured while attempting to save the event. Please check all fields are considered valid and try again.</p>
           }

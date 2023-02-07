@@ -4,7 +4,7 @@ import SelectLocation from "./SelectLocation";
 import React from "react";
 import CreateNewSemester from "./CreateNewSemester";
 
-function CreateNewEvent({mtbEvent,onChange, newEvent}){
+function EventForm({mtbEvent,onChange, newEvent}){
     const [rideStartLocation, setRideStartLocation ] = useState();
     const [liftShareLocation, setLiftShareLocation] = useState();
     const [rideName, setRideName] = useState("");
@@ -173,5 +173,5 @@ function CreateNewEvent({mtbEvent,onChange, newEvent}){
     }
 }
 
-export default CreateNewEvent;
+export default EventForm;
 
