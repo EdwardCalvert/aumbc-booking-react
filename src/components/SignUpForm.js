@@ -28,13 +28,15 @@ class SignUpForm extends Component{
             myVehicles : [],
             event: props.event,
             loading: true,
+            loadingNewCar: false,
+            errorWhileSubmittingNewVehicle :false
 
 
             }
             }       
 
-            componentDidMount(){
-                api.get("Vehicle/get-my-vehicles").then(response2 => {
+            async componentDidMount(){
+               await api.get("Vehicle/get-my-vehicles").then(response2 => {
                     if(response2.status === 200){
                         this.setState( {myVehicles: response2.data,errorWhileAddingVehicle: false});
                     }
@@ -44,13 +46,13 @@ class SignUpForm extends Component{
                 }, error=> {
                     this.setState({errorWhileAddingVehicle:true});
                 })
-                api.get("EventAcceptance/get-acceptance", { params: {eventId: this.state.event.id}}).then(response => {
+              await  api.get("EventAcceptance/get-acceptance", { params: {eventId: this.state.event.id}}).then(response => {
                     this.setState({alreadyBooked:true, inQueue:response.data.inQueue, driving: response.data.vehicleId === null ? "-1": response.data.vehicleId }) ;
-                }, error => {
+                },async  error => {
                     if(error.response.status === 404) // No event aceptance exists. 
                     {
                         this.setState({alreadyBooked: false});
-                        api.get("EventAcceptance/get-remaining-capacity", { params: {eventId: this.state.event.id}}).then(response1 => {
+                        await api.get("EventAcceptance/get-remaining-capacity", { params: {eventId: this.state.event.id}}).then(response1 => {
                             this.setState({capacityForNewPassengers: response1.data});
                         }, error => {
                             this.setState({errorWhileLoading: true})
@@ -75,23 +77,26 @@ class SignUpForm extends Component{
 
             }
 
-            handleNewCarAdded(event){
+            async handleNewCarAdded(event){
                  event.preventDefault();
+                 this.setState({loadingNewCar: true})
                  const newVehicle = {
                     mpg: this.state.newCarMpg,
                     numberOfBikeSpaces: this.state.newCarNumberOfBikeSpaces,
                     numberOfSeats: this.state.newCarNumberOfSeats,
                     petrol: this.state.newCarPetrol,
                 };
-                api.post("Vehicle",{...newVehicle}).then(response => {
+                await api.post("Vehicle",{...newVehicle}).then(response => {
                     let vehicles = this.state.myVehicles;
                     vehicles.push(response.data);
                     this.setState({myVehicles : vehicles,
-                        showAddCarForm: false})
+                        showAddCarForm: false, loading: false, driving: response.data.vehicleId})
                 },
                 error =>{
                     console.log(error);
+                    this.setState({errorWhileSubmittingNewVehicle :true})
                 });
+                this.setState({loadingNewCar: false})
             }
         
   handleEventAcceptance(event) {
@@ -101,17 +106,14 @@ class SignUpForm extends Component{
     
   }
 
-  handleEventCancellation(){
-    if(this.state.driving !== "-1"){
-         this.removeCurrentCarFromCapcity(this.state.driving);
-    }
+  async handleEventCancellation(){
     this.setState({
         driving: "-1",
         alreadyBooked: false,
         loading: true
     })
-    api.delete("EventAcceptance/cancel-acceptance",{params:{eventId : this.state.event.id}})
-    api.get("EventAcceptance/get-remaining-capacity", { params: {eventId: this.state.event.id}}).then(response1 => {
+    await api.delete("EventAcceptance/cancel-acceptance",{params:{eventId : this.state.event.id}})
+   await api.get("EventAcceptance/get-remaining-capacity", { params: {eventId: this.state.event.id}}).then(response1 => {
         this.setState({capacityForNewPassengers: response1.data});
     }, error => {
         console.log(error)
@@ -120,28 +122,11 @@ class SignUpForm extends Component{
 
   }
     updateDrivingSelector(event){
-        //Update the capacity for people on the event.
-        const currentVehicleId = this.state.driving
-        const newVehicleId = event.target.value;
-        if(currentVehicleId === "-1" && newVehicleId !== "-1") // Go from no car to a car
-        {
-           this.addNewCarToCapacity(newVehicleId)
-        }
-        else if(currentVehicleId !== "-1" && newVehicleId === "-1")// Person  was driving, but now not!
-        { 
-             this.removeCurrentCarFromCapcity(currentVehicleId)
-        }
-        else //Person has 'switched' cars
-        {
-            this.removeCurrentCarFromCapcity(currentVehicleId)
-            this.addNewCarToCapacity(newVehicleId)
-        }
         this.setState({ driving: event.target.value});
     }
 
 
     removeCarFromMyVehicles(){
-
         //Get vehicle, update visibility. Append to new list & save
         const currentVehicleId = this.state.driving
         const carToUpdate = this.state.myVehicles.find((item) => item.vehicleId === currentVehicleId)
@@ -149,27 +134,10 @@ class SignUpForm extends Component{
         const otherCars = this.state.myVehicles.filter((item )=>item.vehicleId !== currentVehicleId)
         otherCars.concat(carToUpdate)
 
-        api.delete("Vehicle", {params:{currentVehicleId}});
-        //Now change the currently selected vehicle!
-        this.removeCurrentCarFromCapcity(currentVehicleId);
-            
+        api.delete("Vehicle", {params:{currentVehicleId}});            
         this.setState({myVehicles : otherCars,
             driving :"-1",
         }); 
-    }
-    
-    //Imagine the worst possible bodge that you can think of, but it is fine, due to server side calcs!
-    addNewCarToCapacity( idToAdd){
-        const currentVehicle = this.state.myVehicles.filter(item => item.vehicleId === idToAdd)[0]
-        let minValue = Math.min(currentVehicle.numberOfBikeSpaces,currentVehicle.numberOfSeats)  ; 
-        this.setState({capacityForNewPassengers: this.state.capacityForNewPassengers + minValue});
-    }
-
-    removeCurrentCarFromCapcity(idToRemove){
-        const currentVehicle = this.state.myVehicles.filter(item => item.vehicleId === idToRemove)[0]
-        console.log(currentVehicle);
-        let minValue = Math.min(currentVehicle.numberOfBikeSpaces,currentVehicle.numberOfSeats);
-        this.setState({capacityForNewPassengers: this.state.capacityForNewPassengers - minValue});
     }
 
     toggleAddCarForm(){
@@ -186,6 +154,7 @@ class SignUpForm extends Component{
             return <div>
             <h3>Loading...</h3>
            <div className="spinner-border"></div>
+           <p>Hold on while we pump up the tyres</p>
        </div>
         }
         if(event){
@@ -200,7 +169,7 @@ class SignUpForm extends Component{
                                 <div className="col-sm-8">
                                     <select className="form-select"  onChange={this.updateDrivingSelector} value={this.state.driving}>
                                         <option value="-1" >No</option>
-                                        {myVehicles.filter((item) => item.carVisible).map((item,key)=> (<option value={item.vehicleId} key={item.vehicleId}>{item.numberOfBikeSpaces }x🚲/{item.numberOfSeats}x💺 ({item.petrol? "petrol" : "diesel"}, {item.mpg} mpg)</option>) )}
+                                        {myVehicles.filter((item) => item.carVisible).map((item,key)=> (<option value={item.vehicleId} key={item.vehicleId}>{item.numberOfSeats}x💺/{item.numberOfBikeSpaces }x🚲 ({item.petrol? "petrol" : "diesel"}, {item.mpg} mpg)</option>) )}
                                     </select>
                                     <div className="col-auto">
                                     <button className="btn btn-outline-secondary mt-3 mr-3"  type="button" onClick={this.toggleAddCarForm} >Add a new car?</button>
@@ -220,18 +189,20 @@ class SignUpForm extends Component{
                                     </div>
                                 </div>
                                 
-                                <div className="col-sm-4">
-                                    <div className="input-group">
-                                        <div className="input-group-text">🚲</div>
-                                        <select className="form-select"  name="newCarNumberOfBikeSpaces" value={this.state.newCarNumberOfBikeSpaces} onChange={this.handleFormInputChange}>
-                                        {[...Array(11).keys()].map((count, index) => <option value={index} key={index}>{count}</option>)}
-                                    </select>
-                                    </div>
-                                </div>
+                               
                                 <div className="col-sm-4">
                                     <div className="input-group">
                                         <div className="input-group-text">💺</div>
                                         <select className="form-select" name="newCarNumberOfSeats" value={this.state.newCarNumberOfSeats} onChange={this.handleFormInputChange}>
+                                        {[...Array(11).keys()].map((count, index) => <option value={index+1} key={index}>{count+1}</option>)}
+                                    </select>
+                                    <label className='form text'>The total number of seats in your vehicle</label>
+                                    </div>
+                                </div>
+                                <div className="col-sm-4">
+                                    <div className="input-group">
+                                        <div className="input-group-text">🚲</div>
+                                        <select className="form-select"  name="newCarNumberOfBikeSpaces" value={this.state.newCarNumberOfBikeSpaces} onChange={this.handleFormInputChange}>
                                         {[...Array(11).keys()].map((count, index) => <option value={index} key={index}>{count}</option>)}
                                     </select>
                                     </div>
@@ -245,10 +216,17 @@ class SignUpForm extends Component{
                                 <div className="col-auto">
                                     <button  className="btn btn-success"  type="button" onClick={this.handleNewCarAdded}>Add Car</button>
                                 </div>
+                                {this.state.errorWhileSubmittingNewVehicle &&
+                                <p className='alert alert-danger'>Unable to submit your vehicle. Please ensure you have at least one seat</p>
+                            }
+                            {this.state.loadingNewCar&&
+                                <p>Inserting...</p>
+                            }
                             </div>
                             }
+                           
                             <div className="row mb-3  gy-2">
-                                <label className='col-sm-2'>Cost for you</label>
+                                <label className='col-sm-2'>Cost</label>
                                 <div className="col-sm-8">
                                     
                                 {this.state.vehicleId!==-1? "£"+event.costForPassenger.toFixed(2): "£" + event.costForDriver.toFixed(2)}
@@ -321,11 +299,8 @@ class SignUpForm extends Component{
 
         }
         else{
-            return <p>No idea</p>
+            return <p>Very confused as to what should show here- send me a message if you can answer!</p>
         }
-
-
-       
 }
 
     paymentHelpMessage({paymentAmmount,event}){

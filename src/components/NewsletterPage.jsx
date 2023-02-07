@@ -34,6 +34,7 @@ function NewsletterPage(){
     }
     else{
         return<div>
+            <h2>Newsletter prefences</h2>
               <div className="row mb-3 gx-3 gy-2">
             <label className="col-sm-2">Subscribe?</label>
             
