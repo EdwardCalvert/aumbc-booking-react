@@ -13,6 +13,9 @@ class SignUpForm extends Component{
         this.handleEventCancellation = this.handleEventCancellation.bind(this)
         this.handleEventAcceptance = this.handleEventAcceptance.bind(this)
         this.removeCarFromMyVehicles = this.removeCarFromMyVehicles.bind(this)
+        this.paymentHelpMessage = this.paymentHelpMessage.bind(this);
+        this.markPaymentAsRecieved = this.markPaymentAsRecieved.bind(this);
+        this.submitButton = this.submitButton.bind(this);
         
         this.state = {
             errorWhileLoading: false,
@@ -29,14 +32,19 @@ class SignUpForm extends Component{
             event: props.event,
             loading: true,
             loadingNewCar: false,
-            errorWhileSubmittingNewVehicle :false
+            errorWhileSubmittingNewVehicle :false, 
+            markedAsPaidDate : null,
+            processingSubmission: false,
+            errorProcessingSubmission:  false,
+            newCarNumberOfSeats: 1
+
 
 
             }
             }       
 
             async componentDidMount(){
-               await api.get("Vehicle/get-my-vehicles").then(response2 => {
+                await api.get("Vehicle/get-my-vehicles").then(response2 => {
                     if(response2.status === 200){
                         this.setState( {myVehicles: response2.data,errorWhileAddingVehicle: false});
                     }
@@ -62,9 +70,6 @@ class SignUpForm extends Component{
                     }
                 })
                 this.setState({loading:false})
-                
-
-               
             }
             handleFormInputChange(event){
                 const target = event.target;
@@ -99,10 +104,14 @@ class SignUpForm extends Component{
                 this.setState({loadingNewCar: false})
             }
         
-  handleEventAcceptance(event) {
+  async handleEventAcceptance(event) {
     event.preventDefault();
-    api.post("EventAcceptance/accept-event",{eventId : this.state.event.id,vehicleId : this.state.driving === "-1" ? null  : this.state.driving , borrowClubBike: this.state.borrowClubBike, giveItAGo : this.state.giveItAGo})
-    .then(success => {this.setState({alreadyBooked: true, inQueue: success.data.inQueue})})
+    this.setState({processingSubmission:true});
+   await api.post("EventAcceptance/accept-event",{eventId : this.state.event.id,vehicleId : this.state.driving === "-1" ? null  : this.state.driving , borrowClubBike: this.state.borrowClubBike, giveItAGo : this.state.giveItAGo})
+    .then(success => {this.setState({alreadyBooked: true, inQueue: success.data.inQueue, processingSubmission: false, errorProcessingSubmission:false})}, errror=>{
+        this.setState({errorProcessingSubmission :true, processingSubmission :false})
+    })
+
     
   }
 
@@ -182,6 +191,7 @@ class SignUpForm extends Component{
                             </div>
                             {this.state.showAddCarForm &&
                             <div className='row gx-3 gy-2 align-items-center mb-3 offset-sm-2'>
+                                <label>The number of seats and bike spaces are total (including you)</label>
                                 <div className="col-sm-4">
                                     <div className="input-group">
                                         <input type="number" className="form-control" id="specificSizeInputGroupUsername" placeholder="45" name="newCarMpg" value={this.state.newCarMpg} onChange={this.handleFormInputChange}/>
@@ -196,7 +206,6 @@ class SignUpForm extends Component{
                                         <select className="form-select" name="newCarNumberOfSeats" value={this.state.newCarNumberOfSeats} onChange={this.handleFormInputChange}>
                                         {[...Array(11).keys()].map((count, index) => <option value={index+1} key={index}>{count+1}</option>)}
                                     </select>
-                                    <label className='form text'>The total number of seats in your vehicle</label>
                                     </div>
                                 </div>
                                 <div className="col-sm-4">
@@ -250,6 +259,9 @@ class SignUpForm extends Component{
                                 </div>
                             </div>
                             <this.submitButton state={this.state}/>
+                            {this.state.errorProcessingSubmission &&
+                                <p className='alert alert-danger'>An error occurd while processing your submission. please check all fields are valid.</p>
+                            }
                         </form>
                     
                  
@@ -257,19 +269,19 @@ class SignUpForm extends Component{
             }
             else{
                 if(!event.visible){
-                    return <div><h2>Sign up is unavailable.</h2>
+                    return <div className='sign-up-form-container'><h2>Sign up is unavailable.</h2>
                         <p>You can't sign up, since this ride was cancelled!</p>
                     </div>
                 }
                 else if(Date.parse(event.startDateTime) < Date.now()){
-                    return <div><h2>Sign up is unavailable.</h2>
+                    return <div className='sign-up-form-container'><h2>Sign up is unavailable.</h2>
                      <p>You can't sign up, since this ride has happened!</p>
                      </div>
                 }
                 else{
                     if(this.state.driving !=="-1"){
                         const drivingVehicle = this.state.myVehicles.find((item) => item.vehicleId === this.state.driving)
-                        return <div>
+                        return <div className='sign-up-form-container'>
                             <h2>You are booked as a driver</h2>
                              <p>Thanks for driving, taking {drivingVehicle.numberOfSeats} passengers with {drivingVehicle.numberOfBikeSpaces} bikes. Have a great ride.  <br/>
                              To make an ammendment, please  <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger btn-sm'>cancel current booking</button></p>
@@ -278,15 +290,15 @@ class SignUpForm extends Component{
                     }
                     else{
                         if(this.state.inQueue){
-                            return <div>
-                                <h2>You've already booked, and are waiting for a space</h2>
+                            return <div className='sign-up-form-container'>
+                                <h2>You've booked, and are waiting for a space</h2>
                                 <p>You are queueing for the ride, we'll let you know by email if a space becomes available <br/>
                                 To make an ammendment, please  <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger btn-sm' event={event}>cancel current booking</button></p>
         
                             </div>
                         }
                         else{
-                            return <div>
+                            return <div className='sign-up-form-container'>
                                 <h2>You've booked as a passenger.</h2>
                                 <p>You are attending the ride as a passenger! Have fun!<br/>
                                To make an ammendment, please <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger btn-sm'>cancel current booking</button></p>
@@ -303,11 +315,10 @@ class SignUpForm extends Component{
         }
 }
 
-    paymentHelpMessage({paymentAmmount,event}){
-
-        if(paymentAmmount>0){
+    paymentHelpMessage({paymentAmmount,event,}){
+        if(paymentAmmount>0 && this.state.markedAsPaidDate === null){
             return <React.Fragment>
-                <a href="https://settleup.starlingbank.com/glenncharlton" rel="noreferrer" target="_blank" className='btn btn-primary'>Don't forget to pay £{paymentAmmount.toFixed(2)} to cover our costs here. </a><br/>
+                <a href="https://settleup.starlingbank.com/glenncharlton" rel="noreferrer" target="_blank" className='btn btn-primary' onClick={() => this.markPaymentAsRecieved()}>Don't forget to pay £{paymentAmmount.toFixed(2)} to cover our costs here. </a><br/>
         <label className='form-text'>Please include a descriptive refrence like "{authenticationService.currentUserValue.firstName} {authenticationService.currentUserValue.lastName}  {event.name} { new Date(event.startDateTime).toLocaleDateString("en-gb")}  "</label> 
         </React.Fragment>
         
@@ -315,18 +326,28 @@ class SignUpForm extends Component{
 
     }
 
+   async markPaymentAsRecieved(){
+        console.log("Payment recieved")
+        console.log(this.state.event);
+        await api.post("Finance/mark-cost-as-paid",this.state.event.id).then(success =>{console.log(success);
+            this.setState({markedAsPaidDate: success.data});
+        });
+    }
+    
+
     shouldSignUpFormBeShown(){
         return !this.state.alreadyBooked && this.state.event.visible && Date.parse(this.state.event.startDateTime) > Date.now();
     }
 
     submitButton({state}){
         if( state.driving === "-1" && state.capacityForNewPassengers  ===0){
-            return <div><button type="submit" className="btn btn-warning offset-sm-2">Join wating list</button>
+            return <div><button type="submit" className="btn btn-warning offset-sm-2" disabled={this.state.processingSubmission}><span className={this.state.processingSubmission? "spinner-border spinner-border-sm":""} role="status" aria-hidden="true"></span>
+Join wating list</button>
             <p className='form-text offset-sm-2'>Upon submission, your queue position is recorded and we'll send you confirmation message. You will be notified by email if a space becomes available for you.</p>
             </div>
         }
         else{
-            return <button type="submit" className="btn btn-success offset-sm-2">Submit</button>
+            return <button type="submit"  disabled={this.state.processingSubmission} className="btn btn-success offset-sm-2"><span className={this.state.processingSubmission? "spinner-border spinner-border-sm":""} role="status" aria-hidden="true"></span> Submit</button>
         }
     }
   }

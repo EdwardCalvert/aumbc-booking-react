@@ -25,10 +25,11 @@ function Login(){
   }
   
   async function handleLogin(e) {
+    setProcessingLogin(true);
     if(e){
     e.preventDefault();
     }
-    authenticationService.login(emailAddress, otp).then(
+    await authenticationService.login(emailAddress, otp).then(
       user => {
         const queryString = window.location.href.split("?")[1];
         const urlParams = new URLSearchParams(queryString);
@@ -52,7 +53,9 @@ function Login(){
       error => {
        setErrorWhileLoggingIn(true);
       }
+      
   );
+  setProcessingLogin(false);
   }
   
   function validEmail(email){
@@ -69,7 +72,6 @@ function Login(){
       setOtpSent(true);
     }, 
     error => {
-      console.log(error)
       setRegistrationSuccessful(false);
     })
     setProcessingRegistration(false);
@@ -87,9 +89,13 @@ function Login(){
   const [otp, setOtp] = useState(defaultOTP);
   const [otpFailedToSend, setotpFailedToSend] = useState(false);
   const [otpSent ,setOtpSent] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState (false);
+
+  const [processingLogin, setProcessingLogin] = useState(false);
+
   const [errorWhileLoggingIn, setErrorWhileLoggingIn] = useState(false);
   const [processingRegistration, setProcessingRegistration] = useState(false);
-  const [sendingOtp, setSendingOtp] = useState (false);
+
  
   ///Registration data
   const [registerEmailAddress, setReigisterEmailAddress] = useState("");
@@ -113,21 +119,15 @@ function Login(){
                         <input type="email" className="form-control" id="inputEmail3" placeholder='gwen@livet.com' disabled={otpSent} value={emailAddress}
                 onChange={onChangeEmailAddress} required/> 
                     </div>
-                    <div className='col-sm-2'><button type="submit"  disabled={!(validEmail(emailAddress) && !otpSent)} className="btn btn-primary">Send OTP</button></div>
+                    <div className='col-sm-2'><button type="submit"  disabled={!(validEmail(emailAddress) && !otpSent && !sendingOtp)} className="btn btn-primary">
+                    <span class={sendingOtp? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Send OTP</button></div>
                     <label className='form-text offset-sm-2'>A one-time-passcode will be sent to your email address</label>
                 </div>
-                {sendingOtp&&
-                <div>
-                <h3>We're sending your OTP faster than royal mail...</h3>
-               <div className="spinner-border"></div>
-           </div>
-
-                }
                 {otpSent &&
                   <p className="alert alert-success">OTP sent to {emailAddress}</p>
                 }
                 {otpFailedToSend && 
-                  <p className="alert alert-danger">Unable to send OTP to  {emailAddress}. You can only request a second token after 1 minute.</p>
+                  <p className="alert alert-danger">Unable to send OTP to  {emailAddress}. Does an account with that email exist.  You can only request a second token after 1 minute, so please check your spam folder!</p>
                 }
                 </form>
                 <form className='mb-3' onSubmit={handleLogin} >
@@ -136,10 +136,11 @@ function Login(){
                     <div className="col-sm-6">
                         <input type="text" className="form-control" id="inputEmail3" placeholder='12345678'  disabled={!validEmail(emailAddress)} value={otp} onChange={onChangeOtp} required/>
                     </div>
-                    <div className='col-sm-2'><button type="submit" disabled={!(otp.length >=6 && validEmail(emailAddress))} className="btn btn-primary">Login</button></div>
+                    <div className='col-sm-2'><button type="submit" disabled={!(otp.length >=6 && validEmail(emailAddress) && !processingLogin) } className="btn btn-primary">
+                    <span class={processingLogin? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Login</button></div>
                 </div>
                 {errorWhileLoggingIn &&
-                  <p class=" alert alert-danger">Error while logging in. Likely your emailAddress or OTP was incorrect. </p>
+                  <p className=" alert alert-danger">Error while logging in. Likely your emailAddress or OTP was incorrect. </p>
                 }
 
                 </form>

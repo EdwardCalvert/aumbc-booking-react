@@ -1,8 +1,8 @@
 import {useEffect, useState } from 'react';
-import api from './../services/api.js';
+import api from '../services/api.js';
 import { Link } from 'react-router-dom';
 
-function UnpaidDrivers(){
+function UnpaidDriversPage(){
     const [errorWhileLoading, setErrorWhileLoading] = useState(false);
     const [loading, setLoading] = useState(true);
     const [rows, setRows] = useState();
@@ -34,7 +34,7 @@ function UnpaidDrivers(){
         console.log(event);
     }
 
-    return <div><h2>Not implemented yet!</h2>
+    return <div><h2>Drivers that have not been paid yet</h2>
     {!loading && rows &&
         <div>
         { Object.entries(rows).map(([emailAddress, value])=>
@@ -95,4 +95,4 @@ function UnpaidDrivers(){
     // }
 }
 
-export default UnpaidDrivers;
+export default UnpaidDriversPage;

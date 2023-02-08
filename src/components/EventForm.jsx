@@ -131,7 +131,7 @@ function EventForm({mtbEvent,onChange, newEvent}){
             <label className="col-sm-2">End date & time</label>
             <div className="col-sm-5">
                 <input type="datetime-local" value={endDate}  onChange={(e) => {setEndDate(e.target.value)}}className="form-control" required/>
-                <span class="validity"></span>
+                <span className="validity"></span>
                 {endDate <= startDate &&
                     <p className="alert alert-danger">The event must end later than it starts!  </p>
                 }
@@ -145,7 +145,7 @@ function EventForm({mtbEvent,onChange, newEvent}){
                         <span className="input-group-text">£</span>
                     </div>
                     <input step={0.01}  min={0} max={500} type='number' className="form-control" value={costForPassenger} onChange={(e)=>setCostForPassenger(e.target.value)} />
-                    <span class="validity"></span>
+                    <span className="validity"></span>
                 </div>
             </div>
         </div>
@@ -157,7 +157,7 @@ function EventForm({mtbEvent,onChange, newEvent}){
                         <span className="input-group-text">£</span>
                     </div>
                     <input  step={0.01}  min={0} max={500} type='number' className="form-control" value={costForDriver} onChange={(e)=> setCostForDriver(e.target.value)} />
-                    <span class="validity"></span>
+                    <span className="validity"></span>
                 </div>
             </div>
         </div>

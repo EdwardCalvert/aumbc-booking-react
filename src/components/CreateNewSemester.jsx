@@ -80,8 +80,8 @@ function CreateNewSemester({value,onChange,allowCreatingNewSemesters}){
         <label>Diesel price</label>
         <div className='input-group'>
         <input type='number' className='form-control'value={dieselPrice} onChange={(e)=> setDieselPrice(e.target.value)} step={0.01} min={0} max={1000} required/>
-        <div class="input-group-prepend">
-         <span class="input-group-text">p</span>
+        <div className="input-group-prepend">
+         <span className="input-group-text">p</span>
          </div>
         </div>
          <span className="validity"></span>
@@ -90,8 +90,8 @@ function CreateNewSemester({value,onChange,allowCreatingNewSemesters}){
         <label>Petrol price</label>
         <div className='input-group'>
         <input type='number' className='form-control'value={petrolPrice} onChange={(e)=> setPetrolPrice(e.target.value)} step={0.01} min={0} max={1000} required/>
-        <div class="input-group-append">
-    <span class="input-group-text">p</span>
+        <div className="input-group-append">
+    <span className="input-group-text">p</span>
     </div>
   </div>
         <span className="validity"></span>

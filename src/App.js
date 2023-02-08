@@ -12,10 +12,12 @@ import RequireAuth from './components/RequireAuth';
 import Logout from './components/Logout';
 import AdminHomePage from './components/AdminHomePage';
 import EditEventPage from './components/EditEventPage';
-import MyAccount from './components/MyAccount';
 import NewsletterPage from './components/NewsletterPage';
-import UnpaidDrivers from './components/UnpaidDrivers';
+import UnpaidDriversPage from './components/UnpaidDriversPage';
 import CreateNewEventPage from './components/CreateNewEventPage';
+import RidesAttendedPage from './components/RidesAttendedPage';
+import AdminManagementPage from './components/AdminManagementPage';
+import PeopleAttendingRidePage from './components/PeopleAttendingRidePage';
 
 
 class App extends React.Component {
@@ -49,16 +51,19 @@ class App extends React.Component {
               <Route path="/login" element={<Login/>}/>
               <Route path="/event/:id" element={<RequireAuth><EventDetails/></RequireAuth>}/>
               <Route path="/event/edit/:id" element={<RequireAuth role={Role.Admin}><EditEventPage/></RequireAuth>}/>
+              <Route path="/event/riders/:id" element={<RequireAuth role={Role.Admin}><PeopleAttendingRidePage/></RequireAuth>}/>
               <Route path="/" element={<RequireAuth><EventList /></RequireAuth>}/>
               <Route path="/email-settings" element={<RequireAuth><NewsletterPage /></RequireAuth>}/>
-              <Route path="/my-account" element={<RequireAuth><MyAccount /></RequireAuth>}/>
+              <Route path="/my-account" element={<RequireAuth><RidesAttendedPage /></RequireAuth>}/>
               <Route path="/logout" element={<Logout/>}/>
 
               {/* Admin related components */}
               <Route path="/admin" element={<RequireAuth roles={Role.Admin}><AdminHomePage/></RequireAuth>}/>
-              <Route path="/admin/unpaid-drivers" element={<RequireAuth roles={Role.Admin}><UnpaidDrivers /></RequireAuth>}/>
+              <Route path="/admin/unpaid-drivers" element={<RequireAuth roles={Role.Admin}><UnpaidDriversPage /></RequireAuth>}/>
+              <Route path="/admin/manage/uypmwgkdh,lzxupg" element={<AdminManagementPage/>}></Route>
               <Route path="/admin/new-event/" element={<RequireAuth roles={Role.Admin}><CreateNewEventPage/></RequireAuth>}/>
               <Route path="*" element={<p> There is nothing at this page</p>}/>
+             
           </Routes>
           <Footer/>
         </div>

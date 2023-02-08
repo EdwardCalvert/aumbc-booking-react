@@ -6,6 +6,7 @@ import { useParams, Link } from "react-router-dom";
 import CopyWhat3Words from "./CopyWhat3Words";
 import authenticationService from "../services/authentication.service";
 import api from './../services/api';
+import PeopleAttendingRidePage from "./PeopleAttendingRidePage";
 
 class EventDetailsRenderer extends Component {
 
@@ -97,6 +98,7 @@ class EventDetailsRenderer extends Component {
                 </div>
                 }
                 {authenticationService.currentUserValue&&
+                <React.Fragment>
                 <div className="row mb-3 gx-3 gy-2">
                 <label className="col-sm-2">Admin Controls</label>
                   <div className="col-sm-10">
@@ -104,6 +106,8 @@ class EventDetailsRenderer extends Component {
                   <Link to={"/event/edit/"+this.state.id} ><button className="btn btn-primary btn-block mb-3 me-1 ">Ammend ride</button></Link><button className="btn btn-danger  mb-3 btn-block ">Cancel ride</button>
                   </div>
                   </div>
+                  <PeopleAttendingRidePage/>
+                  </React.Fragment>
                 }
            
              
