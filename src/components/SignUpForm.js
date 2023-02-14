@@ -44,7 +44,7 @@ class SignUpForm extends Component{
             }       
 
             async componentDidMount(){
-                await api.get("Vehicle/get-my-vehicles").then(response2 => {
+                await Promise.all([api.get("Vehicle/get-my-vehicles").then(response2 => {
                     if(response2.status === 200){
                         this.setState( {myVehicles: response2.data,errorWhileAddingVehicle: false});
                     }
@@ -53,8 +53,8 @@ class SignUpForm extends Component{
                     }
                 }, error=> {
                     this.setState({errorWhileAddingVehicle:true});
-                })
-              await  api.get("EventAcceptance/get-acceptance", { params: {eventId: this.state.event.id}}).then(response => {
+                }),
+                 api.get("EventAcceptance/get-acceptance", { params: {eventId: this.state.event.id}}).then(response => {
                     this.setState({alreadyBooked:true, inQueue:response.data.inQueue, driving: response.data.vehicleId === null ? "-1": response.data.vehicleId }) ;
                 },async  error => {
                     if(error.response.status === 404) // No event aceptance exists. 
@@ -64,11 +64,10 @@ class SignUpForm extends Component{
                             this.setState({capacityForNewPassengers: response1.data});
                         }, error => {
                             this.setState({errorWhileLoading: true})
-                            console.log(error)
                         })
                        
                     }
-                })
+                })]); 
                 this.setState({loading:false})
             }
             handleFormInputChange(event){

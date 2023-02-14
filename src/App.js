@@ -45,6 +45,7 @@ class App extends React.Component {
     return (
       <HashRouter >
         <div className='m-2'>
+          <div className='alert alert-warning text-center'>The site is in Beta, please let us know of any issues <a href='https://github.com/EdwardCalvert/aumbc-booking-react/issues/new' target="_blank"> here</a></div>
           <Navbar/>
           <div className='container'>
             <Routes>
