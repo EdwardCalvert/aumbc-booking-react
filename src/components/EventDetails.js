@@ -19,7 +19,18 @@ class EventDetailsRenderer extends Component {
       dataFetched : false,
       errorWhileFetching: false,
     };
+    this.cancelEvent = this.cancelEvent.bind(this)
     
+  }
+
+  cancelEvent(e){
+
+     api.delete("/mtbEvent/"+this.state.id).then(success =>{}, error =>{ this.setState({errorWhileFetching : true})})
+    const newEvent = this.state.event
+    newEvent.visible = false
+    this.setState({
+      event: newEvent
+    })
   }
 
   componentDidMount(){
@@ -103,7 +114,7 @@ class EventDetailsRenderer extends Component {
                 <label className="col-sm-2">Admin Controls</label>
                   <div className="col-sm-10">
                   
-                  <Link to={"/event/edit/"+this.state.id} ><button className="btn btn-primary btn-block mb-3 me-1 ">Ammend ride</button></Link><button className="btn btn-danger  mb-3 btn-block ">Cancel ride</button>
+                  <Link to={"/event/edit/"+this.state.id} ><button className="btn btn-primary btn-block mb-3 me-1 ">Ammend ride</button></Link><button onClick={this.cancelEvent} className="btn btn-danger  mb-3 btn-block ">Cancel ride</button>
                   </div>
                   </div>
                   <PeopleAttendingRidePage/>

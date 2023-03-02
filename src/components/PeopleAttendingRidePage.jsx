@@ -36,7 +36,7 @@ function PeopleAttendingRidePage(){
             <th scope="col">Name</th>
             <th scope="col">💺</th>
             <th scope="col">🚲</th>
-            <th scope="col">In Queue</th>
+            <th scope="col">Transport</th>
             <th scope="col">Club bike</th>
             <th scope="col">Give it a Go</th>
             </tr>
@@ -47,7 +47,7 @@ function PeopleAttendingRidePage(){
                
                 <td>{item.numberOfSeats? item.numberOfSeats :"-"}</td>
                 <td>{item.numberOfBikeSpaces ? item.numberOfSeats : "-"}</td>
-                <td>{item.inQueue?"Yes":"No"}</td>
+                <td>{item.inQueue?"Waiting as a passenger":"No"}</td>
                 <td>{item.borrowClubBike ?"Yes" :"-"}</td>
                 <td>{item.giveItAGo?"Yes" : "-"}</td>
             </tr>)

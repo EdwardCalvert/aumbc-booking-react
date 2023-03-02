@@ -30,8 +30,8 @@ class EventList extends Component{
                       </div>
                   </React.Fragment>
               }
-              { this.state.dataFetched&& events.length === 0&&
-                <h3>There are no upcoming events- please check back soon.</h3>
+              { this.state.dataFetched&& events.length === 0 && !this.state.errorWhileFetch&&
+                <h3>There are no upcoming events</h3>
               }
               {this.state.errorWhileFetch &&
                 <p className='alert alert-danger'>An error occured while attempting to load the events.</p>

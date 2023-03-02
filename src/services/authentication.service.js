@@ -9,6 +9,7 @@ export const authenticationService = {
     logout,
     register,
     sendOtp,
+    updateToken,
     currentUser: currentUserSubject.asObservable(),
     get currentUserValue () { return tokenService.getApiTokenResponse() }
 };
@@ -17,8 +18,8 @@ function sendOtp(emailAddress){
   return api.get("auth/sendOTP", {
   params :{emailAddress}});
 }
-function login(email, otp) {
-  return api
+async function login(email, otp) {
+  return  await api
     .post("/auth/login", {
       email,
       otp
@@ -32,6 +33,10 @@ function login(email, otp) {
             }
       return response.data;
     });
+}
+
+function updateToken(token){
+  currentUserSubject.next(token);
 }
 
 

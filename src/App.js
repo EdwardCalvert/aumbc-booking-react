@@ -10,7 +10,6 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import React from 'react';
 import RequireAuth from './components/RequireAuth';
 import Logout from './components/Logout';
-import AdminHomePage from './components/AdminHomePage';
 import EditEventPage from './components/EditEventPage';
 import NewsletterPage from './components/NewsletterPage';
 import UnpaidDriversPage from './components/UnpaidDriversPage';
@@ -18,6 +17,8 @@ import CreateNewEventPage from './components/CreateNewEventPage';
 import RidesAttendedPage from './components/RidesAttendedPage';
 import AdminManagementPage from './components/AdminManagementPage';
 import PeopleAttendingRidePage from './components/PeopleAttendingRidePage';
+import ListEventsBySemester from './components/ListEventsBySemester';
+import PaidDriversPage from './components/PaidDriversPage';
 
 
 class App extends React.Component {
@@ -47,7 +48,7 @@ class App extends React.Component {
         <div className='m-2'>
           <div className='alert alert-warning text-center'>The site is in Beta, please let us know of any issues <a href='https://github.com/EdwardCalvert/aumbc-booking-react/issues/new' target="_blank"> here</a></div>
           <Navbar/>
-          <div className='container'>
+          <div className='container div-body'>
             <Routes>
               <Route path="/login" element={<Login/>}/>
               <Route path="/event/:id" element={<RequireAuth><EventDetails/></RequireAuth>}/>
@@ -59,10 +60,11 @@ class App extends React.Component {
               <Route path="/logout" element={<Logout/>}/>
 
               {/* Admin related components */}
-              <Route path="/admin" element={<RequireAuth roles={Role.Admin}><AdminHomePage/></RequireAuth>}/>
               <Route path="/admin/unpaid-drivers" element={<RequireAuth roles={Role.Admin}><UnpaidDriversPage /></RequireAuth>}/>
-              <Route path="/admin/manage/uypmwgkdh,lzxupg" element={<AdminManagementPage/>}></Route>
+              <Route path="/admin/paid-drivers" element={<RequireAuth roles={Role.Admin}><PaidDriversPage /></RequireAuth>}/>
+              <Route path="/admin/manage" element={<AdminManagementPage/>}></Route>
               <Route path="/admin/new-event/" element={<RequireAuth roles={Role.Admin}><CreateNewEventPage/></RequireAuth>}/>
+              <Route path="/admin/list-events" element={<RequireAuth roles={Role.Admin}><ListEventsBySemester/></RequireAuth>} />
               <Route path="*" element={<p> There is nothing at this page</p>}/>
              
           </Routes>

@@ -13,10 +13,19 @@ function Login(){
   async function handleEmailProvided(e){
     e.preventDefault();
     setSendingOtp(true);
-   await authenticationService.sendOtp(emailAddress).then( () => {setotpFailedToSend(false); setOtpSent(true);}
-      ,()=>setotpFailedToSend(true));
+   await authenticationService.sendOtp(emailAddress).then( () => {setotpFailedToSend(false); setOtpSent(true); setRateLimitExceeded(false); setSendingOtp(false);}
+      ,error=>{
+        console.log(error)
+      if(error.response.status === 429){
+        setRateLimitExceeded(true);
+        setotpFailedToSend(false);
+      }
+      else{
+        setErrorMessage(error.response.data);
+        setotpFailedToSend(true);
+      }
       setSendingOtp(false);
-    
+    });
   }
 
   function onChangeOtp(e) {
@@ -51,7 +60,9 @@ function Login(){
           
       },
       error => {
-       setErrorWhileLoggingIn(true);
+
+          setErrorWhileLoggingIn(true);
+      
       }
       
   );
@@ -93,7 +104,10 @@ function Login(){
 
   const [processingLogin, setProcessingLogin] = useState(false);
 
+  const [attemptedAutomaticLogin,setAttemptedAutomaticLogin] = useState(false);
   const [errorWhileLoggingIn, setErrorWhileLoggingIn] = useState(false);
+  const [rateLimitExceeded, setRateLimitExceeded] = useState(false);
+  const [errorMessage,setErrorMessage] = useState("");
   const [processingRegistration, setProcessingRegistration] = useState(false);
 
  
@@ -105,7 +119,11 @@ function Login(){
   const [registrationSubmited, setRegistrationSubmitted] = useState(false);
   const [registrationSuccessfull, setRegistrationSuccessful] = useState(true);
 
-  if(urlParams.has('email') && urlParams.has('otp')){
+  if(urlParams.has('email') && urlParams.has('otp') && !attemptedAutomaticLogin){
+    console.log(urlParams)
+    console.log(defaultOTP)
+    console.log(otp)
+    setAttemptedAutomaticLogin(true);
     handleLogin();
   }
   return <React.Fragment>
@@ -126,8 +144,11 @@ function Login(){
                 {otpSent &&
                   <p className="alert alert-success">OTP sent to {emailAddress}</p>
                 }
+                {rateLimitExceeded &&
+                    <p className="alert alert-warning">You must wait 1 minute before requesting another OTP. In the meantime, please check your spam folder!</p>
+                }
                 {otpFailedToSend && 
-                  <p className="alert alert-danger">Unable to send OTP to  {emailAddress}. Does an account with that email exist.  You can only request a second token after 1 minute, so please check your spam folder!</p>
+                  <p className="alert alert-danger">{errorMessage}</p>
                 }
                 </form>
                 <form className='mb-3' onSubmit={handleLogin} >
@@ -139,6 +160,7 @@ function Login(){
                     <div className='col-sm-2'><button type="submit" disabled={!(otp.length >=6 && validEmail(emailAddress) && !processingLogin) } className="btn btn-primary">
                     <span class={processingLogin? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Login</button></div>
                 </div>
+                
                 {errorWhileLoggingIn &&
                   <p className=" alert alert-danger">Error while logging in. Likely your emailAddress or OTP was incorrect. </p>
                 }

@@ -11,7 +11,7 @@ function EditEventPage(props){
     let navigate = useNavigate();
 
     function handleFormSubmit(e){
-        api.patch("MtbEvent", e).then(success =>{
+        api.patch("MtbEvent", {...e, id: id }).then(success =>{
             setErrorWhileSubmitting(false);
 
             navigate(`/event/${id}`,{ replace: true });

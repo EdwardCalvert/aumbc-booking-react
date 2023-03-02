@@ -173,11 +173,12 @@ class SignUpForm extends Component{
                 <form className='mb-3 mt-3' onSubmit={this.handleEventAcceptance}>
                         <p>Fill in this form as a passenger or as a driver who took passengers (so you can be reimbursed for your fuel costs). Please view the important information for loading <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">bikes with mudguards</a>.</p>
                             <div className="row mb-3 gx-3 gy-2">
-                                <label className='col-sm-2'>Will you drive?</label>
+                                <label className='col-sm-2'>How will you get there?</label>
                                 <div className="col-sm-8">
                                     <select className="form-select"  onChange={this.updateDrivingSelector} value={this.state.driving}>
-                                        <option value="-1" >No</option>
-                                        {myVehicles.filter((item) => item.carVisible).map((item,key)=> (<option value={item.vehicleId} key={item.vehicleId}>{item.numberOfSeats}x💺/{item.numberOfBikeSpaces }x🚲 ({item.petrol? "petrol" : "diesel"}, {item.mpg} mpg)</option>) )}
+                                        <option value="-1" >I'll use the lift share</option>
+                                        <option value="-2" >I'll make my own way there </option>
+                                        {myVehicles.filter((item) => item.carVisible).map((item,key)=> (<option value={item.vehicleId} key={item.vehicleId}>I'll drive, with a total of  {item.numberOfSeats}x💺/{item.numberOfBikeSpaces }x🚲 ({item.petrol? "petrol" : "diesel"}, {item.mpg} mpg)</option>) )}
                                     </select>
                                     <div className="col-auto">
                                     <button className="btn btn-outline-secondary mt-3 mr-3"  type="button" onClick={this.toggleAddCarForm} >Add a new car?</button>

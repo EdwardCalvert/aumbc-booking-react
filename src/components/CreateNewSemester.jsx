@@ -57,7 +57,7 @@ function CreateNewSemester({value,onChange,allowCreatingNewSemesters}){
     }
     const isUserAdmin = authenticationService.currentUserValue.role === Role.Admin;
     if(errorWithApi){
-        return <p className='alert alert-danger'>Create new semester object failed.</p>
+        return <p className='alert alert-danger'>Unable to load semesters</p>
     }
     else{
     return <div><select className='form-select' onChange={onSelectionChanged} value={selectedValue} >

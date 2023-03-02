@@ -1,3 +1,5 @@
+import authenticationService from "./authentication.service";
+import api from "./api";
 class TokenService {
     getLocalRefreshToken() {
       const user = JSON.parse(localStorage.getItem("user"));
@@ -15,7 +17,17 @@ class TokenService {
     }
   
     saveApiTokenResponse(user) {
+      authenticationService.updateToken(JSON.stringify(user));
       localStorage.setItem("user", JSON.stringify(user));
+    }
+
+   async updateRefreshToken(){
+      await api.post("/auth/refresh-token", {
+        accessToken : this.getLocalAccessToken(),
+        refreshToken: this.getLocalRefreshToken()
+      }).then(success =>{
+        this.saveApiTokenResponse(success.data)
+      } )
     }
   
     removeUser() {

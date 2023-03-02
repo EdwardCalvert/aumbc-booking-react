@@ -5,7 +5,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import AUMBCPhoto from "./AUMBCPhoto";
 import { Link } from "react-router-dom";
 import authenticationService from "../services/authentication.service";
-
+import Role from "../_helpers/role";
+import { NavDropdown } from "react-bootstrap";
 
 function AUMBCNav (){
   const [expanded, setExpanded] = useState(false);
@@ -18,12 +19,30 @@ return (<Navbar bg="white" expand="lg" expanded={expanded}>
           <Link onClick={() => setExpanded(false)} to="/" className="nav-link">Events</Link>
           <Link onClick={() => setExpanded(false)} to="/my-account" className="nav-link">My rides</Link>
           <Link onClick={() => setExpanded(false)} to="/email-settings" className="nav-link">Newsletter preference</Link>
+          <AdminControls onClick={() => setExpanded(false)}/>
           <LoginLogout onClick={() => setExpanded(false)}/>
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>)
 
+}
+
+function AdminControls({onClick}){
+  const currentUser = authenticationService.currentUserValue
+  console.log(Role.Admin)
+  console.log(currentUser.role)
+  if( currentUser && currentUser.role.indexOf(Role.Admin) !== -1){
+    return <React.Fragment> 
+       <NavDropdown title="Admin Controls" id="basic-nav-dropdown"> 
+       <NavDropdown.Item > <Link onClick={onClick} to="/admin/new-event" className="dropdown-item">New event</Link></NavDropdown.Item>
+       <NavDropdown.Item > <Link onClick={onClick} to="/admin/unpaid-drivers" className="dropdown-item">Outstanding pay-outs</Link></NavDropdown.Item>
+       <NavDropdown.Item > <Link onClick={onClick} to="/admin/paid-drivers" className="dropdown-item">Receipts for pay-outs</Link></NavDropdown.Item>
+       <NavDropdown.Item > <Link onClick={onClick} to="/admin/list-events" className="dropdown-item">Rides this semester</Link></NavDropdown.Item>
+       <NavDropdown.Item > <Link onClick={onClick} to="/admin/manage" className="dropdown-item">Manage users</Link></NavDropdown.Item>
+            </NavDropdown>
+    </React.Fragment>
+  }
 }
 
 function LoginLogout({onClick}){

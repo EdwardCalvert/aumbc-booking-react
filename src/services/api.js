@@ -3,6 +3,7 @@ import authenticationService from "./authentication.service";
 import { useNavigate } from "react-router-dom";
 import TokenService from "./token.service";
  ///https://aumbc-api-server-v2-production.up.railway.app/api/
+ //https://localhost:7260/api
 const instance = axios.create({
   baseURL: (!process.env.NODE_ENV || process.env.NODE_ENV === 'development')? "https://localhost:7260/api":  "https://aumbc-api-server-v2-production.up.railway.app/api/",
   headers: {
@@ -24,44 +25,142 @@ instance.interceptors.request.use(
   }
 );
 
-instance.interceptors.response.use(
-  (res) => {
-    return res;
-  },
-  async (err) => {
-    const originalConfig = err.config;
+let isRefreshing = false;
+ let failedQueue = [];
 
-    if (originalConfig.url !== "/auth/login" && err.response) {
-      // Access Token was expired
-      if (err.response.status === 401 && !originalConfig._retry) {
-        originalConfig._retry = true;
-
-        try {
-          const rs = await instance.post("/auth/refresh-token", {
-
-            accessToken : TokenService.getLocalAccessToken(),
-            refreshToken: TokenService.getLocalRefreshToken(),
-          }.then(success => {
-
-          }, error =>{
-            useNavigate("/logout",{replace:true});
-          } ));
-
-          console.log("Proabably need more casting of types- email etc.")
-          console.log(rs.data)
-          const { accessToken } = rs.data;
-          TokenService.saveApiTokenResponse(accessToken);
-          authenticationService.currentUser.next(JSON.stringify(rs.data));
-
-          return instance(originalConfig);
-        } catch (_error) {
-          return Promise.reject(_error);
+const processQueue = (error) => {
+    failedQueue.forEach(prom => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve();
         }
-      }
+    });
+    if(error){
+      authenticationService.logout();
     }
 
-    return Promise.reject(err);
-  }
+    failedQueue = [];
+};
+
+instance.interceptors.response.use(
+  async (res) => {
+    return res;
+  },
+   async (err) => {
+    const originalRequest = err.config;
+   if (err.response.status === 401 && !originalRequest._retry) {
+       if (isRefreshing) {
+           return new Promise(function(resolve, reject) {
+               failedQueue.push({ resolve, reject });
+           })
+               .then(() => {
+                   originalRequest.headers['Authorization'] = 'Bearer ' + TokenService.getLocalAccessToken();
+                   return axios(originalRequest);
+               })
+               .catch(err => {
+                   return Promise.reject(err);
+               });
+       }
+
+       originalRequest._retry = true;
+       isRefreshing = true;
+
+       return new Promise(function(resolve, reject) {
+            TokenService.updateRefreshToken()
+               .then(() => {
+                   axios.defaults.headers.common['Authorization'] = 'Bearer ' + TokenService.getLocalAccessToken();
+                   originalRequest.headers['Authorization'] = 'Bearer ' + TokenService.getLocalAccessToken();
+                   processQueue(null,);
+                   resolve(axios(originalRequest));
+               })
+               .catch(err => {
+                   processQueue(err, null);
+                  //  store.dispatch(showMessage({ message: 'Expired Token' }));
+                  console.log("STUPIIDD - failure")
+
+                   reject(err);
+               })
+               .then(() => {
+                   isRefreshing = false;
+               });
+       });
+   }
+
+   return Promise.reject(err);
+} 
+
+
+//Fully working - but I can do better! __________________________________________
+// {
+//   const originalRequest = err.config;
+//  if (err.response.status === 401 && !originalRequest._retry) {
+//      if (isRefreshing) {
+//          return new Promise(function(resolve, reject) {
+//              failedQueue.push({ resolve, reject });
+//          })
+//              .then(token => {
+//                  originalRequest.headers['Authorization'] = 'Bearer ' + token;
+//                  return axios(originalRequest);
+//              })
+//              .catch(err => {
+//                  return Promise.reject(err);
+//              });
+//      }
+
+//      originalRequest._retry = true;
+//      isRefreshing = true;
+
+//      return new Promise(function(resolve, reject) {
+//           TokenService.updateRefreshToken()
+//              .then(() => {
+//                  axios.defaults.headers.common['Authorization'] = 'Bearer ' + TokenService.getLocalAccessToken();
+//                  originalRequest.headers['Authorization'] = 'Bearer ' + TokenService.getLocalAccessToken();
+//                  processQueue(null, TokenService.getLocalAccessToken());
+//                  resolve(axios(originalRequest));
+//              })
+//              .catch(err => {
+//                  processQueue(err, null);
+//                 //  store.dispatch(showMessage({ message: 'Expired Token' }));
+//                 console.log("STUPIIDD - failure")
+
+//                  reject(err);
+//              })
+//              .then(() => {
+//                  isRefreshing = false;
+//              });
+//      });
+//  }
+
+//  return Promise.reject(err);
+// }
+////END _________________________________________________
+
+
+  //   const originalConfig = err.config;
+
+  //   if (originalConfig.url != "/auth/refresh-token"&&  err.response && authenticationService.currentUserValue &&  err.response.status === 401 && !originalConfig._retry) //originalConfig.url !== "/auth/login" && originalConfig.url !== "/auth/refresh-token" && 
+  //   {
+  //       try {
+  //         originalConfig._retry = true;
+  //          await TokenService.updateRefreshToken().then(async () => {
+  //         originalConfig.headers["Authorization"] = 'Bearer ' + TokenService.getLocalAccessToken();
+  //         return await axios(originalConfig);
+
+  //         }, () =>{
+  //           //User is unalbe to use the token, so we'll log them out. 
+  //          authenticationService.logout();
+  //         } );
+  //       } 
+  //       catch (_error) {
+  //         authenticationService.logout()
+  //         return Promise.reject(_error);
+  //       }
+      
+  //   }
+
+  //   return Promise.reject(err);
+  // }
 );
 
 export default instance;

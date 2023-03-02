@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+
 }
 
 .App-logo {
@@ -19,6 +20,16 @@
 }
 .no-bullets {
   list-style-type: none;
+}
+
+.div-body{
+  min-height: calc( 100vh - 200px);
+    display: flex;
+    flex-direction: column;
+}
+
+.footer{
+  margin-top: auto;
 }
 
 .EventTile-image{
