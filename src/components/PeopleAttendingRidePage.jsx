@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import authenticationService from "../services/authentication.service";
 import api from './../services/api'
 function PeopleAttendingRidePage(){
     const id = useParams().id
@@ -42,7 +43,8 @@ function PeopleAttendingRidePage(){
             </tr>
         </thead>
         <tbody>
-            {rows.map((item, index) =><tr scope="row"  key={index}>
+          
+            {rows.map((item, index) =>   <React.Fragment  key={index}><tr scope="row" >
                 <td>{item.firstName} {item.lastName}</td>
                
                 <td>{item.numberOfSeats? item.numberOfSeats :"-"}</td>
@@ -50,9 +52,12 @@ function PeopleAttendingRidePage(){
                 <td>{item.inQueue?"Waiting as a passenger":"No"}</td>
                 <td>{item.borrowClubBike ?"Yes" :"-"}</td>
                 <td>{item.giveItAGo?"Yes" : "-"}</td>
-            </tr>)
-
+            </tr>
+            { authenticationService.isAdmin() && item.otherComments &&
+                <tr><td  style={{whiteSpace: 'pre-line'}} colSpan={6}>{item.otherComments}</td></tr>
             }
+            </React.Fragment>
+            )}
             
         </tbody>
     </table>

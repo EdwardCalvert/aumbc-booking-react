@@ -30,16 +30,14 @@ return (<Navbar bg="white" expand="lg" expanded={expanded}>
 
 function AdminControls({onClick}){
   const currentUser = authenticationService.currentUserValue
-  console.log(Role.Admin)
-  console.log(currentUser.role)
   if( currentUser && currentUser.role.indexOf(Role.Admin) !== -1){
     return <React.Fragment> 
        <NavDropdown title="Admin Controls" id="basic-nav-dropdown"> 
-       <NavDropdown.Item > <Link onClick={onClick} to="/admin/new-event" className="dropdown-item">New event</Link></NavDropdown.Item>
-       <NavDropdown.Item > <Link onClick={onClick} to="/admin/unpaid-drivers" className="dropdown-item">Outstanding pay-outs</Link></NavDropdown.Item>
-       <NavDropdown.Item > <Link onClick={onClick} to="/admin/paid-drivers" className="dropdown-item">Receipts for pay-outs</Link></NavDropdown.Item>
-       <NavDropdown.Item > <Link onClick={onClick} to="/admin/list-events" className="dropdown-item">Rides this semester</Link></NavDropdown.Item>
-       <NavDropdown.Item > <Link onClick={onClick} to="/admin/manage" className="dropdown-item">Manage users</Link></NavDropdown.Item>
+       <NavDropdown.Item  onClick={onClick} href="/#/admin/new-event" className="dropdown-item">New event</NavDropdown.Item>
+       <NavDropdown.Item  onClick={onClick} href="/#/admin/unpaid-drivers" className="dropdown-item">Outstanding pay-outs</NavDropdown.Item>
+       <NavDropdown.Item onClick={onClick} href="/#/admin/paid-drivers" className="dropdown-item">Receipts for pay-outs</NavDropdown.Item>
+       <NavDropdown.Item onClick={onClick} href="/#/admin/list-events" className="dropdown-item">Rides this semester</NavDropdown.Item>
+       <NavDropdown.Item  onClick={onClick} href="/#/admin/manage" className="dropdown-item" >Manage users</NavDropdown.Item>
             </NavDropdown>
     </React.Fragment>
   }

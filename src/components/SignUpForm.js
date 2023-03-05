@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import api from './../services/api';
 import authenticationService from '../services/authentication.service';
+import AutoTextArea from './AutoTextArea';
 class SignUpForm extends Component{
 
     constructor(props){
@@ -36,7 +37,8 @@ class SignUpForm extends Component{
             markedAsPaidDate : null,
             processingSubmission: false,
             errorProcessingSubmission:  false,
-            newCarNumberOfSeats: 1
+            newCarNumberOfSeats: 1,
+            otherComments: ""
 
 
 
@@ -105,8 +107,9 @@ class SignUpForm extends Component{
         
   async handleEventAcceptance(event) {
     event.preventDefault();
+    console.log(this.state.otherComments)
     this.setState({processingSubmission:true});
-   await api.post("EventAcceptance/accept-event",{eventId : this.state.event.id,vehicleId : this.state.driving === "-1" ? null  : this.state.driving , borrowClubBike: this.state.borrowClubBike, giveItAGo : this.state.giveItAGo})
+   await api.post("EventAcceptance/accept-event",{eventId : this.state.event.id,vehicleId : this.state.driving === "-1" ? null  : this.state.driving , borrowClubBike: this.state.borrowClubBike, giveItAGo : this.state.giveItAGo,otherComments: this.state.otherComments})
     .then(success => {this.setState({alreadyBooked: true, inQueue: success.data.inQueue, processingSubmission: false, errorProcessingSubmission:false})}, errror=>{
         this.setState({errorProcessingSubmission :true, processingSubmission :false})
     })
@@ -256,6 +259,14 @@ class SignUpForm extends Component{
                                         <input className="form-check-input" type="checkbox" id="gridCheck1" name="giveItAGo" checked={this.state.giveItAGo} onChange={this.handleFormInputChange}/>
                                         <label className="form-check-label" >This is my give it a go ride</label>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div className="row mb-3  gy-2">
+                                <label className='col-sm-2'>Other comments</label>
+                                <div className="col-sm-8">
+                                    
+                                <AutoTextArea value={this.state.otherComments} onChange={(e)=>this.setState({otherComments : e.target.value})}/>
                                 </div>
                             </div>
                             <this.submitButton state={this.state}/>

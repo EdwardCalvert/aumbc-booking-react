@@ -1,4 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
+import Role from '../_helpers/role';
 import api from "./api";
 import tokenService from "./token.service";
 
@@ -10,6 +11,7 @@ export const authenticationService = {
     register,
     sendOtp,
     updateToken,
+    isAdmin,
     currentUser: currentUserSubject.asObservable(),
     get currentUserValue () { return tokenService.getApiTokenResponse() }
 };
@@ -18,6 +20,11 @@ function sendOtp(emailAddress){
   return api.get("auth/sendOTP", {
   params :{emailAddress}});
 }
+
+function isAdmin(){
+  return tokenService.getApiTokenResponse().role == Role.Admin
+}
+
 async function login(email, otp) {
   return  await api
     .post("/auth/login", {

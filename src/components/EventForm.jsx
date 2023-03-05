@@ -133,7 +133,7 @@ function EventForm({mtbEvent,onChange, newEvent}){
                 <input type="datetime-local" value={endDate}  onChange={(e) => {setEndDate(e.target.value)}}className="form-control" required/>
                 <span className="validity"></span>
                 {endDate <= startDate &&
-                    <p className="alert alert-danger">The event must end later than it starts!  </p>
+                    <p className="alert alert-danger">The event must end later than it starts!  And in the future </p>
                 }
             </div>
         </div>

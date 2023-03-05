@@ -43,7 +43,7 @@
   padding-bottom: 10px !important;
 }
 .sign-up-form-container{
-  height: 800px;
+  min-height: 80vw;
 }
 
 .EventTile-map{

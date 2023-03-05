@@ -15,7 +15,7 @@ import NewsletterPage from './components/NewsletterPage';
 import UnpaidDriversPage from './components/UnpaidDriversPage';
 import CreateNewEventPage from './components/CreateNewEventPage';
 import RidesAttendedPage from './components/RidesAttendedPage';
-import AdminManagementPage from './components/AdminManagementPage';
+import UserManagementPage from './components/UserManagementPage';
 import PeopleAttendingRidePage from './components/PeopleAttendingRidePage';
 import ListEventsBySemester from './components/ListEventsBySemester';
 import PaidDriversPage from './components/PaidDriversPage';
@@ -62,7 +62,7 @@ class App extends React.Component {
               {/* Admin related components */}
               <Route path="/admin/unpaid-drivers" element={<RequireAuth roles={Role.Admin}><UnpaidDriversPage /></RequireAuth>}/>
               <Route path="/admin/paid-drivers" element={<RequireAuth roles={Role.Admin}><PaidDriversPage /></RequireAuth>}/>
-              <Route path="/admin/manage" element={<AdminManagementPage/>}></Route>
+              <Route path="/admin/manage" element={<UserManagementPage/>}></Route>
               <Route path="/admin/new-event/" element={<RequireAuth roles={Role.Admin}><CreateNewEventPage/></RequireAuth>}/>
               <Route path="/admin/list-events" element={<RequireAuth roles={Role.Admin}><ListEventsBySemester/></RequireAuth>} />
               <Route path="*" element={<p> There is nothing at this page</p>}/>
