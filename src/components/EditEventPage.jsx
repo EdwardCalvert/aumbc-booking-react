@@ -10,8 +10,8 @@ function EditEventPage(props){
     const id = useParams().id;
     let navigate = useNavigate();
 
-    function handleFormSubmit(e){
-        api.patch("MtbEvent", {...e, id: id }).then(success =>{
+    async function handleFormSubmit(e){
+       await api.patch("MtbEvent", {...e, id: id }).then(success =>{
             setErrorWhileSubmitting(false);
 
             navigate(`/event/${id}`,{ replace: true });

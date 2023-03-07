@@ -14,7 +14,7 @@ function EventTile(props) {
             <div className="card-body">
               <h5 className="card-title">{event.name} </h5>
               <h6>{getDisplayDate(event.startDateTime, event.endDateTime)}</h6>
-              <p>{event.description.substring(0, 200)}</p>
+              <p style={{whiteSpace: 'pre-line'}}>{event.description.substring(0, 200)}</p>
 
             </div>
             </div>

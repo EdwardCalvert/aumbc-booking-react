@@ -7,8 +7,8 @@ function CreateNewEventPage(){
     const [errorWhileSubmitting, setErrorWhileSubmitting] = useState(false);
     let navigate = useNavigate();
 
-    function handleFormSubmit(e){
-        api.post("MtbEvent/insert-event", e).then(success =>{
+    async function handleFormSubmit(e){
+        await api.post("MtbEvent/insert-event", e).then(success =>{
             setErrorWhileSubmitting(false);
            
             navigate(`/event/${success.data.id}`,{ replace: true });

@@ -73,7 +73,10 @@ class EventDetailsRenderer extends Component {
                 {event.name}
               </h2>
               <p style={{whiteSpace: 'pre-line'}}>{event.description}</p>
-      
+
+              <SignUpForm event={event}/>
+              <PeopleAttendingRidePage/>
+              <h2>Ride details</h2>
               <div className="row mb-3 gx-3 gy-2">
                   <label className="col-sm-2">Lift share at</label>
                   
@@ -115,13 +118,13 @@ class EventDetailsRenderer extends Component {
                   <Link to={"/event/edit/"+this.state.id} ><button className="btn btn-primary btn-block mb-3 me-1 ">Ammend ride</button></Link><button onClick={this.cancelEvent} className="btn btn-danger  mb-3 btn-block ">Cancel ride</button>
                   </div>
                   </div>
-                  <PeopleAttendingRidePage/>
+                  
                   </React.Fragment>
                 }
            
              
       
-              <SignUpForm event={event}/>
+             
             </div>
           );
         }

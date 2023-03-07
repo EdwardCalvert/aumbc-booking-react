@@ -14,6 +14,7 @@ function EventForm({mtbEvent,onChange, newEvent}){
     const [costForDriver, setCostForDriver] = useState(0);
     const [costForPassenger, setCostForPassenger] = useState(0);
     const [semesterId, setSemesterId] = useState();
+    const [submittingResults,setSubmittingResults] = useState(false);
 
     useEffect(() =>{ 
         if(mtbEvent){
@@ -40,7 +41,8 @@ function EventForm({mtbEvent,onChange, newEvent}){
         }
     }
 
-    function handleFormSubmit(event){
+    async function handleFormSubmit(event){
+        setSubmittingResults(true);
         event.preventDefault();
         let eventToSave = {
             name: rideName,
@@ -56,7 +58,8 @@ function EventForm({mtbEvent,onChange, newEvent}){
             semesterId : semesterId
 
         };
-        onChange(eventToSave);
+        await onChange(eventToSave);
+        setSubmittingResults(false);
     }
 
     function onLiftShareLocationChanged(event){
@@ -133,7 +136,7 @@ function EventForm({mtbEvent,onChange, newEvent}){
                 <input type="datetime-local" value={endDate}  onChange={(e) => {setEndDate(e.target.value)}}className="form-control" required/>
                 <span className="validity"></span>
                 {endDate <= startDate &&
-                    <p className="alert alert-danger">The event must end later than it starts!  And in the future </p>
+                    <p className="alert alert-danger">The event must end later than it starts! </p>
                 }
             </div>
         </div>
@@ -161,10 +164,8 @@ function EventForm({mtbEvent,onChange, newEvent}){
                 </div>
             </div>
         </div>
-        <button type="submit" disabled={!(costForPassenger>=0 && costForPassenger >= 0 && Date.parse(endDate) > Date.parse(startDate)  &&rideStartLocation !== liftShareLocation )} className="btn btn-primary">Submit</button>
-        {!(costForPassenger>=0 && costForPassenger >= 0 && Date.parse(endDate) > Date.parse(startDate) && rideStartLocation !== liftShareLocation )&&
-            <label className="form-text">Please fill out: Name, start date, end date, cost for driver and cost for passenger to continue. P.s. (end date should be greater than start date! and the ride start cannot be the same as the end.)</label>
-        }
+        <button type="submit" disabled={!((costForPassenger>=0 && costForPassenger >= 0 && Date.parse(endDate) > Date.parse(startDate)  &&rideStartLocation !== liftShareLocation ))||submittingResults} className="btn btn-primary">
+        <span class={submittingResults? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Submit</button>
         
 
     </form>}

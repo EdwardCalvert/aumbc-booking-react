@@ -30,6 +30,8 @@ function SelectLocation({startLocation, onLocationChanged}){
     const [locations,setLocations] = useState([]);
     const [errorWhileLoading, setErrorWhileLoading] = useState(false);
     const [noData, setNoData] = useState(false);
+    const [submittingW3W, setSubmittingW3W] = useState(false);
+    const [submittingNewLocation,setSubmittingNewLocation] = useState(false);
 
     useEffect(()=>{
         api.get("Location/get-all-locations").then(success =>{
@@ -153,12 +155,14 @@ function SelectLocation({startLocation, onLocationChanged}){
                 <p>Create a new location, by moving the marker on the map or supplying a what 3 words address. You need to enter a name before the location is saved.</p>
                 <label>Give the marker a name: </label>
                 <input type="text" value={newMarkerName} onChange={onMarkerNameChanged}  className="form-control" placeholder="ASV"/>
-                <button type='button' className="btn btn-success"  disabled={newMarkerName.length < 2} onClick={onSaveMarkerLocation}>Save red marker location</button>
+                <button type='button' className="btn btn-success"  disabled={newMarkerName.length < 2} onClick={onSaveMarkerLocation}>
+                <span class={submittingNewLocation? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Save red marker location</button>
                 {!what3WordsAddressSet &&
                 <React.Fragment>
                      <label>Or supply a what 3 words address:</label>
                      <input type="text" value={newWhat3WordsAddress} onChange={onWhat3WordsChanged} className="form-control" placeholder="recent.soup.mock"/>
-                     <button type='button' className="btn btn-secondary" onClick={onWhat3WordsSubmitted}  disabled={newWhat3WordsAddress.length < 3}>Load from What 3 Words Address (please save afterwards!)</button>
+                     <button type='button' className="btn btn-secondary" onClick={onWhat3WordsSubmitted}  disabled={newWhat3WordsAddress.length < 3}>
+                        <span class={submittingW3W? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Load from What 3 Words Address (please save afterwards!)</button>
                      <button type='button' className="btn btn-danger" onClick={onCancelAddingNewLocationClicked}>Cancel adding new location.</button>
                      </React.Fragment>
                 }
@@ -175,7 +179,8 @@ function SelectLocation({startLocation, onLocationChanged}){
         </div>
     }
 
-    function onWhat3WordsSubmitted(){
+   async function onWhat3WordsSubmitted(){
+        setSubmittingW3W(true);
         // Get lat lng object. Set location of marker. Disable dragging. 
         let requestAddress = newWhat3WordsAddress
         if(newWhat3WordsAddress.startsWith("///")){
@@ -183,7 +188,7 @@ function SelectLocation({startLocation, onLocationChanged}){
         }
         // let latLngResonse ;
         if(locations.findIndex(x => x.what3WordsAddress === newWhat3WordsAddress) ===-1){
-        api.get('Location/w3w-to-latlng', { params: { w3w: requestAddress } }).then(success => { 
+       await api.get('Location/w3w-to-latlng', { params: { w3w: requestAddress } }).then(success => { 
             let latLngResonse = success.data;
             map.removeLayer(editMarkerRef.current)
             map.flyTo([latLngResonse.lat,latLngResonse.lng], 16)
@@ -193,6 +198,7 @@ function SelectLocation({startLocation, onLocationChanged}){
             failure => {console.log(failure);
                 errorOutNewLocation();
         });
+        setSubmittingW3W(false);
     }  
     }
 
@@ -212,7 +218,9 @@ function SelectLocation({startLocation, onLocationChanged}){
     function onWhat3WordsChanged(e){
         setNewWhat3WordsAddress(e.target.value);
     }
-    function onSaveMarkerLocation(){
+   
+    async function onSaveMarkerLocation(){
+        setSubmittingNewLocation(true);
         let selectedLocation;
         //Get location of current marker
         if(!what3WordsAddressSet){
@@ -222,7 +230,7 @@ function SelectLocation({startLocation, onLocationChanged}){
         else{
             selectedLocation = locations[locations.length -1] // Last item in list.
         }
-        api.post("Location/insert-lat-lng",{
+       await api.post("Location/insert-lat-lng",{
                 lat: selectedLocation.lat,
                 lng: selectedLocation.lng,
                 name: newMarkerName
@@ -251,12 +259,13 @@ function SelectLocation({startLocation, onLocationChanged}){
             console.log(error);
             errorOutNewLocation();
         }
+        
         )
 
        
 
 
-       
+        setSubmittingNewLocation(false);
     }
 
 }

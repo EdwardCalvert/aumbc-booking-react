@@ -3,6 +3,11 @@ import PropTypes from 'prop-types'
 import api from './../services/api';
 import authenticationService from '../services/authentication.service';
 import AutoTextArea from './AutoTextArea';
+const Driving = "8";
+const QueuingPassenger = "2";
+const AttendingPassenger = "4";
+const MakingOwnWayThere = "1";
+
 class SignUpForm extends Component{
 
     constructor(props){
@@ -21,14 +26,14 @@ class SignUpForm extends Component{
         this.state = {
             errorWhileLoading: false,
             showAddCarForm: false,
-            driving: "-1",
+            transportSelectorValue: QueuingPassenger,
+            transportState : QueuingPassenger,
             newCarPetrol: true,
             capacityForNewPassengers: 0,
             newCarMpg: 47.6,
             alreadyBooked: false,
             borrowClubBike: false,
             giveItAGo:false,
-            inQueue: false,
             myVehicles : [],
             event: props.event,
             loading: true,
@@ -57,7 +62,7 @@ class SignUpForm extends Component{
                     this.setState({errorWhileAddingVehicle:true});
                 }),
                  api.get("EventAcceptance/get-acceptance", { params: {eventId: this.state.event.id}}).then(response => {
-                    this.setState({alreadyBooked:true, inQueue:response.data.inQueue, driving: response.data.vehicleId === null ? "-1": response.data.vehicleId }) ;
+                    this.setState({alreadyBooked:true, inQueue:response.data.inQueue, transportSelectorValue: response.data.vehicleId, transportState: String(response.data.transportState) }) ;
                 },async  error => {
                     if(error.response.status === 404) // No event aceptance exists. 
                     {
@@ -96,7 +101,7 @@ class SignUpForm extends Component{
                     let vehicles = this.state.myVehicles;
                     vehicles.push(response.data);
                     this.setState({myVehicles : vehicles,
-                        showAddCarForm: false, loading: false, driving: response.data.vehicleId})
+                        showAddCarForm: false, loading: false, driving: response.data.vehicleId, transportState: Driving})
                 },
                 error =>{
                     console.log(error);
@@ -109,8 +114,8 @@ class SignUpForm extends Component{
     event.preventDefault();
     console.log(this.state.otherComments)
     this.setState({processingSubmission:true});
-   await api.post("EventAcceptance/accept-event",{eventId : this.state.event.id,vehicleId : this.state.driving === "-1" ? null  : this.state.driving , borrowClubBike: this.state.borrowClubBike, giveItAGo : this.state.giveItAGo,otherComments: this.state.otherComments})
-    .then(success => {this.setState({alreadyBooked: true, inQueue: success.data.inQueue, processingSubmission: false, errorProcessingSubmission:false})}, errror=>{
+   await api.post("EventAcceptance/accept-event",{eventId : this.state.event.id, vehicleId : this.state.transportState === Driving ? this.state.transportSelectorValue: null   , transportState: this.state.transportState, borrowClubBike: this.state.borrowClubBike, giveItAGo : this.state.giveItAGo,otherComments: this.state.otherComments})
+    .then(success => {this.setState({alreadyBooked: true, transportState: String(success.data.transportState), processingSubmission: false, errorProcessingSubmission:false})}, errror=>{
         this.setState({errorProcessingSubmission :true, processingSubmission :false})
     })
 
@@ -119,7 +124,8 @@ class SignUpForm extends Component{
 
   async handleEventCancellation(){
     this.setState({
-        driving: "-1",
+        transportSelectorValue: QueuingPassenger,
+        transportState : QueuingPassenger,
         alreadyBooked: false,
         loading: true
     })
@@ -133,13 +139,24 @@ class SignUpForm extends Component{
 
   }
     updateDrivingSelector(event){
-        this.setState({ driving: event.target.value});
+        let transportState = QueuingPassenger
+        if(event.target.value == String(QueuingPassenger)){
+            transportState= QueuingPassenger
+        }
+        else if(event.target.value == String(MakingOwnWayThere)){
+           transportState= MakingOwnWayThere;
+        }
+        else { // Must be driving
+             transportState = Driving;
+        }
+        this.setState({ transportSelectorValue: event.target.value, transportState : transportState});
+
     }
 
 
     removeCarFromMyVehicles(){
         //Get vehicle, update visibility. Append to new list & save
-        const currentVehicleId = this.state.driving
+        const currentVehicleId = this.state.transportSelectorValue
         const carToUpdate = this.state.myVehicles.find((item) => item.vehicleId === currentVehicleId)
         carToUpdate.carVisible = false;
         const otherCars = this.state.myVehicles.filter((item )=>item.vehicleId !== currentVehicleId)
@@ -147,7 +164,8 @@ class SignUpForm extends Component{
 
         api.delete("Vehicle", {params:{currentVehicleId}});            
         this.setState({myVehicles : otherCars,
-            driving :"-1",
+            transportSelectorValue : QueuingPassenger,
+            transportState: QueuingPassenger
         }); 
     }
 
@@ -162,7 +180,7 @@ class SignUpForm extends Component{
             return <p alert="alert alert-primary">Unable to load required data for the sign up form.</p>
         }
         if(this.state.loading){
-            return <div>
+            return <div className='sign-up-form-container'>
             <h3>Loading...</h3>
            <div className="spinner-border"></div>
            <p>Hold on while we pump up the tyres</p>
@@ -178,14 +196,14 @@ class SignUpForm extends Component{
                             <div className="row mb-3 gx-3 gy-2">
                                 <label className='col-sm-2'>How will you get there?</label>
                                 <div className="col-sm-8">
-                                    <select className="form-select"  onChange={this.updateDrivingSelector} value={this.state.driving}>
-                                        <option value="-1" >I'll use the lift share</option>
-                                        <option value="-2" >I'll make my own way there </option>
+                                    <select className="form-select"  onChange={this.updateDrivingSelector} value={this.state.transportSelectorValue}>
+                                        <option value={String(QueuingPassenger)} >I'll use the lift share</option>
+                                        <option value={String(MakingOwnWayThere)} >I'll make my own way there </option>
                                         {myVehicles.filter((item) => item.carVisible).map((item,key)=> (<option value={item.vehicleId} key={item.vehicleId}>I'll drive, with a total of  {item.numberOfSeats}x💺/{item.numberOfBikeSpaces }x🚲 ({item.petrol? "petrol" : "diesel"}, {item.mpg} mpg)</option>) )}
                                     </select>
                                     <div className="col-auto">
                                     <button className="btn btn-outline-secondary mt-3 mr-3"  type="button" onClick={this.toggleAddCarForm} >Add a new car?</button>
-                                    {this.state.driving !=="-1" &&
+                                    {this.state.transportState === Driving &&
                                         <button className="btn btn-outline-danger mt-3 ml-3 "  type="button" onClick={this.removeCarFromMyVehicles} >Delete current car</button>
                                     }
                                 </div>
@@ -241,7 +259,7 @@ class SignUpForm extends Component{
                                 <label className='col-sm-2'>Cost</label>
                                 <div className="col-sm-8">
                                     
-                                {this.state.vehicleId!==-1? "£"+event.costForPassenger.toFixed(2): "£" + event.costForDriver.toFixed(2)}
+                                {this.state.transportState === Driving? "£"+event.costForDriver.toFixed(2): ( this.state.transportState === QueuingPassenger ?"£" + event.costForPassenger.toFixed(2) : "£0.00") }
                                 </div>
                             </div>
                             
@@ -286,38 +304,47 @@ class SignUpForm extends Component{
                 }
                 else if(Date.parse(event.startDateTime) < Date.now()){
                     return <div className='sign-up-form-container'><h2>Sign up is unavailable.</h2>
-                     <p>You can't sign up, since this ride has happened!</p>
+                     <p>You can't sign up, since this ride has started</p>
+                     <this.paymentHelpMessage paymentAmmount={ this.state.transportSelectorValue === "-1"? event.costForPassenger: event.costForDriver} event={event}></this.paymentHelpMessage>
                      </div>
                 }
-                else{
-                    if(this.state.driving !=="-1"){
-                        const drivingVehicle = this.state.myVehicles.find((item) => item.vehicleId === this.state.driving)
-                        return <div className='sign-up-form-container'>
-                            <h2>You are booked as a driver</h2>
-                             <p>Thanks for driving, taking {drivingVehicle.numberOfSeats} passengers with {drivingVehicle.numberOfBikeSpaces} bikes. Have a great ride.  <br/>
-                             To make an ammendment, please  <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger btn-sm'>cancel current booking</button></p>
-                             <this.paymentHelpMessage paymentAmmount={event.costForDriver} event={event}></this.paymentHelpMessage>
-                             </div>
-                    }
-                    else{
-                        if(this.state.inQueue){
-                            return <div className='sign-up-form-container'>
-                                <h2>You've booked, and are waiting for a space</h2>
-                                <p>You are queueing for the ride, we'll let you know by email if a space becomes available <br/>
-                                To make an ammendment, please  <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger btn-sm' event={event}>cancel current booking</button></p>
-        
+              
+
+                else if(this.state.transportState === Driving){
+                    const drivingVehicle = this.state.myVehicles.find((item) => item.vehicleId === this.state.transportSelectorValue)
+                    return <div className='sign-up-form-container'>
+                        <h2>You are booked as a driver</h2>
+                            <p>Thanks for driving, taking {drivingVehicle.numberOfSeats} passengers with {drivingVehicle.numberOfBikeSpaces} bikes. Make sure to be at <a className='btn btn-sm btn-primary' href={"https://w3w.co/" + this.state.event.liftShareW3W} target="_blank">{this.state.event.liftShareW3W}</a> {new Date(this.state.event.startDateTime).toLocaleDateString("en-gb")} at { new Date(this.state.event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}  <br/>
+                            To make an ammendment, please  <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger btn-sm'>cancel current booking</button></p>
+                            <this.paymentHelpMessage paymentAmmount={event.costForDriver} event={event}></this.paymentHelpMessage>
                             </div>
-                        }
-                        else{
-                            return <div className='sign-up-form-container'>
-                                <h2>You've booked as a passenger.</h2>
-                                <p>You are attending the ride as a passenger! Have fun!<br/>
-                               To make an ammendment, please <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger btn-sm'>cancel current booking</button></p>
-                                <this.paymentHelpMessage paymentAmmount={ event.costForPassenger} event={event}></this.paymentHelpMessage>
-                            </div>
-                        }
-                    }
                 }
+                else
+                    if(this.state.transportState === QueuingPassenger){
+                        return <div className='sign-up-form-container'>
+                            <h2>You've booked, and are waiting for a space</h2>
+                            <p>You are queueing for the ride, we'll let you know by email if a space becomes available <br/>
+                            To make an ammendment, please  <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger btn-sm' event={event}>cancel current booking</button></p>
+    
+                        </div>
+                    }
+                    else if (this.state.transportState === AttendingPassenger){
+                        return <div className='sign-up-form-container'>
+                            <h2>You've booked as a passenger.</h2>
+                            <p>You are attending the ride as a passenger! Make sure to be at <a className='btn btn-sm btn-primary' href={"https://w3w.co/" + this.state.event.liftShareW3W} target="_blank">{this.state.event.liftShareW3W}</a> {new Date(this.state.event.startDateTime).toLocaleDateString("en-gb")} at { new Date(this.state.event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}<br/>
+                            To make an ammendment, please <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger btn-sm'>cancel current booking</button></p>
+                            <this.paymentHelpMessage paymentAmmount={ event.costForPassenger} event={event}></this.paymentHelpMessage>
+                        </div>
+                    }
+                    else if (this.state.transportState === MakingOwnWayThere){
+                        return <div className='sign-up-form-container'>
+                            <h2>You are making your own way there</h2>
+                            <p>You are attending the ride, and making your own way there! We look forward to seeing you on the trails at <a className='btn btn-sm btn-primary' href={"https://w3w.co/" + this.state.event.rideStartW3W} target="_blank">{this.state.event.rideStartW3W}</a>,   on the {new Date(this.state.event.startDateTime).toLocaleDateString("en-gb")} some time after { new Date(this.state.event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}  (We'll need to drive from ASV)!<br/>
+                            To make an ammendment, please <button type='button' onClick={this.handleEventCancellation} className='btn btn-outline-danger btn-sm'>cancel current booking</button></p>
+                        </div>
+                    }
+                    
+                
             }
 
         }
@@ -351,7 +378,7 @@ class SignUpForm extends Component{
     }
 
     submitButton({state}){
-        if( state.driving === "-1" && state.capacityForNewPassengers  ===0){
+        if( state.transportSelectorValue === QueuingPassenger && state.capacityForNewPassengers  ===0){
             return <div><button type="submit" className="btn btn-warning offset-sm-2" disabled={this.state.processingSubmission}><span className={this.state.processingSubmission? "spinner-border spinner-border-sm":""} role="status" aria-hidden="true"></span>
 Join wating list</button>
             <p className='form-text offset-sm-2'>Upon submission, your queue position is recorded and we'll send you confirmation message. You will be notified by email if a space becomes available for you.</p>

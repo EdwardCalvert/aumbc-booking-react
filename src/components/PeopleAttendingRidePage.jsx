@@ -5,6 +5,8 @@ import api from './../services/api'
 function PeopleAttendingRidePage(){
     const id = useParams().id
     
+    const TransportDescriptors = {1: "Making own way there", 2: "Passenger", 4: "Queueing as passenger",8: "Driving"}
+
     const [errorWhileLoading, setErrorWhileLoading] = useState(false);
     const [rows ,setRows] = useState([]);
     const [loadingData, setLoadingData] = useState(true);
@@ -20,15 +22,15 @@ function PeopleAttendingRidePage(){
         setLoadingData(false);
     },[])
     if(errorWhileLoading){
-        return <div><h2>Riders attending event</h2><p className="alert alert-danger">Unable to load the data</p></div>
+        return <div><h3>Riders attending event</h3><p className="alert alert-danger">Unable to load the data</p></div>
     }
     if(loadingData){
-        return <div><h2>Riders attending event</h2><p>Loading</p></div>
+        return <div><h3>Riders attending event</h3><p>Loading</p></div>
     }
     if(rows.length == 0){
-        return <div><h2>Riders attending event</h2><p>No submissions have been recieved yet.</p></div>
+        return <div><h3>Riders attending event</h3><p>No submissions have been recieved yet.</p></div>
     }
-    return <div><h2>Riders attending event</h2>
+    return <div><h3>Riders attending event</h3>
     <p>Please note: this does not update. </p>
     {rows.length >0 &&
     <table className="table">
@@ -49,7 +51,7 @@ function PeopleAttendingRidePage(){
                
                 <td>{item.numberOfSeats? item.numberOfSeats :"-"}</td>
                 <td>{item.numberOfBikeSpaces ? item.numberOfSeats : "-"}</td>
-                <td>{item.inQueue?"Waiting as a passenger":"No"}</td>
+                <td>{ TransportDescriptors[ item.transportState]}</td>
                 <td>{item.borrowClubBike ?"Yes" :"-"}</td>
                 <td>{item.giveItAGo?"Yes" : "-"}</td>
             </tr>
