@@ -72,6 +72,8 @@ function UnpaidDriversPage(){
         <br/> Let maxEffectivePeople = number of seats + number of bike spaces. 
     <br/> Since this also includes the driver's costs, we select the maximum of 0.5 or (maxEffectivePeople - 1)/maxEffectivePeople to exclude the drivers costs. 0.5 was chosen as it is invisiged that all cars would have at least two occupants!  </p>
     <p>I am incredibly happy for you to ask all questions you have about how pricing is calculated, it is a computer so it is fallible and there are many edge cases that I won't have thought of, so it is more of a guide and approximation than anything else. Source code for the backend is availble on request! </p>
+    <p>Payout- The estimated extra cost to the driver for transporting the other passengers </p>
+    <p>Passenger- if more drivers attended that was needed for car space, you may demote someone to a passenger instead</p>
     {!loading && rows &&
         <div className='table-responsive'>
         {rows.map( (outerItem, outerIndex) => Object.entries(outerItem).map(([emailAddress, value])=>
@@ -100,7 +102,7 @@ function UnpaidDriversPage(){
                     <td>{x.name}</td>
                     <td>{ new Date(x.startDateTime).toLocaleDateString("en-GB")}</td>
                     
-                    <td>£{x.payoutDue}</td>
+                    <td>£{x.payoutDue.toFixed(2)}</td>
                     <td>
                         <Link to={"/event/" + x.eventId} className="btn btn-sm btn-secondary  ">View</Link>
                     </td>
