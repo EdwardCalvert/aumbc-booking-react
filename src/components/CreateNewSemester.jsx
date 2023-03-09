@@ -71,7 +71,7 @@ function CreateNewSemester({value,onChange,allowCreatingNewSemesters}){
     else{
     return <div><select className='form-select' onChange={onSelectionChanged} value={selectedValue} disabled={loading} >
         {}
-        {semesters.map((item,index)=><option value={item.semesterId} key={index}>{item.semesterName} {isUserAdmin && allowCreatingNewSemesters? `(Diesel: ${item.dieselPrice}p Petrol: ${item.petrolPrice}p)`: ""}</option>)}
+        {semesters.map((item,index)=><option value={item.semesterId} key={index}>{item.semesterName} {isUserAdmin && allowCreatingNewSemesters? `(Diesel: ${item.dieselPrice}p Petrol: ${item.petrolPrice}p, CPM: £${item.averageCostPerMile.toFixed(2)}, Wear & tear: £${item.wearAndTearCost.toFixed(2)} 🚗/💺ratio ${item.carToSeatRatio})`: ""}</option>)}
         {loading && 
             <option>Loading ....</option>
         }
