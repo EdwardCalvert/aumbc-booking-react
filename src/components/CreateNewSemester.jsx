@@ -4,22 +4,28 @@ import { useState } from 'react';
 import authenticationService from '../services/authentication.service';
 import Role from '../_helpers/role';
 
+
+
 function CreateNewSemester({value,onChange,allowCreatingNewSemesters}){
+
     const [semesters, setSemesters ] = useState([]);
     const [selectedValue, setSelectedValue] = useState(-1);
     const [errorWithApi, setErrorWithApi] = useState(false);
     const [petrolPrice, setPetrolPrice] = useState("");
     const [dieselPrice, setDieselPrice] = useState("");
     const [semesterName, setSemesterName] = useState("");
+    const [averageCostPerMile,setAverageCostPerMile] = useState(null);
+    const [wearAndTearCost,setWearAndTearCost] = useState(null);
+    const [carToSeatRatio,setCarToSeatRatio] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
         api.get("Finance/get-all-semesters").then(success => {
             if(success.status === 200){
-                // console.log("SEMESTERS: ")
-                // console.log(success.data)
                 setSemesters(success.data);
                 setSelectedValue(success.data[0].semesterId);
                 onChange({target: {value: success.data[0].semesterId}});
+                setLoading(false);
             }
            
             setErrorWithApi(false);
@@ -39,9 +45,12 @@ function CreateNewSemester({value,onChange,allowCreatingNewSemesters}){
         api.post("Finance/semester",{
             semesterName: semesterName,
             dieselPrice: dieselPrice,
-            petrolPrice: petrolPrice
+            petrolPrice: petrolPrice,
+            averageCostPerMile: averageCostPerMile,
+            wearAndTearCost: wearAndTearCost,
+            carToSeatRatio: carToSeatRatio
         }).then(success =>{
-            setSemesters([...semesters, { semesterName, dieselPrice, petrolPrice, semesterId: success.data}]);
+            setSemesters([...semesters, { semesterName, dieselPrice, petrolPrice,averageCostPerMile,wearAndTearCost,carToSeatRatio, semesterId: success.data}]);
             setSelectedValue(success.data);
         } , error=>{
             setErrorWithApi(true);
@@ -60,15 +69,18 @@ function CreateNewSemester({value,onChange,allowCreatingNewSemesters}){
         return <p className='alert alert-danger'>Unable to load semesters</p>
     }
     else{
-    return <div><select className='form-select' onChange={onSelectionChanged} value={selectedValue} >
+    return <div><select className='form-select' onChange={onSelectionChanged} value={selectedValue} disabled={loading} >
         {}
         {semesters.map((item,index)=><option value={item.semesterId} key={index}>{item.semesterName} {isUserAdmin && allowCreatingNewSemesters? `(Diesel: ${item.dieselPrice}p Petrol: ${item.petrolPrice}p)`: ""}</option>)}
+        {loading && 
+            <option>Loading ....</option>
+        }
         {isUserAdmin && allowCreatingNewSemesters && 
         <option value={"-1"} >Create new semester</option>
         }
     </select>
     {selectedValue === "-1" && isUserAdmin  &&
-    <div >
+    <div className='col-sm-3'>
     <div className="form-group">
         <label>Semester Name</label>
         <input type='text' className='form-control'  value={semesterName} onChange={(e)=> setSemesterName(e.target.value)} required/>
@@ -95,6 +107,36 @@ function CreateNewSemester({value,onChange,allowCreatingNewSemesters}){
     </div>
   </div>
         <span className="validity"></span>
+    </div>
+    <div className='form-group'>
+        <label>Average cost per mile</label>
+        <div className='input-group'>
+        <div className="input-group-prepend">
+    <span className="input-group-text">£</span>
+    </div>
+        <input type='number' className='form-control'value={averageCostPerMile} onChange={(e)=> setAverageCostPerMile(e.target.value)} step={0.01} min={0} max={1000} required/>
+        
+  </div>
+        <span className="validity"></span>
+    </div>
+    <div className='form-group'>
+        <label>Wear and tear cost</label>
+        <div className='input-group'>
+        <div className="input-group-prepend">
+    <span className="input-group-text">£</span>
+    </div>
+        <input type='number' className='form-control'value={wearAndTearCost} onChange={(e)=> setWearAndTearCost(e.target.value)} step={0.01} min={0} max={1000} required/>
+        
+  </div>
+        <span className="validity"></span>
+    </div>
+    <div className='form-group'>
+        <label>Car to seat ratio</label>
+        <div className='input-group'>
+        <input type='number' className='form-control'value={carToSeatRatio} onChange={(e)=> setCarToSeatRatio(e.target.value)} step={0.01} min={0} max={1000} required/>
+
+  </div>
+     
     </div>
     <button type='button' className='btn btn-primary' onClick={submitNewSemester}>Submit</button>
 </div>

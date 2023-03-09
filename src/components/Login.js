@@ -88,7 +88,18 @@ function Login(){
     setProcessingRegistration(false);
   }
   
-  
+  const LoginFormRow = (props)=> { return  <div className="row mb-3">
+  <label className="col-sm-2 col-form-label">{props.label}</label>
+ 
+     {props.children}
+</div>} 
+const RegtisterFormRow = (props) => {return <div className="row mb-3">
+<label className="col-sm-2 col-form-label">{props.label}</label>
+<div className=""col-sm-10 col-md-8 col-lg-6>
+   {props.children}
+   </div>
+</div>}
+
   
   const queryString = window.location.href.split("?")[1];
   const urlParams = new URLSearchParams(queryString);
@@ -131,16 +142,15 @@ function Login(){
       <React.Fragment> 
             <form className='mb-3' onSubmit={handleEmailProvided} >
             <h2>Login</h2>
-                <div className="row mb-3">
-                    <label className="col-sm-2 col-form-label">Email</label>
-                    <div className="col-sm-6">
+            <LoginFormRow label="Email">
+             <div className="col-sm-6">
                         <input type="email" className="form-control" id="inputEmail3" placeholder='gwen@livet.com' disabled={otpSent} value={emailAddress}
                 onChange={onChangeEmailAddress} required/> 
                     </div>
                     <div className='col-sm-2'><button type="submit"  disabled={!(validEmail(emailAddress) && !otpSent && !sendingOtp)} className="btn btn-primary">
                     <span class={sendingOtp? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Send OTP</button></div>
                     <label className='form-text offset-sm-2'>A one-time-passcode will be sent to your email address</label>
-                </div>
+            </LoginFormRow>
                 {otpSent &&
                   <p className="alert alert-success">OTP sent to {emailAddress}</p>
                 }
@@ -152,14 +162,13 @@ function Login(){
                 }
                 </form>
                 <form className='mb-3' onSubmit={handleLogin} >
-                <div className="row mb-3">
-                    <label  className="col-sm-2 col-form-label">OTP</label>
-                    <div className="col-sm-6">
+                  <LoginFormRow label="OTP">
+                  <div className="col-sm-6">
                         <input type="text" className="form-control" id="inputEmail3" placeholder='12345678'  disabled={!validEmail(emailAddress)} value={otp} onChange={onChangeOtp} required/>
                     </div>
                     <div className='col-sm-2'><button type="submit" disabled={!(otp.length >=6 && validEmail(emailAddress) && !processingLogin) } className="btn btn-primary">
                     <span class={processingLogin? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Login</button></div>
-                </div>
+                  </LoginFormRow>
                 
                 {errorWhileLoggingIn &&
                   <p className=" alert alert-danger">Error while logging in. Likely your emailAddress or OTP was incorrect. </p>
@@ -170,44 +179,29 @@ function Login(){
                   <form className='mb-3' onSubmit={handleRegister}>
                   <h2>Register Account</h2>
                       <p>Registration is open for any member of UoA, RGU, NESCOL. </p>
-                      <div  className="row mb-3">
-                          <label className="col-sm-2 col-form-label">First Name</label>
-                          <div className="col-sm-10 col-md-8 col-lg-6">
-                              <input type="text" className="form-control" value={registrationFirstName} onChange={(e) => setRegistrationFirstName(e.target.value)} id="specificSizeInputName" placeholder="Gwen" minLength={2} required/>
+                      <RegtisterFormRow label="First Name">
+                      <input type="text" className="form-control" value={registrationFirstName} onChange={(e) => setRegistrationFirstName(e.target.value)} id="specificSizeInputName" placeholder="Gwen" minLength={2} required/>
                               <span className="validity"></span>
-                          </div>
-                      </div >
-                      <div  className="row mb-3">
-                          <label className="col-sm-2 col-form-label" >Last Name</label>
-                          <div className="col-sm-10 col-md-8 col-lg-6">
-                              <input type="text" className="form-control"value={registerLastName} onChange={(e)=> setRegisterLastName(e.target.value)} id="specificSizeInputName" placeholder="Livet" minLength={2} required/>
+                      </RegtisterFormRow>
+                      <RegtisterFormRow label="Last Name">
+                        <input type="text" className="form-control"value={registerLastName} onChange={(e)=> setRegisterLastName(e.target.value)} id="specificSizeInputName" placeholder="Livet" minLength={2} required/>
                               <span className="validity"></span>
-                          </div>
-                      </div >
-                      <div className="row mb-3">
-                      <label  className="col-sm-2 col-form-label">Email</label>
-                      <div className="col-sm-10 col-md-8 col-lg-6">
-                          <input type="email" className="form-control"  value={registerEmailAddress} onChange={(e) => setReigisterEmailAddress(e.target.value)} placeholder='gwen@livet.com' required/>
+                      </RegtisterFormRow>
+                      <RegtisterFormRow label="Email">
+                      <input type="email" className="form-control"  value={registerEmailAddress} onChange={(e) => setReigisterEmailAddress(e.target.value)} placeholder='gwen@livet.com' required/>
                           <p className='form-text'>Login codes & booking confirmations are sent to your email. </p>
                           <span className="validity"></span>
-                      </div>
-                      </div>
-                      <div className="row mb-3">
-                      <label  className="col-sm-2 col-form-label">Newsletter</label>
-                      <div className="col-sm-10 col-md-8 col-lg-6">
-                          <input type="checkbox" className="form-check-input" checked={registerNewsletterSubscribe} onChange={(e) => setRegisterNewsletterSubscribe(e.target.checked)} placeholder='gwen@livet.com' />
+                      </RegtisterFormRow>
+                      <RegtisterFormRow label="Newsletter">
+                        <input type="checkbox" className="form-check-input" checked={registerNewsletterSubscribe} onChange={(e) => setRegisterNewsletterSubscribe(e.target.checked)} placeholder='gwen@livet.com' />
                           <label className='orm-check-label'>We'll send you a notification when a new ride created.</label>
                           <span className="validity"></span>
-                      </div>
-                      </div>
-                      {processingRegistration && 
-                        <div>
-                        <h4>We're processing your request faster than you can blink.</h4>
-                       <div className="spinner-border"></div>
-                   </div>
-                      }{!processingRegistration &&
-                        <button type="submit"className="btn btn-primary offset-sm-2">Register account & send OTP</button>
-                      }
+                      </RegtisterFormRow>
+
+                      <button type="submit"className="btn btn-primary offset-sm-2"> 
+                      <span class={processingRegistration? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true" disabled={processingRegistration}></span>
+                      Register account & send OTP</button>
+                      
                       
                       {!registrationSuccessfull && 
                         <p className="alert alert-danger">Couldn't save your details.- most likely an account already exists with the same email.</p>
@@ -219,7 +213,7 @@ function Login(){
             </React.Fragment>
     }
     { authenticationService.currentUserValue &&
-    <div><h2>Hello, {authenticationService.currentUserValue.firstName} </h2>
+    <div><h2>Hello, {authenticationService.currentUserValue.firstName}  {authenticationService.currentUserValue.lastName} </h2>
     <p>You are now logged in as a {authenticationService.currentUserValue.role}.</p>
     
     <Link to={"/logout"} className="btn btn-primary">Logout</Link>

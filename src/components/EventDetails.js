@@ -50,6 +50,22 @@ class EventDetailsRenderer extends Component {
                       
                       console.log(error)
                     });
+                    this.updateAttendees();
+  }
+
+  updateAttendees(){
+  
+       
+          api.get("MtbEvent/get-people-on-ride",{params:{eventId : this.state.id }}).then(success => {
+              if(success.status === 200){
+                  this.setState({ attendees:  success.data})
+              }
+          }, error=>{
+             // setErrorWhileLoading(true);
+          })
+          //setLoadingData(false);
+  
+
   }
 
   render() {
@@ -74,8 +90,8 @@ class EventDetailsRenderer extends Component {
               </h2>
               <p style={{whiteSpace: 'pre-line'}}>{event.description}</p>
 
-              <SignUpForm event={event}/>
-              <PeopleAttendingRidePage/>
+              <SignUpForm event={event} onChange={()=> this.updateAttendees()} />
+              <PeopleAttendingRidePage rows={this.state.attendees}/>
               <h2>Ride details</h2>
               <div className="row mb-3 gx-3 gy-2">
                   <label className="col-sm-2">Lift share at</label>
@@ -98,7 +114,7 @@ class EventDetailsRenderer extends Component {
                     <StaticMap
                       lat={event.rideStartLat}
                       lng={event.rideStartLng}
-                      zoom={17}
+                      zoom={14}
                     ></StaticMap>
                     <OpenInGoogleMps position={{lat: event.rideStartLat, lng: event.rideStartLng}} /> <CopyWhat3Words what3Words={event.rideStartW3W}/>
                   </div>

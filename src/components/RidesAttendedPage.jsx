@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import {Link }from 'react-router-dom';
 import CreateNewSemester from "./CreateNewSemester";
+import LoadingSpinner from "./LoadingSpinner";
 
 function RidesAttendedPage (){
     const [rides, setRides ]= useState([]);
@@ -76,18 +77,13 @@ function RidesAttendedPage (){
          </tbody>
          </table>
 
-        }{loading &&
-            <div>
-                <div className="d-flex justify-content-center">
-                    <div className="spinner-border" role="status">
-                </div>
-            </div>
-            <p>We're peddaling like Murdo to process your request... </p>
-            </div>
-            
         }
+            <LoadingSpinner show={loading}>
+                We're peddaling like Murdo to process your request... 
+            </LoadingSpinner> 
+        
         {!loading && rides.length == 0&&
-            <p>There are no invoices for the selected period </p>
+            <p>You attended no rides for the selected period. </p>
         }
        
     </div>

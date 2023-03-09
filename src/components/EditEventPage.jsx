@@ -38,7 +38,7 @@ function EditEventPage(props){
     if(mtbEvent){
         return <div>
             {new Date(mtbEvent.startDateTime) <  Date.now() &&
-                <h1 className="text-danger"> This event has happend. Notice, it will not affect existing payouts, so please use caution when editing the page.</h1>
+                <h1 className="text-danger"> This event has happend. Notice, updating details that affect billing will not affect payouts that have already been made, so please use caution when editing the page.</h1>
 
             }
             <h1>Edit </h1>

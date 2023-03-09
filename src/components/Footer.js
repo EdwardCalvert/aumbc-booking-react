@@ -13,7 +13,6 @@ class Footer extends Component{
 
     <ul className="nav col-md-4 justify-content-end list-unstyled d-flex">
       <li className="ms-3"><a className="text-muted" href="https://github.com/EdwardCalvert/aumbc-booking-react">Source</a></li>
-      <li className="ms-3"><a className="text-muted" href="#"></a></li>
     </ul>
   </footer>
 </div>

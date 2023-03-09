@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import {Link, Navigate }from 'react-router-dom';
 import CreateNewSemester from "./CreateNewSemester";
+import LoadingSpinner from "./LoadingSpinner";
 
 function ListEventsBySemester (){
     const [rides, setRides ]= useState([]);
@@ -32,8 +33,6 @@ function ListEventsBySemester (){
         setSemesterId(event.target.value);
     }
 
-
-
     if(errorLoadingInvoice){
         return <p className="alert alert-danger">Unable to load rides.</p>
     }
@@ -58,16 +57,10 @@ function ListEventsBySemester (){
          </tbody>
          </table>
 
-        }{loading &&
-            <div>
-                <div className="d-flex justify-content-center">
-                    <div className="spinner-border" role="status">
-                </div>
-            </div>
-            <p>Loading </p>
-            </div>
-            
         }
+        <LoadingSpinner show={loading}>
+            Loading ...
+        </LoadingSpinner>
         {!loading && rides.length == 0&&
             <p>There are no rides for the selected period </p>
         }
