@@ -69,9 +69,9 @@ return <div>
             <React.Fragment>
                 <td>{item.firstName} {item.lastName}</td>
                 <td>{item.role}</td>
-                <td><button className="btn btn-sm btn-primary btn-block me-1" onClick={() => ToggleAdminState(item.emailAddress)}>{item.role == "Administrator"? "Demote": "Promote"}</button>
-                <button className="btn btn-sm btn-primary btn-block me-1" onClick={() => ToggleNewsletterState(item.emailAddress)}>{item.notifyNewEvents ? "Unsubscribe": "Subscribe"}</button>
-                <button className="btn btn-sm btn-danger btn-block me-1" onClick={() => DeleteUser(item.emailAddress)}>delete</button></td>
+                <td><button className="btn btn-sm btn-primary btn-block me-1" onClick={() => ToggleAdminState(item.emailAddress)}> <i className={item.role == "Administrator"? "bi bi-person-up": "bi bi-person-fill-down"} ></i></button>
+                <button className="btn btn-sm btn-primary btn-block me-1" onClick={() => ToggleNewsletterState(item.emailAddress)}><i className={item.notifyNewEvents ? "bi bi-envelope-slash-fill": "bi bi-envelope-plus"}></i></button>
+                <button className="btn btn-sm btn-danger btn-block me-1" onClick={() => DeleteUser(item.emailAddress)}><i className="bi bi-trash"></i></button></td>
                 </React.Fragment>
             }
             {item.emailAddress === authenticationService.currentUserValue.emailAddress &&

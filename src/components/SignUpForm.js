@@ -83,7 +83,6 @@ class SignUpForm extends Component{
                     await api.get(`vehicle/${this.state.transportSelectorValue}`).then(success =>{
                         let arrayCopy = this.state.myVehicles
                         arrayCopy = [...arrayCopy,success.data]
-                        console.log(success.data)
                         this.setState({myVehicles: arrayCopy, loading: false})
                         
                     })
@@ -119,7 +118,6 @@ class SignUpForm extends Component{
                         showAddCarForm: false, loading: false, driving: response.data.vehicleId, transportState: Driving})
                 },
                 error =>{
-                    console.log(error);
                     this.setState({errorWhileSubmittingNewVehicle :true})
                 });
                 this.setState({loadingNewCar: false})
@@ -127,7 +125,6 @@ class SignUpForm extends Component{
         
   async handleEventAcceptance(event) {
     event.preventDefault();
-    console.log(this.state.otherComments)
     this.setState({processingSubmission:true});
    await api.post("EventAcceptance/accept-event",{eventId : this.state.event.id, vehicleId : this.state.transportState === Driving ? this.state.transportSelectorValue: null   , transportState: this.state.transportState, borrowClubBike: this.state.borrowClubBike, giveItAGo : this.state.giveItAGo,otherComments: this.state.otherComments})
     .then(success => {this.setState({alreadyBooked: true, transportState: String(success.data.transportState), processingSubmission: false, errorProcessingSubmission:false})}, errror=>{
@@ -383,7 +380,6 @@ class SignUpForm extends Component{
     }
 
    async markPaymentAsRecieved(){
-        console.log("Payment recieved")
         console.log(this.state.event);
         await api.post("Finance/mark-cost-as-paid",this.state.event.id).then(success =>{console.log(success);
             this.setState({markedAsPaidDate: success.data});

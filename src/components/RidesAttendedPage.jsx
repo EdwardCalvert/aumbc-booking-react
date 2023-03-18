@@ -14,8 +14,6 @@ function RidesAttendedPage (){
         api.get("Finance/invoice-by-semester",{params:{semesterId: semesterId}}).then(success => {
         if(success.status === 200){
             setRides(success.data);
-            console.log("Returnd data:")
-            console.log(success.data)
         }
         else{
             setRides([]);
@@ -35,9 +33,7 @@ function RidesAttendedPage (){
     async function markRidePaid(indexOfEvent){
         
         let copyOfRides = rides;
-        console.log(copyOfRides[indexOfEvent].eventId);
         await api.post("Finance/mark-cost-as-paid", copyOfRides[indexOfEvent].eventId ).then(success => {
-            console.log(success.data);
         })
 
         copyOfRides[indexOfEvent].markedAsPaidDate = true;

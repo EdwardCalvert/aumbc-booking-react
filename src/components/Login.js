@@ -16,7 +16,6 @@ function Login(){
     setSendingOtp(true);
    await authenticationService.sendOtp(emailAddress).then( () => {setotpFailedToSend(false); setOtpSent(true); setRateLimitExceeded(false); setSendingOtp(false);}
       ,error=>{
-        console.log(error)
       if(error.response.status === 429){
         setRateLimitExceeded(true);
         setotpFailedToSend(false);
@@ -45,7 +44,6 @@ function Login(){
         const urlParams = new URLSearchParams(queryString);
         if (urlParams.has('redirect')) {
           let redirect = decodeURI(urlParams.get('redirect'))
-          console.log(redirect)
           if(redirect.startsWith("/")) // Assumed local redirect. 
           {
             navigate(redirect,{ replace: true });
@@ -123,9 +121,6 @@ function Login(){
   const [registrationSuccessfull, setRegistrationSuccessful] = useState(true);
 
   if(urlParams.has('email') && urlParams.has('otp') && !attemptedAutomaticLogin){
-    console.log(urlParams)
-    console.log(defaultOTP)
-    console.log(otp)
     setAttemptedAutomaticLogin(true);
     handleLogin();
   }

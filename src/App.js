@@ -19,7 +19,7 @@ import UserManagementPage from './components/UserManagementPage';
 import PeopleAttendingRidePage from './components/PeopleAttendingRidePage';
 import ListEventsBySemester from './components/ListEventsBySemester';
 import PaidDriversPage from './components/PaidDriversPage';
-
+import ScrollToTop from './_helpers/ScrollToTop';
 
 class App extends React.Component {
   constructor(props) {
@@ -45,6 +45,7 @@ class App extends React.Component {
   render() {
     return (
       <HashRouter >
+        <ScrollToTop />
         <div className='m-2'>
           <div className='alert alert-warning text-center'>The site is in Beta, please let us know of any issues <a href='https://github.com/EdwardCalvert/aumbc-booking-react/issues/new' target="_blank"> here</a></div>
           <Navbar/>

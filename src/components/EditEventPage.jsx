@@ -26,7 +26,6 @@ function EditEventPage(props){
             setErrorWhileLoading(false);
             setMtbEvent(success.data);
         }, error => {
-            console.log(error); 
             setErrorWhileLoading(true)})
 
     },[])

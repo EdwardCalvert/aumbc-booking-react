@@ -14,8 +14,6 @@ function PaidDriversPage (){
         api.get("Finance/get-driver-payouts",{params:{semesterId: semesterId}}).then(success => {
         if(success.status === 200){
             setInvoices(success.data);
-            console.log("Returnd data:")
-            console.log(success.data)
         }
         else{
             setInvoices([]);

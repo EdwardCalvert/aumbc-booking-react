@@ -49,57 +49,77 @@ class EventDetailsRenderer extends Component {
                         this.setState({dataFetched:true, errorWhileFetching :  true});
                       }
                       
-                      console.log(error)
                     });
                     this.updateAttendees();
   }
 
   updateAttendees(){
-  
-       
           api.get("MtbEvent/get-people-on-ride",{params:{eventId : this.state.id }}).then(success => {
               if(success.status === 200){
-                  this.setState({ attendees:  success.data})
+                let results = success.data.map(x =>  {return  { ...x, processing: false, editPayout: false, newPayoutValue : x.payoutTotal}} );
+                  this.setState({ attendees:  results})
               }
           }, error=>{
              // setErrorWhileLoading(true);
           })
           //setLoadingData(false);
-  
-
   }
-  
-  
+
+  editDataRow(email, propName, newValue){
+    let copyOfRows = this.state.attendees
+    const indexToRemove = copyOfRows.findIndex(x => x.emailAddress === email)
+    copyOfRows[indexToRemove][propName] = newValue ;
+    this.setState({attendees:copyOfRows})
+  }
 
 
+  async saveCustomPayoutTotal(email){
+    this.processingRecord(email)
+    let copyOfRows = this.state.attendees
+  const indexToRemove = copyOfRows.findIndex(x => x.emailAddress === email)
+  copyOfRows[indexToRemove].payoutTotal = parseFloat(copyOfRows[indexToRemove].newPayoutValue) ;
+  await api.post("EventAcceptance/update-payout-total",{ emailAddress: email,eventId: this.state.id, payoutTotal : copyOfRows[indexToRemove].payoutTotal })
+  copyOfRows[indexToRemove].editPayout = false;
+  copyOfRows[indexToRemove].customPayoutTotal = true;
+  this.setState({attendees:copyOfRows})
+  this.processingRecord(email);
+  }
+
+
+
+async processingRecord(email, state){
+  this.editDataRow(email,"processing",state);
+}
 
   async deleteEventAcceptance(email){
+    this.processingRecord(email,true)
     await api.delete("finance/cancel-acceptance",{params:{eventId: this.state.id ,emailAddress:email }})
     if(authenticationService.currentUserValue.emailAddress === email){
       window.location.reload();
     }
     else{
      let copyOfRows = this.state.attendees
-     const indexToRemove = copyOfRows.indexOf(x => x.emailAddress === email)
+     const indexToRemove = copyOfRows.findIndex(x => x.emailAddress === email)
      copyOfRows.splice(indexToRemove,1);
-     this.setState({attendees:copyOfRows})
+     this.setState({attendees:copyOfRows});
+     this.processingRecord(email,false)
     }
      
   }
 
  async onDemoteToPassenger(email){
-    await  api.delete("finance/demote-acceptance-to-passenger",{params:{eventId: this.state.id ,emailAddress:email }})
+  this.processingRecord(email,true)
+     await  api.delete("finance/demote-acceptance-to-passenger",{params:{eventId: this.state.id ,emailAddress:email }})
     if(authenticationService.currentUserValue.emailAddress === email){
       window.location.reload();
     }
     else{
-    let copyOfRows = this.state.attendees
-    const indexToRemove = copyOfRows.indexOf(x => x.emailAddress === email)
-    copyOfRows[indexToRemove].transportState = transportState.AttendingPassenger;
-    this.setState({attendees:copyOfRows})
+      this.editDataRow(email,"transportState",transportState.AttendingPassenger);
+      this.processingRecord(email,false)
     }
     
   }
+
 
   render() {
     if(!this.state.dataFetched){
@@ -111,7 +131,7 @@ class EventDetailsRenderer extends Component {
    
     else{
       if(this.state.errorWhileFetching){
-        return <p className="alert-danger alert">An error occured while loading the event. It's likely the event id you supplied doesn't exist.  <Link to={"/"} className="btn btn-primary">Take me home</Link></p>
+        return <p className="alert-danger alert">An error occured while loading the event. Possilby, the event id you supplied doesn't exist.  <Link to={"/"} className="btn btn-primary">Take me home</Link></p>
       }
       else{
         const event = this.state.event;
@@ -124,7 +144,14 @@ class EventDetailsRenderer extends Component {
               <p style={{whiteSpace: 'pre-line'}}>{event.description}</p>
 
               <SignUpForm event={event} onChange={()=> this.updateAttendees()} />
-              <PeopleAttendingRidePage rows={this.state.attendees} event={this.state.event} onDelete={(email) => this.deleteEventAcceptance(email)} onDemoteToPassenger={(email) =>this.onDemoteToPassenger(email)}/>
+              <PeopleAttendingRidePage 
+              rows={this.state.attendees}
+               event={this.state.event} 
+               onDelete={(email) => this.deleteEventAcceptance(email)} 
+               onDemoteToPassenger={(email) =>this.onDemoteToPassenger(email)} 
+               togglePayoutEdit={(email,newValue) => this.editDataRow(email,"editPayout",newValue)} 
+               setCustomPayoutTotal={(email, newValue) =>   this.editDataRow(email,"newPayoutValue",newValue)}
+               saveCustomPayoutTotal={(email)=> this.saveCustomPayoutTotal(email)}/>
               <h4>Ride details</h4>
               <div className="row mb-3 gx-3 gy-2">
                   <label className="col-sm-2">Lift share at</label>

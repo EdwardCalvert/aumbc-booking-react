@@ -14,8 +14,6 @@ function ListEventsBySemester (){
         api.get("MtbEvent/get-all-rides",{params:{semesterId: semesterId}}).then(success => {
         if(success.status === 200){
             setRides(success.data);
-            console.log("Return data:")
-            console.log(success.data)
         }
         else{
             setRides([]);

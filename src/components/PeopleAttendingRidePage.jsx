@@ -32,7 +32,10 @@ function PeopleAttendingRidePage(props){
         </thead>
         <tbody>
 
-            {rows.map((item, index) =>   <React.Fragment  key={index}><tr scope="row" >
+            {rows.map((item, index) =>   <React.Fragment  key={index}>
+               
+                <tr scope="row" >
+                
                 <td>{item.firstName} {item.lastName}</td>
                 {item.transportState == 8 &&
                     <td>{item.numberOfSeats}💺&nbsp;&nbsp;{item.numberOfBikeSpaces }🚲</td>
@@ -46,12 +49,33 @@ function PeopleAttendingRidePage(props){
                 { authenticationService.isAdmin() &&
                     <React.Fragment>
                         <td>£{DisplayInboundCost(item,mtbEvent).toFixed(2)}</td>
-                        <td>{item.transportState ===  transportState.Driving? "£"+item.payoutTotal.toFixed(2):"-"} </td>
-                        <td><div className="display-flex"><button className="btn btn-danger btn-sm btn-block me-1" onClick={()=>props.onDelete(item.emailAddress)}><i className="bi bi-trash"></i></button>{item.transportState === transportState.Driving? <button className="btn btn-sm btn-secondary btn-block me-1" onClick={()=> props.onDemoteToPassenger(item.emailAddress)}><i>💺</i></button>:""}</div></td>
+                        <td> <div className="display-flex">{item.transportState ===  transportState.Driving? "£"+item.payoutTotal.toFixed(2):"-"}{item.customPayoutTotal? <span><i className="bi bi-pencil"></i></span>:""} </div></td>
+                        <td>
+                            {item.processing &&
+                                <LoadingSpinner/>
+                            }
+                            {!item.processing &&
+                                <div className="display-flex">
+                            <button className="btn btn-danger btn-sm btn-block me-1" onClick={()=>props.onDelete(item.emailAddress)}><i className="bi bi-trash"></i></button>
+                            {item.transportState === transportState.Driving? <React.Fragment> 
+                                <button className="btn btn-sm btn-secondary btn-block me-1" onClick={()=> props.onDemoteToPassenger(item.emailAddress)}><i className="bi bi-person-down"></i></button> 
+                                <button className="btn btn-sm btn-secondary btn-block me-1" onClick={()=> props.togglePayoutEdit(item.emailAddress, !item.editPayout)}> <i class="bi bi-pencil"></i></button> </React.Fragment>:""}
+                            </div>
+                            }
+                            </td>
                         
                     </React.Fragment>
                 }
+               
             </tr>
+            {item.editPayout&&
+                    <tr>
+                        <td colSpan={4}></td>
+                        <th scope="row">New amount</th>
+                        <td><input  style={{maxWidth:"90px"}} className="form-control" value={item.newPayoutValue} onChange={(e)=> props.setCustomPayoutTotal(item.emailAddress,e.target.value) } type="number"></input></td>
+                        <td><button disabled={item.processing} className="btn btn-sm btn-primary" onClick={()=> props.saveCustomPayoutTotal(item.emailAddress)}>Update</button></td>
+                    </tr>
+                }
             { authenticationService.isAdmin() && item.otherComments &&
                 <tr><th scope="col">Comments:</th>
                     <td  style={{whiteSpace: 'pre-line'}} colSpan={6}>{item.otherComments}</td></tr>

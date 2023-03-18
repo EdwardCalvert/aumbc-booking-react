@@ -8,13 +8,10 @@ function UnpaidDriversPage(){
     const [loading, setLoading] = useState(true);
     const [rows, setRows] = useState([]);
     useEffect(()=>{
-        console.log("DEV MODE")
-        console.log(!process.env.NODE_ENV || process.env.NODE_ENV === 'development')
         api.get("Finance/get-all-unpaid-payouts").then(success => {
             if(success.status === 200){
             setErrorWhileLoading(false);
             setLoading(false);
-            console.log(success.data);
             setRows(success.data);
             }
             setLoading(false)

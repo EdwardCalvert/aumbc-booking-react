@@ -59,7 +59,6 @@ class EventList extends Component{
          
         }, error => {
           this.setState({errorWhileFetch : true, dataFetched : true})
-          console.log(error);
         });
     }
 

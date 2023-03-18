@@ -9,7 +9,6 @@ function NewsletterPage(){
     useEffect(()=> {
         api.get("auth/newsletter").then(success => {
             setNewsletterSubscribe(success.data)
-            console.log(success.data)
 
         }, error=>{
             setErrorWhileLoading(true);
@@ -18,11 +17,9 @@ function NewsletterPage(){
     },[])
 
     function postNewState(){
-        console.log(!newsletterSubscribe);
         const data = !newsletterSubscribe;
         api.post("auth/newsletter",data).then(success=>{
             setSuccessWhileSaving(true);
-            console.log(success);
         }, error => {
             setErrorWhileSaving(true);
             setSuccessWhileSaving(false);

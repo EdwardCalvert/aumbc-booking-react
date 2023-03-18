@@ -40,7 +40,6 @@ function CreateNewSemester({value,onChange,allowCreatingNewSemesters}){
     },[])
 
     function submitNewSemester(event){
-        console.log(event);
         event.preventDefault();
         api.post("Finance/semester",{
             semesterName: semesterName,
