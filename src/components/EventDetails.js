@@ -7,6 +7,7 @@ import CopyWhat3Words from "./CopyWhat3Words";
 import authenticationService from "../services/authentication.service";
 import api from './../services/api';
 import PeopleAttendingRidePage from "./PeopleAttendingRidePage";
+import transportState from "../_helpers/transportState";
 
 class EventDetailsRenderer extends Component {
 
@@ -67,11 +68,43 @@ class EventDetailsRenderer extends Component {
   
 
   }
+  
+  
+
+
+
+  async deleteEventAcceptance(email){
+    await api.delete("finance/cancel-acceptance",{params:{eventId: this.state.id ,emailAddress:email }})
+    if(authenticationService.currentUserValue.emailAddress === email){
+      window.location.reload();
+    }
+    else{
+     let copyOfRows = this.state.attendees
+     const indexToRemove = copyOfRows.indexOf(x => x.emailAddress === email)
+     copyOfRows.splice(indexToRemove,1);
+     this.setState({attendees:copyOfRows})
+    }
+     
+  }
+
+ async onDemoteToPassenger(email){
+    await  api.delete("finance/demote-acceptance-to-passenger",{params:{eventId: this.state.id ,emailAddress:email }})
+    if(authenticationService.currentUserValue.emailAddress === email){
+      window.location.reload();
+    }
+    else{
+    let copyOfRows = this.state.attendees
+    const indexToRemove = copyOfRows.indexOf(x => x.emailAddress === email)
+    copyOfRows[indexToRemove].transportState = transportState.AttendingPassenger;
+    this.setState({attendees:copyOfRows})
+    }
+    
+  }
 
   render() {
     if(!this.state.dataFetched){
         return <div>
-                 <h3>Loading</h3>
+                 <h4>Loading</h4>
                 <div className="spinner-border"></div>
             </div>
     }
@@ -91,8 +124,8 @@ class EventDetailsRenderer extends Component {
               <p style={{whiteSpace: 'pre-line'}}>{event.description}</p>
 
               <SignUpForm event={event} onChange={()=> this.updateAttendees()} />
-              <PeopleAttendingRidePage rows={this.state.attendees}/>
-              <h2>Ride details</h2>
+              <PeopleAttendingRidePage rows={this.state.attendees} event={this.state.event} onDelete={(email) => this.deleteEventAcceptance(email)} onDemoteToPassenger={(email) =>this.onDemoteToPassenger(email)}/>
+              <h4>Ride details</h4>
               <div className="row mb-3 gx-3 gy-2">
                   <label className="col-sm-2">Lift share at</label>
                   

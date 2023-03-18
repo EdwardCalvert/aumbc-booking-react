@@ -66,7 +66,7 @@ function RidesAttendedPage (){
              <td>{item.name}</td>
              <td>{new Date(item.startDateTime).toLocaleDateString("en-GB")}</td>
              <td className={item.markedAsPaidDate  || item.paymentDue ==0? "text-success": "text-danger"}>£{item.paymentDue.toFixed(2)}</td>
-             <td className={item.payoutSent ? "text-success": "text-danger" }>£{item.payoutDue.toFixed(2)}</td>
+             <td className={item.payoutSent || item.payoutDue == 0 ? "text-success": "text-danger" }>£{item.payoutDue.toFixed(2)}</td>
              <td>
                 <Link className="btn btn-primary" to={"/event/"+item.eventId} >View</Link>
                 {!item.markedAsPaidDate  && item.paymentDue !==0 && 

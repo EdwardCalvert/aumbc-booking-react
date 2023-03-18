@@ -39,6 +39,9 @@
     object-fit: cover;
 }
 
+.display-flex{
+  display: flex;
+}
 .table-space{
   padding-bottom: 10px !important;
 }
