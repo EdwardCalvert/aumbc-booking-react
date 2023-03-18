@@ -168,7 +168,7 @@ function EventForm({mtbEvent,onChange, newEvent}){
             </div>
         </div> */}
         <button type="submit" disabled={!((costForPassenger>=0 && costForPassenger >= 0 && Date.parse(endDate) > Date.parse(startDate)  &&rideStartLocation !== liftShareLocation ))||submittingResults} className="btn btn-primary">
-        <span class={submittingResults? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Submit</button>
+        <span className={submittingResults? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Submit</button>
         
 
     </form>}

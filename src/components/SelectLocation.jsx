@@ -156,13 +156,13 @@ function SelectLocation({startLocation, onLocationChanged}){
                 <label>Give the marker a name: </label>
                 <input type="text" value={newMarkerName} onChange={onMarkerNameChanged}  className="form-control" placeholder="ASV"/>
                 <button type='button' className="btn btn-success"  disabled={newMarkerName.length < 2} onClick={onSaveMarkerLocation}>
-                <span class={submittingNewLocation? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Save red marker location</button>
+                <span className={submittingNewLocation? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Save red marker location</button>
                 {!what3WordsAddressSet &&
                 <React.Fragment>
                      <label>Or supply a what 3 words address:</label>
                      <input type="text" value={newWhat3WordsAddress} onChange={onWhat3WordsChanged} className="form-control" placeholder="recent.soup.mock"/>
                      <button type='button' className="btn btn-secondary" onClick={onWhat3WordsSubmitted}  disabled={newWhat3WordsAddress.length < 3}>
-                        <span class={submittingW3W? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Load from What 3 Words Address (please save afterwards!)</button>
+                        <span className={submittingW3W? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Load from What 3 Words Address (please save afterwards!)</button>
                      <button type='button' className="btn btn-danger" onClick={onCancelAddingNewLocationClicked}>Cancel adding new location.</button>
                      </React.Fragment>
                 }

@@ -59,7 +59,7 @@ function PeopleAttendingRidePage(props){
                             <button className="btn btn-danger btn-sm btn-block me-1" onClick={()=>props.onDelete(item.emailAddress)}><i className="bi bi-trash"></i></button>
                             {item.transportState === transportState.Driving? <React.Fragment> 
                                 <button className="btn btn-sm btn-secondary btn-block me-1" onClick={()=> props.onDemoteToPassenger(item.emailAddress)}><i className="bi bi-person-down"></i></button> 
-                                <button className="btn btn-sm btn-secondary btn-block me-1" onClick={()=> props.togglePayoutEdit(item.emailAddress, !item.editPayout)}> <i class="bi bi-pencil"></i></button> </React.Fragment>:""}
+                                <button className="btn btn-sm btn-secondary btn-block me-1" onClick={()=> props.togglePayoutEdit(item.emailAddress, !item.editPayout)}> <i className="bi bi-pencil"></i></button> </React.Fragment>:""}
                             </div>
                             }
                             </td>

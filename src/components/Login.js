@@ -135,7 +135,7 @@ function Login(){
                 onChange={onChangeEmailAddress} required/> 
                     </div>
                     <div className='col-sm-2'><button type="submit"  disabled={!(validEmail(emailAddress) && !otpSent && !sendingOtp)} className="btn btn-primary">
-                    <span class={sendingOtp? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Send OTP</button></div>
+                    <span className={sendingOtp? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Send OTP</button></div>
                     <label className='form-text offset-sm-2'>A one-time-passcode will be sent to your email address</label>
             </LoginFormRow>
                 {otpSent &&
@@ -154,7 +154,7 @@ function Login(){
                         <input type="text" className="form-control" id="inputEmail3" placeholder='12345678'  disabled={!validEmail(emailAddress)} value={otp} onChange={onChangeOtp} required/>
                     </div>
                     <div className='col-sm-2'><button type="submit" disabled={!(otp.length >=6 && validEmail(emailAddress) && !processingLogin) } className="btn btn-primary">
-                    <span class={processingLogin? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Login</button></div>
+                    <span className={processingLogin? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Login</button></div>
                   </LoginFormRow>
                 
                 {errorWhileLoggingIn &&
@@ -186,7 +186,7 @@ function Login(){
                       </RegtisterFormRow>
 
                       <button type="submit"className="btn btn-primary offset-sm-2"> 
-                      <span class={processingRegistration? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true" disabled={processingRegistration}></span>
+                      <span className={processingRegistration? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true" disabled={processingRegistration}></span>
                       Register account & send OTP</button>
                       
                       
