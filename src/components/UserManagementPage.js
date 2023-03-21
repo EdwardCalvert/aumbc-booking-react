@@ -19,31 +19,32 @@ useEffect( ()=>{
     })
 },[])
 
-    async function ToggleAdminState(email){
-        await api.get("auth/toggle-admin",  { params : { emailAddress : email}}).then(success => {
-           const index =  users.findIndex(x => x.emailAddress ==  email);
-           const copyOfUsers = users;
-           copyOfUsers[index].role = success.data;
-           setUsers([...copyOfUsers]);
+    async function ToggleAdminState(accountId){
+        await api.get("auth/toggle-admin",  { params : { accountId : accountId}}).then(success => {
+            editDataRow(accountId,"role",success.data);
         }, error=>{
 
         })
     }
 
-    async function ToggleNewsletterState(email){
-        await api.get("auth/toggle-newsletter",  { params : { emailAddress : email}}).then(success => {
-           const index =  users.findIndex(x => x.emailAddress ==  email);
-           const copyOfUsers = users;
-           copyOfUsers[index].notifyNewEvents = success.data;
-           setUsers([...copyOfUsers]);
+   function editDataRow(accountId, propName, newValue){
+        let copyOfRows = users
+        const indexToRemove = copyOfRows.findIndex(x => x.accountId === accountId)
+        copyOfRows[indexToRemove][propName] = newValue ;
+        setUsers([...copyOfRows])
+      }
+
+    async function ToggleNewsletterState(accountId){
+        await api.get("auth/toggle-newsletter",  { params : { accountId : accountId}}).then(success => {
+            editDataRow(accountId,"notifyNewEvents",success.data);
         }, error=>{
 
         })
     }
 
-    async function DeleteUser(email){
-        await api.delete("auth/delete-user",  { params : { emailAddress : email}}).then(success => {
-           const index =  users.findIndex(x => x.emailAddress ==  email);
+    async function DeleteUser(accountId){
+        await api.delete("auth/delete-user",  { params : { accountId : accountId}}).then(success => {
+           const index =  users.findIndex(x => x.accountId ==  accountId);
            const copyOfUsers = users;
            copyOfUsers.splice(index, 1);
            setUsers([...copyOfUsers]);
@@ -64,17 +65,17 @@ return <div>
         </tr>
     </thead>
     <tbody>
-        { users.map((item, index) => <tr key={item.emailAddress}>
-            {item.emailAddress !== authenticationService.currentUserValue.emailAddress &&
+        { users.map((item, index) => <tr key={item.accountId}>
+            {item.accountId !== authenticationService.currentUserValue.accountId &&
             <React.Fragment>
                 <td>{item.firstName} {item.lastName}</td>
                 <td>{item.role}</td>
-                <td><button className="btn btn-sm btn-primary btn-block me-1" onClick={() => ToggleAdminState(item.emailAddress)}> <i className={item.role == "Administrator"? "bi bi-person-up": "bi bi-person-fill-down"} ></i></button>
-                <button className="btn btn-sm btn-primary btn-block me-1" onClick={() => ToggleNewsletterState(item.emailAddress)}><i className={item.notifyNewEvents ? "bi bi-envelope-slash-fill": "bi bi-envelope-plus"}></i></button>
-                <button className="btn btn-sm btn-danger btn-block me-1" onClick={() => DeleteUser(item.emailAddress)}><i className="bi bi-trash"></i></button></td>
+                <td><button className="btn btn-sm btn-primary btn-block me-1" onClick={() => ToggleAdminState(item.accountId)}> <i className={item.role == "Administrator"? "bi bi-person-up": "bi bi-person-fill-down"} ></i></button>
+                <button className="btn btn-sm btn-primary btn-block me-1" onClick={() => ToggleNewsletterState(item.accountId)}><i className={item.notifyNewEvents ? "bi bi-envelope-slash-fill": "bi bi-envelope-plus"}></i></button>
+                <button className="btn btn-sm btn-danger btn-block me-1" onClick={() => DeleteUser(item.accountId)}><i className="bi bi-trash"></i></button></td>
                 </React.Fragment>
             }
-            {item.emailAddress === authenticationService.currentUserValue.emailAddress &&
+            {item.accountId === authenticationService.currentUserValue.accountId &&
                 <td colSpan={3}>You</td>
             }
             

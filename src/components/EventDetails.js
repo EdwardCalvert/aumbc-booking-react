@@ -65,57 +65,57 @@ class EventDetailsRenderer extends Component {
           //setLoadingData(false);
   }
 
-  editDataRow(email, propName, newValue){
+  editDataRow(accountId, propName, newValue){
     let copyOfRows = this.state.attendees
-    const indexToRemove = copyOfRows.findIndex(x => x.emailAddress === email)
+    const indexToRemove = copyOfRows.findIndex(x => x.accountId === accountId)
     copyOfRows[indexToRemove][propName] = newValue ;
     this.setState({attendees:copyOfRows})
   }
 
 
-  async saveCustomPayoutTotal(email){
-    this.processingRecord(email)
+  async saveCustomPayoutTotal(accountId){
+    this.processingRecord(accountId)
     let copyOfRows = this.state.attendees
-  const indexToRemove = copyOfRows.findIndex(x => x.emailAddress === email)
+  const indexToRemove = copyOfRows.findIndex(x => x.accountId === accountId)
   copyOfRows[indexToRemove].payoutTotal = parseFloat(copyOfRows[indexToRemove].newPayoutValue) ;
-  await api.post("EventAcceptance/update-payout-total",{ emailAddress: email,eventId: this.state.id, payoutTotal : copyOfRows[indexToRemove].payoutTotal })
+  await api.post("EventAcceptance/update-payout-total",{ accountId: accountId,eventId: this.state.id, payoutTotal : copyOfRows[indexToRemove].payoutTotal })
   copyOfRows[indexToRemove].editPayout = false;
   copyOfRows[indexToRemove].customPayoutTotal = true;
   this.setState({attendees:copyOfRows})
-  this.processingRecord(email);
+  this.processingRecord(accountId);
   }
 
 
 
-async processingRecord(email, state){
-  this.editDataRow(email,"processing",state);
+async processingRecord(accountId, state){
+  this.editDataRow(accountId,"processing",state);
 }
 
-  async deleteEventAcceptance(email){
-    this.processingRecord(email,true)
-    await api.delete("finance/cancel-acceptance",{params:{eventId: this.state.id ,emailAddress:email }})
-    if(authenticationService.currentUserValue.emailAddress === email){
+  async deleteEventAcceptance(accountId){
+    this.processingRecord(accountId,true)
+    await api.delete("finance/cancel-acceptance",{params:{eventId: this.state.id ,accountId:accountId }})
+    if(authenticationService.currentUserValue.accountId === accountId){
       window.location.reload();
     }
     else{
      let copyOfRows = this.state.attendees
-     const indexToRemove = copyOfRows.findIndex(x => x.emailAddress === email)
+     const indexToRemove = copyOfRows.findIndex(x => x.accountId === accountId)
      copyOfRows.splice(indexToRemove,1);
      this.setState({attendees:copyOfRows});
-     this.processingRecord(email,false)
+     this.processingRecord(accountId,false)
     }
      
   }
 
- async onDemoteToPassenger(email){
-  this.processingRecord(email,true)
-     await  api.delete("finance/demote-acceptance-to-passenger",{params:{eventId: this.state.id ,emailAddress:email }})
-    if(authenticationService.currentUserValue.emailAddress === email){
+ async onDemoteToPassenger(accountId){
+  this.processingRecord(accountId,true)
+     await  api.delete("finance/demote-acceptance-to-passenger",{params:{eventId: this.state.id ,accountId:accountId }})
+    if(authenticationService.currentUserValue.accountId === accountId){
       window.location.reload();
     }
     else{
-      this.editDataRow(email,"transportState",transportState.AttendingPassenger);
-      this.processingRecord(email,false)
+      this.editDataRow(accountId,"transportState",transportState.AttendingPassenger);
+      this.processingRecord(accountId,false)
     }
     
   }
@@ -147,11 +147,11 @@ async processingRecord(email, state){
               <PeopleAttendingRidePage 
               rows={this.state.attendees}
                event={this.state.event} 
-               onDelete={(email) => this.deleteEventAcceptance(email)} 
-               onDemoteToPassenger={(email) =>this.onDemoteToPassenger(email)} 
-               togglePayoutEdit={(email,newValue) => this.editDataRow(email,"editPayout",newValue)} 
-               setCustomPayoutTotal={(email, newValue) =>   this.editDataRow(email,"newPayoutValue",newValue)}
-               saveCustomPayoutTotal={(email)=> this.saveCustomPayoutTotal(email)}/>
+               onDelete={(accountId) => this.deleteEventAcceptance(accountId)} 
+               onDemoteToPassenger={(accountId) =>this.onDemoteToPassenger(accountId)} 
+               togglePayoutEdit={(accountId,newValue) => this.editDataRow(accountId,"editPayout",newValue)} 
+               setCustomPayoutTotal={(accountId, newValue) =>   this.editDataRow(accountId,"newPayoutValue",newValue)}
+               saveCustomPayoutTotal={(accountId)=> this.saveCustomPayoutTotal(accountId)}/>
               <h4>Ride details</h4>
               <div className="row mb-3 gx-3 gy-2">
                   <label className="col-sm-2">Lift share at</label>

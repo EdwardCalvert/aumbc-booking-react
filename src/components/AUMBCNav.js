@@ -34,9 +34,9 @@ function AdminControls({onClick}){
     return <React.Fragment> 
        <NavDropdown title="Admin Controls" id="basic-nav-dropdown"> 
        <NavDropdown.Item  onClick={onClick} href="/#/admin/new-event" className="dropdown-item">New event</NavDropdown.Item>
-       <NavDropdown.Item  onClick={onClick} href="/#/admin/unpaid-drivers" className="dropdown-item">Outstanding pay-outs</NavDropdown.Item>
+       {/* <NavDropdown.Item  onClick={onClick} href="/#/admin/unpaid-drivers" className="dropdown-item">Outstanding pay-outs</NavDropdown.Item>
        <NavDropdown.Item onClick={onClick} href="/#/admin/paid-drivers" className="dropdown-item">Receipts for pay-outs</NavDropdown.Item>
-       <NavDropdown.Item onClick={onClick} href="/#/admin/list-events" className="dropdown-item">Rides this semester</NavDropdown.Item>
+       <NavDropdown.Item onClick={onClick} href="/#/admin/list-events" className="dropdown-item">Rides this semester</NavDropdown.Item> */}
        <NavDropdown.Item  onClick={onClick} href="/#/admin/manage" className="dropdown-item" >Manage users</NavDropdown.Item>
             </NavDropdown>
     </React.Fragment>
