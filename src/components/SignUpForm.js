@@ -309,12 +309,12 @@ class SignUpForm extends Component{
                     </div>
             }
             else if(!event.visible){
-                    return <div className='sign-up-form-container'><h2>Sign up is unavailable.</h2>
+                    return <div className='sign-up-form-container'><h4>Sign up is unavailable.</h4>
                         <p>You can't sign up, since this ride was cancelled!</p>
                     </div>
                 }
                 else if(Date.parse(event.startDateTime) < Date.now()){
-                    return <div className='sign-up-form-container'><h2>Sign up is unavailable.</h2>
+                    return <div className='sign-up-form-container'><h4>Sign up is unavailable.</h4>
                      <p>You can't sign up, since this ride has started</p>
                      {(this.state.transportState === AttendingPassenger || this.state.transportState === Driving) &&
                             <this.paymentHelpMessage paymentAmmount={ this.state.transportState === AttendingPassenger? event.costForPassenger: event.costForDriver} event={event}></this.paymentHelpMessage>

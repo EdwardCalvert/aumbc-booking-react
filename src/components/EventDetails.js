@@ -6,7 +6,7 @@ import { useParams, Link } from "react-router-dom";
 import CopyWhat3Words from "./CopyWhat3Words";
 import authenticationService from "../services/authentication.service";
 import api from './../services/api';
-import PeopleAttendingRidePage from "./PeopleAttendingRidePage";
+import EventAcceptanceRow from "./PeopleAttendingRidePage";
 import transportState from "../_helpers/transportState";
 
 class EventDetailsRenderer extends Component {
@@ -144,9 +144,9 @@ async processingRecord(accountId, state){
               <p style={{whiteSpace: 'pre-line'}}>{event.description}</p>
 
               <SignUpForm event={event} onChange={()=> this.updateAttendees()} />
-              <PeopleAttendingRidePage 
+              <h4>Riders attending event</h4>
+              <EventAcceptanceRow 
               rows={this.state.attendees}
-               event={this.state.event} 
                onDelete={(accountId) => this.deleteEventAcceptance(accountId)} 
                onDemoteToPassenger={(accountId) =>this.onDemoteToPassenger(accountId)} 
                togglePayoutEdit={(accountId,newValue) => this.editDataRow(accountId,"editPayout",newValue)} 
