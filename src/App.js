@@ -15,7 +15,7 @@ import NewsletterPage from './components/NewsletterPage';
 import CreateNewEventPage from './components/CreateNewEventPage';
 import RidesAttendedPage from './components/RidesAttendedPage';
 import UserManagementPage from './components/UserManagementPage';
-import PeopleAttendingRidePage from './components/PeopleAttendingRidePage';
+import PeopleAttendingRidePage from './components/EventAcceptanceRow';
 import ListEventsBySemester from './components/ListEventsBySemester';
 import ScrollToTop from './_helpers/ScrollToTop';
 import { TreasurerPage } from './components/TreasurerPage';

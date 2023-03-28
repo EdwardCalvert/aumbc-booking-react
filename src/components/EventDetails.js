@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import SignUpForm from "./SignUpForm";
+import SignUpForm from "./SignUpForm-v2";
 import StaticMap from "./StaticMap";
 import OpenInGoogleMps from "./OpenInGoogleMaps";
 import { useParams, Link } from "react-router-dom";
 import CopyWhat3Words from "./CopyWhat3Words";
 import authenticationService from "../services/authentication.service";
 import api from './../services/api';
-import EventAcceptanceRow from "./PeopleAttendingRidePage";
+import EventAcceptanceRow from "./EventAcceptanceRow";
 import transportState from "../_helpers/transportState";
 
 class EventDetailsRenderer extends Component {
@@ -19,6 +19,7 @@ class EventDetailsRenderer extends Component {
         id : id,
       dataFetched : false,
       errorWhileFetching: false,
+      signUpFormObject : null
     };
     this.cancelEvent = this.cancelEvent.bind(this)
     
@@ -35,7 +36,10 @@ class EventDetailsRenderer extends Component {
   }
 
   componentDidMount(){
-    api.get("MtbEvent/get", {params: {eventId :this.state.id}})
+        api.get("EventAcceptance/get-signup-form-object", { params: {eventId: this.state.id}}).then(response => {
+      this.setState({signUpFormObject: response.data})});
+    
+      api.get("MtbEvent/get", {params: {eventId :this.state.id}})
                     .then((response) => {
                         this.setState({
                             event: response.data,
@@ -50,7 +54,9 @@ class EventDetailsRenderer extends Component {
                       }
                       
                     });
-                    this.updateAttendees();
+
+
+    this.updateAttendees();
   }
 
   updateAttendees(){
@@ -143,15 +149,15 @@ async processingRecord(accountId, state){
               </h2>
               <p style={{whiteSpace: 'pre-line'}}>{event.description}</p>
 
-              <SignUpForm event={event} onChange={()=> this.updateAttendees()} />
+              <SignUpForm event={event} onChange={()=> this.updateAttendees()} signUpObject={this.state.signUpFormObject} />
               <h4>Riders attending event</h4>
               <EventAcceptanceRow 
               rows={this.state.attendees}
-               onDelete={(accountId) => this.deleteEventAcceptance(accountId)} 
-               onDemoteToPassenger={(accountId) =>this.onDemoteToPassenger(accountId)} 
-               togglePayoutEdit={(accountId,newValue) => this.editDataRow(accountId,"editPayout",newValue)} 
-               setCustomPayoutTotal={(accountId, newValue) =>   this.editDataRow(accountId,"newPayoutValue",newValue)}
-               saveCustomPayoutTotal={(accountId)=> this.saveCustomPayoutTotal(accountId)}/>
+               onDelete={(accountId,eventId) => this.deleteEventAcceptance(accountId)} 
+               onDemoteToPassenger={(accountId,eventId) =>this.onDemoteToPassenger(accountId)} 
+               togglePayoutEdit={(accountId,eventId,newValue) => this.editDataRow(accountId,"editPayout",newValue)} 
+               setCustomPayoutTotal={(accountId,eventId, newValue) =>   this.editDataRow(accountId,"newPayoutValue",newValue)}
+               saveCustomPayoutTotal={(accountId,eventId)=> this.saveCustomPayoutTotal(accountId)}/>
               <h4>Ride details</h4>
               <div className="row mb-3 gx-3 gy-2">
                   <label className="col-sm-2">Lift share at</label>
@@ -197,10 +203,6 @@ async processingRecord(accountId, state){
                   
                   </React.Fragment>
                 }
-           
-             
-      
-             
             </div>
           );
         }
@@ -215,27 +217,6 @@ async processingRecord(accountId, state){
       }
     }
   }
-
-
-  MapLocation({eventLocationName,eventWhat3Words, eventLat, eventLng, locationTitle,zoom, dateTime} ) {
-        return (
-          <div className="row mb-3 gx-3 gy-2">
-            <label className="col-sm-2">{locationTitle}</label>
-            
-            <div className="col-sm-6">
-            <h5>{eventLocationName} - <a href={"https://what3words.com/" + eventWhat3Words} rel="noreferrer" target="_blank">///{eventWhat3Words}</a> @{  new Date(dateTime).toLocaleDateString("en-GB") +" "+ new Date(dateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})}</h5>
-              <StaticMap
-                lat={eventLat}
-                lng={eventLng}
-                zoom={zoom}
-              ></StaticMap>
-              <OpenInGoogleMps position={{lat: eventLat, lng: eventLng}} /> <CopyWhat3Words what3Words={eventWhat3Words}/>
-            </div>
-          </div>
-        );
-    }
-  
-    
   
 
   RideDate({ event }) {
