@@ -1,0 +1,22 @@
+-- Table: public.Token
+
+-- DROP TABLE IF EXISTS public."Token";
+
+CREATE TABLE IF NOT EXISTS public."Token"
+(
+    "AccessToken" text COLLATE pg_catalog."default" NOT NULL,
+    "RefreshToken" text COLLATE pg_catalog."default" NOT NULL,
+    "AccessTokenExpiry" timestamp without time zone NOT NULL,
+    "RefreshTokenExpiry" timestamp without time zone NOT NULL,
+    "AccountId" character varying(36) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Token_pkey" PRIMARY KEY ("AccessToken", "RefreshToken"),
+    CONSTRAINT "FK_Token_Account" FOREIGN KEY ("AccountId")
+        REFERENCES public."Account" ("AccountId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."Token"
+    OWNER to postgres;

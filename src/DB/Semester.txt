@@ -1,0 +1,20 @@
+-- Table: public.Semester
+
+-- DROP TABLE IF EXISTS public."Semester";
+
+CREATE TABLE IF NOT EXISTS public."Semester"
+(
+    "SemesterName" text COLLATE pg_catalog."default" NOT NULL,
+    "PetrolPrice" money NOT NULL,
+    "DieselPrice" money NOT NULL,
+    "SemesterId" integer NOT NULL DEFAULT nextval('"Semester_SemesterId_seq"'::regclass),
+    "AverageCostPerMile" money NOT NULL,
+    "WearAndTearCost" money NOT NULL,
+    "CarToSeatRatio" double precision NOT NULL,
+    CONSTRAINT "Semester_pkey" PRIMARY KEY ("SemesterId")
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."Semester"
+    OWNER to postgres;

@@ -219,7 +219,7 @@ Join wating list</button>
                         <select className="form-select"  onChange={updateDrivingSelector} value={transportSelectorValue}>
                             <option value={String(QueuingPassenger)} >I'll use the lift share</option>
                             <option value={String(MakingOwnWayThere)} >I'll make my own way there </option>
-                            {myVehicles.filter((item) => item.carVisible).map((item,key)=> (<option value={item.vehicleId} key={item.vehicleId}>I'll drive, with a total of  {item.numberOfSeats}x💺/{item.numberOfBikeSpaces }x🚲 ({item.petrol? "petrol" : "diesel"}, {item.mpg} mpg)</option>) )}
+                            {myVehicles?.filter((item) => item.carVisible).map((item,key)=> (<option value={item.vehicleId} key={item.vehicleId}>I'll drive, with a total of  {item.numberOfSeats}x💺/{item.numberOfBikeSpaces }x🚲 ({item.petrol? "petrol" : "diesel"}, {item.mpg} mpg)</option>) )}
                         </select>
                         <div className="col-auto">
                         <button className="btn btn-outline-secondary mt-3 mr-3"  type="button" onClick={toggleAddCarForm} >Add a new car?</button>

@@ -153,6 +153,7 @@ async processingRecord(accountId, state){
               <h4>Riders attending event</h4>
               <EventAcceptanceRow 
               rows={this.state.attendees}
+              showAdminControls={true}
                onDelete={(accountId,eventId) => this.deleteEventAcceptance(accountId)} 
                onDemoteToPassenger={(accountId,eventId) =>this.onDemoteToPassenger(accountId)} 
                togglePayoutEdit={(accountId,eventId,newValue) => this.editDataRow(accountId,"editPayout",newValue)} 

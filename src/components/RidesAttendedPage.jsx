@@ -57,6 +57,9 @@ function RidesAttendedPage (){
     if(errorLoadingInvoice){
         return <p className="alert alert-danger">Unable to load invoices.</p>
     }
+    if(loading &&  !semesterId ){
+        return <p>No semesters</p>
+    }
     return <div>
         <h2>Rides you have attended</h2>
         <CreateNewSemester allowCreatingNewSemesters={false} value={semesterId} onChange={semesterChanged}></CreateNewSemester>

@@ -1,0 +1,18 @@
+-- Table: public.Location
+
+-- DROP TABLE IF EXISTS public."Location";
+
+CREATE TABLE IF NOT EXISTS public."Location"
+(
+    "What3WordsAddress" character varying(65) COLLATE pg_catalog."default" NOT NULL,
+    "Visible" boolean NOT NULL,
+    "Lat" double precision NOT NULL,
+    "Lng" double precision NOT NULL,
+    "Name" character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Location_pkey1" PRIMARY KEY ("What3WordsAddress")
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."Location"
+    OWNER to postgres;

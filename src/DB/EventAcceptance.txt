@@ -1,0 +1,38 @@
+-- Table: public.EventAcceptance
+
+-- DROP TABLE IF EXISTS public."EventAcceptance";
+
+CREATE TABLE IF NOT EXISTS public."EventAcceptance"
+(
+    "EventId" character varying(36) COLLATE pg_catalog."default" NOT NULL,
+    "VehicleId" character varying COLLATE pg_catalog."default",
+    "BorrowClubBike" boolean NOT NULL,
+    "GiveItAGo" boolean NOT NULL,
+    "OtherComments" text COLLATE pg_catalog."default",
+    "ServerReciveTimeUTC" timestamp without time zone NOT NULL,
+    "EventCostsPaidDate" timestamp without time zone,
+    "TransportState" integer,
+    "PayoutTotal" money NOT NULL,
+    "IsCustomPayoutTotal" boolean NOT NULL DEFAULT false,
+    "AccountId" character varying(36) COLLATE pg_catalog."default" NOT NULL,
+    "PayoutSentDate" timestamp without time zone,
+    "EventCostsToPay" money NOT NULL,
+    CONSTRAINT "EventAcceptance_pkey" PRIMARY KEY ("AccountId", "EventId"),
+    CONSTRAINT "FK_EventAcceptance_Account" FOREIGN KEY ("AccountId")
+        REFERENCES public."Account" ("AccountId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "FK_EventAcceptance_MtbEvent" FOREIGN KEY ("EventId")
+        REFERENCES public."MtbEvent" ("Id") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "FK_EventAcceptance_Vehicle" FOREIGN KEY ("VehicleId")
+        REFERENCES public."Vehicle" ("VehicleId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."EventAcceptance"
+    OWNER to postgres;

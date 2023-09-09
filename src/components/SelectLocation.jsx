@@ -2,9 +2,11 @@ import { MapContainer } from 'react-leaflet/MapContainer'
 import { TileLayer } from 'react-leaflet/TileLayer'
 import {Marker} from 'react-leaflet/Marker'
 import { Popup } from "react-leaflet";
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState,useMemo} from "react";
 import { useRef } from 'react'
 import L from "leaflet";
+import axios from 'axios';
+import debounce from 'lodash.debounce';
 import api from "./../services/api"
 const icon = L.icon({
     iconSize: [31, 52],
@@ -16,6 +18,22 @@ const icon = L.icon({
 
 
 function SelectLocation({startLocation, onLocationChanged}){
+    const nullState = "-1"
+    //Debounce the new text address
+    const ref = useRef();
+    const onChange = () => {
+        setSelectedAddress(nullState);
+         axios.get("https://nominatim.openstreetmap.org/search.php?q="+encodeURI(newTextAddress)+"&countrycodes=gb&format=jsonv2&limit=10").then(success=> {setAddressSearchResults(success.data)}) }
+    useEffect(() => {
+      ref.current = onChange
+    }, [onChange]);
+    const doCallbackWithDebounce = useMemo(() => {
+      const callback = () => ref.current?.()
+      return debounce(callback, 600);
+    }, []);
+    //End debounce
+
+    
     const [selectedLocation, setSelectedLocation] = useState();
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [zoom, setZoom] = useState(7);
@@ -23,9 +41,16 @@ function SelectLocation({startLocation, onLocationChanged}){
     const [map, setMap] = useState(null)
     let markerRefs = useRef([])
     const editMarkerRef = useRef(null);
+
     const [newMarkerName, setNewMarkerName] = useState("");
     const [newWhat3WordsAddress, setNewWhat3WordsAddress] = useState("");
     const [what3WordsAddressSet,setWhat3WordsAddressSet] = useState(false);
+
+    const [newTextAddress,setNewTextAddress] = useState("");
+    const [addressSearchResults,setAddressSearchResults] = useState([]);
+    const [selectedAddress, setSelectedAddress] = useState("-1");
+
+
     const [errorWhileProcessing,setErrorWhileProcessing] = useState(false);
     const [locations,setLocations] = useState([]);
     const [errorWhileLoading, setErrorWhileLoading] = useState(false);
@@ -73,6 +98,17 @@ function SelectLocation({startLocation, onLocationChanged}){
         })
     },[])
 
+    
+    useEffect(()=> {
+        const index = parseInt(selectedAddress);
+        if(index >=0 ){
+            var newLatLng = new L.LatLng(addressSearchResults[index].lat,addressSearchResults[index].lon);
+            editMarkerRef.current.setLatLng(newLatLng); 
+            map.flyTo([addressSearchResults[index].lat,addressSearchResults[index].lon], 16);
+        }
+     } ,[selectedAddress]);
+
+
     function markerSelected(event){
         if(!addNewLocation.current){
         const index = locations.findIndex(x => x.what3WordsAddress ===event.what3WordsAddress)
@@ -81,7 +117,7 @@ function SelectLocation({startLocation, onLocationChanged}){
             setSelectedLocation(event);
             onLocationChanged(event);
         }
-    }
+        }
     }
  
     function selectionChanged(event){
@@ -154,11 +190,25 @@ function SelectLocation({startLocation, onLocationChanged}){
              <React.Fragment>
                 <p>Create a new location, by moving the marker on the map or supplying a what 3 words address. You need to enter a name before the location is saved.</p>
                 <label>Give the marker a name: </label>
-                <input type="text" value={newMarkerName} onChange={onMarkerNameChanged}  className="form-control" placeholder="ASV"/>
+                <input type="text" value={newMarkerName} onChange={onMarkerNameChanged}  className="form-control" placeholder="ASV" />
                 <button type='button' className="btn btn-success"  disabled={newMarkerName.length < 2} onClick={onSaveMarkerLocation}>
                 <span className={submittingNewLocation? "spinner-border spinner-border-sm" :""} role="status" aria-hidden="true"></span>Save red marker location</button>
                 {!what3WordsAddressSet &&
                 <React.Fragment>
+                    <label>Search for location:</label>
+                     <input type="text" value={newTextAddress}  onChange={(e)=>{setNewTextAddress(e.target.value);doCallbackWithDebounce();}}  className="form-control" placeholder="Aberdeen" />
+                        <select className='form-select' value={selectedAddress} onChange={(e) => setSelectedAddress(e.target.value)}>
+                        {addressSearchResults.length ==0 &&
+                                <option value={-2} selected>No Results</option>
+                            }
+                            {addressSearchResults.length >0 &&
+                                <option value={-1} selected>Select</option>
+                            }
+                            {addressSearchResults.map((item,index)=> <option key={item.osm_id} value={index}>{item.display_name} </option> )}
+                            
+                           
+                        </select>
+                     
                      <label>Or supply a what 3 words address:</label>
                      <input type="text" value={newWhat3WordsAddress} onChange={onWhat3WordsChanged} className="form-control" placeholder="recent.soup.mock"/>
                      <button type='button' className="btn btn-secondary" onClick={onWhat3WordsSubmitted}  disabled={newWhat3WordsAddress.length < 3}>
@@ -179,6 +229,7 @@ function SelectLocation({startLocation, onLocationChanged}){
         </div>
     }
 
+    
    async function onWhat3WordsSubmitted(){
         setSubmittingW3W(true);
         // Get lat lng object. Set location of marker. Disable dragging. 
@@ -218,7 +269,6 @@ function SelectLocation({startLocation, onLocationChanged}){
     function onWhat3WordsChanged(e){
         setNewWhat3WordsAddress(e.target.value);
     }
-   
     async function onSaveMarkerLocation(){
         setSubmittingNewLocation(true);
         let selectedLocation;
@@ -261,10 +311,6 @@ function SelectLocation({startLocation, onLocationChanged}){
         }
         
         )
-
-       
-
-
         setSubmittingNewLocation(false);
     }
 

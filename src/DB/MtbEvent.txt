@@ -1,0 +1,37 @@
+-- Table: public.MtbEvent
+
+-- DROP TABLE IF EXISTS public."MtbEvent";
+
+CREATE TABLE IF NOT EXISTS public."MtbEvent"
+(
+    "Id" character varying(36) COLLATE pg_catalog."default" NOT NULL,
+    "StartDateTime" timestamp without time zone NOT NULL,
+    "EndDateTime" timestamp without time zone NOT NULL,
+    "CostForPassenger" money NOT NULL,
+    "CostForDriver" money NOT NULL,
+    "DistanceForLiftShare" double precision NOT NULL,
+    "Name" text COLLATE pg_catalog."default" NOT NULL,
+    "Description" text COLLATE pg_catalog."default",
+    "RideStartW3W" character varying(65) COLLATE pg_catalog."default" NOT NULL,
+    "LiftShareW3W" character varying(65) COLLATE pg_catalog."default" NOT NULL,
+    "Visible" boolean NOT NULL,
+    "SemesterId" integer NOT NULL,
+    CONSTRAINT "MtbEvent_pkey1" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_MtbEvent_Location" FOREIGN KEY ("RideStartW3W")
+        REFERENCES public."Location" ("What3WordsAddress") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "FK_MtbEvent_Location_2" FOREIGN KEY ("LiftShareW3W")
+        REFERENCES public."Location" ("What3WordsAddress") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "FK_MtbEvent_Semester" FOREIGN KEY ("SemesterId")
+        REFERENCES public."Semester" ("SemesterId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."MtbEvent"
+    OWNER to postgres;

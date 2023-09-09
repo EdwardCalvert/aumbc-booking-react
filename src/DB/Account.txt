@@ -1,0 +1,23 @@
+-- Table: public.Account
+
+-- DROP TABLE IF EXISTS public."Account";
+
+CREATE TABLE IF NOT EXISTS public."Account"
+(
+    "FirstName" character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    "LastName" character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    "Role" character varying(15) COLLATE pg_catalog."default" NOT NULL,
+    "NotifyNewEvents" boolean NOT NULL,
+    "OtpCodeExpiryUTC" timestamp without time zone,
+    "OtpCode" character varying(8) COLLATE pg_catalog."default" DEFAULT 'NULL::character varying'::character varying,
+    "LastRequestedOtpCodeUTC" timestamp without time zone,
+    "Enabled" boolean NOT NULL,
+    "AccountId" character varying(36) COLLATE pg_catalog."default" NOT NULL,
+    "EmailAddress" character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Account_pkey" PRIMARY KEY ("AccountId")
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."Account"
+    OWNER to postgres;
