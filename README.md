@@ -1,4 +1,4 @@
-# AUMBC booking website, written poorley in react. 
+# AUMBC booking website, written poorly in react. 
 
 Allows users rides to be created, users to book onto rides and drivers to be reimbursed for any fuel costs. 
 
