@@ -33,15 +33,6 @@ useEffect( ()=>{
         copyOfRows[indexToRemove][propName] = newValue ;
         setUsers([...copyOfRows])
       }
-
-    async function ToggleNewsletterState(accountId){
-        await api.get("auth/toggle-newsletter",  { params : { accountId : accountId}}).then(success => {
-            editDataRow(accountId,"notifyNewEvents",success.data);
-        }, error=>{
-
-        })
-    }
-
     async function DeleteUser(accountId){
         await api.delete("auth/delete-user",  { params : { accountId : accountId}}).then(success => {
            const index =  users.findIndex(x => x.accountId ==  accountId);
@@ -70,8 +61,7 @@ return <div>
             <React.Fragment>
                 <td>{item.firstName} {item.lastName}</td>
                 <td>{item.role}</td>
-                <td><button className="btn btn-sm btn-primary btn-block me-1" onClick={() => ToggleAdminState(item.accountId)}> <i className={item.role == "Administrator"? "bi bi-person-up": "bi bi-person-fill-down"} ></i></button>
-                <button className="btn btn-sm btn-primary btn-block me-1" onClick={() => ToggleNewsletterState(item.accountId)}><i className={item.notifyNewEvents ? "bi bi-envelope-slash-fill": "bi bi-envelope-plus"}></i></button>
+                <td><button className="btn btn-sm btn-primary btn-block me-1" onClick={() => ToggleAdminState(item.accountId)}> <i className={item.role !== "Administrator"? "bi bi-person-up": "bi bi-person-fill-down"} ></i></button>
                 <button className="btn btn-sm btn-danger btn-block me-1" onClick={() => DeleteUser(item.accountId)}><i className="bi bi-trash"></i></button></td>
                 </React.Fragment>
             }

@@ -189,7 +189,7 @@ async processingRecord(accountId, state){
                   <div className="row mb-3 gx-3 gy-2 mb-3 pb-3">
                     <label className="col-sm-2">Possible finish</label>
                       <div className="col-sm-10">
-                        { new Date(event.endDateTime).toLocaleDateString("en-GB")} { new Date(event.startDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})} (This is simply a guess)
+                        { new Date(event.endDateTime).toLocaleDateString("en-GB")} { new Date(event.endDateTime).toLocaleTimeString("en-GB",{timeStyle: "short"})} (This is simply a guess)
                       </div>
                 </div>
                 {authenticationService.currentUserValue&&

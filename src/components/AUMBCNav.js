@@ -18,7 +18,6 @@ return (<Navbar bg="white" expand="lg" expanded={expanded}>
           <Nav className="container d-flex">
           <Link onClick={() => setExpanded(false)} to="/" className="nav-link">Events</Link>
           <Link onClick={() => setExpanded(false)} to="/my-account" className="nav-link">My rides</Link>
-          <Link onClick={() => setExpanded(false)} to="/email-settings" className="nav-link">Newsletter preference</Link>
           <AdminControls onClick={() => setExpanded(false)}/>
           <LoginLogout onClick={() => setExpanded(false)}/>
           </Nav>
@@ -35,10 +34,6 @@ function AdminControls({onClick}){
        <NavDropdown title="Admin Controls" id="basic-nav-dropdown"> 
        <NavDropdown.Item  onClick={onClick} href="/#/admin/new-event" className="dropdown-item">New event</NavDropdown.Item>
        <NavDropdown.Item  onClick={onClick} href="/#/admin/treasurer/" className="dropdown-item">Treasuer</NavDropdown.Item>
-       
-       {/* <NavDropdown.Item  onClick={onClick} href="/#/admin/unpaid-drivers" className="dropdown-item">Outstanding pay-outs</NavDropdown.Item>
-       <NavDropdown.Item onClick={onClick} href="/#/admin/paid-drivers" className="dropdown-item">Receipts for pay-outs</NavDropdown.Item>
-       <NavDropdown.Item onClick={onClick} href="/#/admin/list-events" className="dropdown-item">Rides this semester</NavDropdown.Item> */}
        <NavDropdown.Item  onClick={onClick} href="/#/admin/manage" className="dropdown-item" >Manage users</NavDropdown.Item>
             </NavDropdown>
     </React.Fragment>

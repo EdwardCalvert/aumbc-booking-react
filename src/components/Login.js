@@ -76,7 +76,7 @@ function Login(){
   async function handleRegister(event){
     event.preventDefault();
     setProcessingRegistration(true);
-    await authenticationService.register(registrationFirstName,registerLastName,registerEmailAddress,registerNewsletterSubscribe).then(success =>{
+    await authenticationService.register(registrationFirstName,registerLastName,registerEmailAddress).then(success =>{
       setRegistrationSubmitted(true);
       setEmail(registerEmailAddress);
       setOtpSent(true);
@@ -177,11 +177,6 @@ function Login(){
                       <RegtisterFormRow label="Email">
                       <input type="email" className="form-control"  value={registerEmailAddress} onChange={(e) => setReigisterEmailAddress(e.target.value)} placeholder='gwen@livet.com' required/>
                           <p className='form-text'>Login codes & booking confirmations are sent to your email. </p>
-                          <span className="validity"></span>
-                      </RegtisterFormRow>
-                      <RegtisterFormRow label="Newsletter">
-                        <input type="checkbox" className="form-check-input" checked={registerNewsletterSubscribe} onChange={(e) => setRegisterNewsletterSubscribe(e.target.checked)} placeholder='gwen@livet.com' />
-                          <label className='orm-check-label'>We'll send you a notification when a new ride created.</label>
                           <span className="validity"></span>
                       </RegtisterFormRow>
 

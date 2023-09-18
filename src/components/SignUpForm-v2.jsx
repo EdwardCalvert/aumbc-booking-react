@@ -5,6 +5,7 @@ import authenticationService from '../services/authentication.service';
 import AutoTextArea from './AutoTextArea';
 import OpenInW3W from './OpenInW3W';
 import TransportState, { transportState } from './../_helpers/transportState'
+import LoadingSpinner from './LoadingSpinner';
 const Driving = String(transportState.Driving);
 const QueuingPassenger =  String(transportState.QueuingPassenger) ;
 const AttendingPassenger = String(transportState.AttendingPassenger);
@@ -17,7 +18,7 @@ function SignUpForm(props){
         petrol: true,
         mpg: 47.6,
         numberOfBikeSpaces: 0 ,
-        numberOfSeats : 0
+        numberOfSeats : 1
 
     });
     const [eventAcceptance, setEventAcceptance] = useState({
@@ -54,7 +55,7 @@ function SignUpForm(props){
                 setAlreadyBooked(false);
             }
             setLoading(false);
-            setMyVehicles(data.vehicles);
+            setMyVehicles(data.vehicles ? data.vehicles : []); //Empty array if no vehicles are present
             setCapacityForNewPassengers(data.maxCapacity);
         }
         
@@ -65,7 +66,7 @@ function SignUpForm(props){
    function PaymentHelpMessage(){
     if(eventAcceptance.eventCostsToPay&& eventAcceptance.eventCostsToPay>0 && eventAcceptance.eventCostsPaidDate === null){
         return <React.Fragment>
-            <a href="https://settleup.starlingbank.com/glenncharlton" rel="noreferrer" target="_blank" className='btn btn-primary' onClick={() => payEventCosts()}>Don't forget to pay £{eventAcceptance.eventCostsToPay.toFixed(2)} to cover our costs here. </a><br/>
+            <button  className='btn btn-primary' onClick={() => payEventCosts()}>I've paid £{eventAcceptance.eventCostsToPay.toFixed(2)} to the club, to cover costs. </button><br/>
     <label className='form-text'>Please include a descriptive refrence like "{authenticationService.currentUserValue.firstName} {authenticationService.currentUserValue.lastName}  {event.name} { new Date(event.startDateTime).toLocaleDateString("en-gb")}  "</label> 
     </React.Fragment>
     }
@@ -100,10 +101,11 @@ Join wating list</button>
         setLoadingNewCar(true);
         await api.post("Vehicle",{...newCar}).then(response => {
             let vehicles = myVehicles;
+            console.log(vehicles)
             vehicles.push(response.data);
             setMyVehicles(vehicles);
-            showAddCarForm(false);
-            loading(false);
+            setShowAddCarForm(false);
+            setLoading(false);
             setTransportState(Driving);
             setTransportSelectorValue(response.data.vehicleId);
         },
@@ -116,6 +118,7 @@ Join wating list</button>
   async function handleEventAcceptance(e) {
     e.preventDefault();
     setProcessingSubmission(true);
+    console.log(transportState)
    await api.post("EventAcceptance/accept-event",
    {eventId : event.id, 
     vehicleId : transportState === Driving ? transportSelectorValue: null   , 
@@ -159,11 +162,14 @@ Join wating list</button>
     }
   }
     function updateDrivingSelector(event){
-        let newTransportState = QueuingPassenger
+        let newTransportState
         if(event.target.value === MakingOwnWayThere){
            newTransportState= MakingOwnWayThere;
         }
-        else { // Must be driving
+        else if( event.target.value === QueuingPassenger){
+            newTransportState = QueuingPassenger
+        }
+        else  { // Must be driving
              newTransportState = Driving;
         }
         setTransportSelectorValue(event.target.value);
@@ -270,7 +276,10 @@ Join wating list</button>
                     <p className='alert alert-danger'>Unable to submit your vehicle. Please ensure you have at least one seat</p>
                 }
                 {loadingNewCar&&
-                    <p>Inserting...</p>
+                    
+                    <LoadingSpinner >
+                            <p>Inserting...</p>
+                    </LoadingSpinner>
                 }
                 </div>
                 }

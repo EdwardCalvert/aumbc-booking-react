@@ -11,12 +11,10 @@ import React from 'react';
 import RequireAuth from './components/RequireAuth';
 import Logout from './components/Logout';
 import EditEventPage from './components/EditEventPage';
-import NewsletterPage from './components/NewsletterPage';
 import CreateNewEventPage from './components/CreateNewEventPage';
 import RidesAttendedPage from './components/RidesAttendedPage';
 import UserManagementPage from './components/UserManagementPage';
 import PeopleAttendingRidePage from './components/EventAcceptanceRow';
-import ListEventsBySemester from './components/ListEventsBySemester';
 import ScrollToTop from './_helpers/ScrollToTop';
 import { TreasurerPage } from './components/TreasurerPage';
 
@@ -55,17 +53,13 @@ class App extends React.Component {
               <Route path="/event/edit/:id" element={<RequireAuth role={Role.Admin}><EditEventPage/></RequireAuth>}/>
               <Route path="/event/riders/:id" element={<RequireAuth role={Role.Admin}><PeopleAttendingRidePage/></RequireAuth>}/>
               <Route path="/" element={<RequireAuth><EventList /></RequireAuth>}/>
-              <Route path="/email-settings" element={<RequireAuth><NewsletterPage /></RequireAuth>}/>
               <Route path="/my-account" element={<RequireAuth><RidesAttendedPage /></RequireAuth>}/>
               <Route path="/logout" element={<Logout/>}/>
 
               {/* Admin related components */}
-              {/* <Route path="/admin/unpaid-drivers" element={<RequireAuth roles={Role.Admin}><UnpaidDriversPage /></RequireAuth>}/>
-              <Route path="/admin/paid-drivers" element={<RequireAuth roles={Role.Admin}><PaidDriversPage /></RequireAuth>}/> */}
               <Route path="/admin/manage" element={<UserManagementPage/>}></Route>
               <Route path="/admin/new-event/" element={<RequireAuth roles={Role.Admin}><CreateNewEventPage/></RequireAuth>}/>
               <Route path="/admin/treasurer/" element={<RequireAuth roles={Role.Admin}><TreasurerPage/></RequireAuth>}/>
-              {/* <Route path="/admin/list-events" element={<RequireAuth roles={Role.Admin}><ListEventsBySemester/></RequireAuth>} /> */}
               <Route path="*" element={<p> There is nothing at this page</p>}/>
              
           </Routes>

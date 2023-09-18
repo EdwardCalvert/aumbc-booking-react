@@ -28,7 +28,7 @@ function EventAcceptanceRow(props){
                     }
             <th scope="col">Transport</th>
             
-            {authenticationService.isAdmin() &&
+            {authenticationService.isAdmin() && props.invocing  &&
                 <React.Fragment>
 
                     <th scope="col">Club bike</th>
@@ -38,6 +38,15 @@ function EventAcceptanceRow(props){
                     <th scope="col">Controls</th>
                     </React.Fragment>
             }
+
+            {   props.showPayEventCosts &&
+             <React.Fragment>
+             <th scope="col">You owe club</th>
+             <th scope="col">Club owes you</th>
+             <th scope="col">Controls</th>
+             </React.Fragment>
+
+            }
             </tr>
         </thead>
         <tbody>
@@ -46,7 +55,7 @@ function EventAcceptanceRow(props){
                
                 <tr scope="row" >
                 
-                <td style={{width:"25%"}}> {props.invocing?  <Link to={`/event/${item.eventId}`}>{item.name}</Link> : `${item.firstName} ${item.lastName}` }</td>
+                <td style={{width:"25%"}}> {props.invocing|| props.showPayEventCosts ?  <Link to={`/event/${item.eventId}`}>{item.name}</Link> : `${item.firstName} ${item.lastName}` }</td>
                 {props.invocing && authenticationService.isAdmin() && 
                     <td style={{width:getRowWidth()}}>{ new Date(item.startDateTime).toLocaleDateString("en-GB")}  </td>
                 }
@@ -59,13 +68,18 @@ function EventAcceptanceRow(props){
                 }
 
                
-                {  ( authenticationService.isAdmin() || props.showPayEventCosts  )&&
+                {  ( authenticationService.isAdmin() && props.invocing  )&&
                     <React.Fragment>
                          <td style={{width:getRowWidth()}}>{item.borrowClubBike ?"Yes" :"-"}</td>
                 <td style={{width:getRowWidth()}}>{item.giveItAGo?"Yes" : "-"}</td>
+                    </React.Fragment>
+                }
+                {  ( authenticationService.isAdmin() || props.showPayEventCosts   )&&
+                    <React.Fragment>
+
                         <td style={{width:getRowWidth()}}> <div className={(item.eventCostsPaidDate?  " text-success": "")}>{ item.eventCostsToPay !== 0? ("£"+item.eventCostsToPay.toFixed(2)):"-" } </div></td>
-                        <td> <div className={"display-flex"  + (item.payoutSentDate?  " text-success": "")}>{ item.payoutTotal !== 0 ?( "£"+item.payoutTotal.toFixed(2)):"-"}{item.customPayoutTotal? <span><i className="bi bi-pencil"></i></span>:""} </div></td>
-                        <td style={{width:"25%"}}>
+                        <td style={{width:getRowWidth()}}> <div className={"display-flex"  + (item.payoutSentDate?  " text-success": "")}>{ item.payoutTotal !== 0 ?( "£"+item.payoutTotal.toFixed(2)):"-"}{item.customPayoutTotal? <span><i className="bi bi-pencil"></i></span>:""} </div></td>
+                        <td style={{width:getRowWidth()}}>
                             <LoadingSpinner show={item.processing}/>
                             {!item.processing && props.showAdminControls &&
                                 <div className="display-flex">
@@ -85,7 +99,7 @@ function EventAcceptanceRow(props){
 
                             {props.showPayEventCosts && item.eventCostsToPay > 0 &&  item.eventCostsPaidDate === null && !item.processing &&  
                                 <div className="display-flex">
-                                    <button className="btn btn-sm btn-primary" onClick={()=> props.onPayEventCosts(item.accountId,item.eventId)}>Mark event costs paid</button>
+                                    <button className="btn btn-sm btn-primary" onClick={()=> props.onPayEventCosts(item.accountId,item.eventId)}>I've paid £{item.eventCostsToPay.toFixed(2)}</button>
                                 </div>
                             }
                             </td>
@@ -108,7 +122,7 @@ function EventAcceptanceRow(props){
             }
             </React.Fragment>
             )}
-            {authenticationService.isAdmin() &&
+            {authenticationService.isAdmin() && props.invocing &&
 
                 <tr>
                     <td colSpan={props.invocing? 4:  3}></td>

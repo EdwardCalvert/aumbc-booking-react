@@ -52,9 +52,9 @@ function logout() {
   currentUserSubject.next(null);
 }
 
-function register(firstName, lastName, emailAddress, notifyNewEvents) {
+function register(firstName, lastName, emailAddress) {
 return api.post( "auth/register", {
- firstName:  firstName, lastName: lastName, emailAddress: emailAddress, notifyNewEvents  :notifyNewEvents
+ firstName:  firstName, lastName: lastName, emailAddress: emailAddress
 });
 }
 
